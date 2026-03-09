@@ -88,6 +88,21 @@ MomCare/
 └── Platform/         # Widgets, Live Activities, Siri
 ```
 
+## Decision-Making Protocol
+
+**Important decisions require brainstorming first.** Before any agent makes a significant architectural, design, or technical decision, invoke `superpowers:brainstorming`. This includes adding dependencies, changing data models, choosing between approaches, or designing UX flows.
+
+## No Emojis
+
+Never use emojis in code, comments, commit messages, documentation, or UI strings. All agents must follow this rule.
+
+## Graphics & Icons
+
+- **SF Symbols** for all standard UI icons (tabs, buttons, navigation, status indicators)
+- **Nova MCP** for custom graphics, illustrations, and visual assets that SF Symbols cannot cover (onboarding art, empty states, marketing visuals, app icon variants)
+- Never use emoji as icon substitutes
+- Never use third-party icon libraries
+
 ## Conventions
 
 - Entity structs conform to `Identifiable`, `Codable`, `Hashable`

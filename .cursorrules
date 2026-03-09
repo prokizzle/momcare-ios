@@ -49,7 +49,18 @@ View → ViewModel (@Observable) → Repository (protocol) → SwiftData / Fireb
 - .xcodeproj is gitignored — regenerate with `xcodegen generate`
 - Never manually edit .xcodeproj
 
+## Graphics & Icons
+- SF Symbols for all standard UI icons
+- Nova MCP for custom graphics and illustrations (onboarding, empty states, marketing)
+- Never use emoji as icons or in UI strings
+- Never use third-party icon libraries
+
+## Important Decisions
+- Before any significant architectural or design decision, invoke superpowers:brainstorming
+- This includes: new dependencies, data model changes, UX flow design, sync strategy changes
+
 ## Don'ts
+- Don't use emojis anywhere — not in code, comments, commit messages, docs, or UI
 - Don't use Combine (use @Observable + async/await)
 - Don't use ObservableObject/@Published (use @Observable)
 - Don't use XCTest (use Swift Testing)
@@ -59,3 +70,4 @@ View → ViewModel (@Observable) → Repository (protocol) → SwiftData / Fireb
 - Don't hardcode colors — use the design system tokens
 - Don't skip haptic feedback on interactive elements
 - Don't create tap targets smaller than 44pt
+- Don't use emoji as icon substitutes — use SF Symbols or Nova MCP

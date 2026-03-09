@@ -12,6 +12,31 @@ This is non-negotiable. Even for "simple" questions. The axiom:ask skill routes 
 
 If you think there's even a 1% chance an Axiom skill applies, invoke it.
 
+## Critical: Brainstorm Important Decisions
+
+**Before making any significant architectural, design, or technical decision, invoke `superpowers:brainstorming`.**
+
+This includes:
+- Adding new dependencies or frameworks
+- Changing data models or persistence strategy
+- Choosing between implementation approaches
+- Designing new feature UX flows
+- Modifying the sync/auth architecture
+- Any decision that would be hard to reverse
+
+When in doubt, brainstorm first. Fast decisions lead to slow rewrites.
+
+## No Emojis
+
+Never use emojis in code, comments, commit messages, documentation, or UI strings. Keep all output clean and professional.
+
+## Graphics & Icons
+
+- **SF Symbols** for all standard UI icons (tabs, buttons, navigation, status indicators)
+- **Nova MCP** for custom graphics, illustrations, and visual assets that SF Symbols cannot cover (onboarding art, empty states, marketing visuals, app icon variants)
+- Never use emoji as a substitute for proper icons or graphics
+- Never use third-party icon libraries — SF Symbols + Nova MCP covers everything
+
 ## Project Overview
 
 - **App**: MomCare — premium baby & mother care tracker
