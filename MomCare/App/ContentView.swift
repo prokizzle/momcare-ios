@@ -5,29 +5,37 @@ struct ContentView: View {
 
     var body: some View {
         TabView(selection: $navigation.selectedTab) {
-            Tab("Dashboard", systemImage: "heart.text.clipboard", value: .dashboard) {
-                NavigationStack(path: $navigation.dashboardPath) {
-                    Text("Mission Control")
-                }
+            NavigationStack(path: $navigation.dashboardPath) {
+                Text("Mission Control")
             }
+            .tabItem {
+                Label("Dashboard", systemImage: "heart.text.clipboard")
+            }
+            .tag(AppTab.dashboard)
 
-            Tab("Feeding", systemImage: "drop.fill", value: .feeding) {
-                NavigationStack(path: $navigation.feedingPath) {
-                    Text("Feeding")
-                }
+            NavigationStack(path: $navigation.feedingPath) {
+                Text("Feeding")
             }
+            .tabItem {
+                Label("Feeding", systemImage: "drop.fill")
+            }
+            .tag(AppTab.feeding)
 
-            Tab("Self-Care", systemImage: "sparkles", value: .selfCare) {
-                NavigationStack(path: $navigation.selfCarePath) {
-                    Text("Self-Care")
-                }
+            NavigationStack(path: $navigation.selfCarePath) {
+                Text("Self-Care")
             }
+            .tabItem {
+                Label("Self-Care", systemImage: "sparkles")
+            }
+            .tag(AppTab.selfCare)
 
-            Tab("Insights", systemImage: "chart.xyaxis.line", value: .insights) {
-                NavigationStack(path: $navigation.insightsPath) {
-                    Text("Insights")
-                }
+            NavigationStack(path: $navigation.insightsPath) {
+                Text("Insights")
             }
+            .tabItem {
+                Label("Insights", systemImage: "chart.xyaxis.line")
+            }
+            .tag(AppTab.insights)
         }
         .environment(navigation)
     }

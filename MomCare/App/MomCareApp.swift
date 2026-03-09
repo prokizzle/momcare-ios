@@ -1,5 +1,6 @@
 import SwiftUI
 import SwiftData
+import FirebaseCore
 
 @main
 struct MomCareApp: App {
@@ -20,9 +21,14 @@ struct MomCareApp: App {
         }
     }()
 
+    init() {
+        FirebaseApp.configure()
+    }
+
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environment(\.dependencies, AppDependencies())
         }
         .modelContainer(sharedModelContainer)
     }
