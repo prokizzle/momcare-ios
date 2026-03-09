@@ -73,3 +73,24 @@ extension Baby {
         )
     }
 }
+
+extension Baby.BiologicalSex {
+    var displayName: String {
+        switch self {
+        case .male: "Male"
+        case .female: "Female"
+        case .other: "Other"
+        case .preferNotToSay: "Prefer not to say"
+        }
+    }
+}
+
+extension Baby.FeedingMethod {
+    var displayName: String {
+        switch self {
+        case .breast: "Breastfeeding"
+        case .bottle: "Bottle feeding"
+        case .both: "Both"
+        }
+    }
+}
