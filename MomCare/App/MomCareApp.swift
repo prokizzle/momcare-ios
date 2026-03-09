@@ -6,7 +6,7 @@ import FirebaseCore
 struct MomCareApp: App {
     var sharedModelContainer: ModelContainer = {
         let schema = Schema([
-            // Models will be registered here as they're built
+            BabyModel.self
         ])
         let modelConfiguration = ModelConfiguration(
             schema: schema,
