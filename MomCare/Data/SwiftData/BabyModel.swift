@@ -12,7 +12,7 @@ final class BabyModel {
     var birthHeadCircumference: Double?
     var feedingMethodRaw: String
     @Attribute(.externalStorage) var photoData: Data?
-    var isDeleted: Bool
+    var isSoftDeleted: Bool
     var createdAt: Date
     var updatedAt: Date
 
@@ -26,7 +26,7 @@ final class BabyModel {
         self.birthHeadCircumference = baby.birthHeadCircumference
         self.feedingMethodRaw = baby.feedingMethod.rawValue
         self.photoData = baby.photoData
-        self.isDeleted = baby.isDeleted
+        self.isSoftDeleted = baby.isDeleted
         self.createdAt = baby.createdAt
         self.updatedAt = baby.updatedAt
     }
@@ -42,7 +42,7 @@ final class BabyModel {
             birthHeadCircumference: birthHeadCircumference,
             feedingMethod: Baby.FeedingMethod(rawValue: feedingMethodRaw) ?? .breast,
             photoData: photoData,
-            isDeleted: isDeleted,
+            isDeleted: isSoftDeleted,
             createdAt: createdAt,
             updatedAt: updatedAt
         )
@@ -57,7 +57,7 @@ final class BabyModel {
         birthHeadCircumference = baby.birthHeadCircumference
         feedingMethodRaw = baby.feedingMethod.rawValue
         photoData = baby.photoData
-        isDeleted = baby.isDeleted
+        isSoftDeleted = baby.isDeleted
         updatedAt = Date.now
     }
 }
