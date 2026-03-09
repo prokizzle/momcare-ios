@@ -33,6 +33,17 @@ Pods/
 # Firebase
 GoogleService-Info.plist
 
+# Agent/tool directories
+.agent/
+.agents/*
+!.agents/product-marketing-context.md
+.augment/
+.claude/
+logs/
+output/
+scratch/
+skills-lock.json
+
 # Fastlane
 fastlane/report.xml
 fastlane/Preview.html

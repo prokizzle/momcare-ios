@@ -1,24 +1,43 @@
 import SwiftUI
 
 struct ContentView: View {
+    @State private var navigation = AppNavigation()
+
     var body: some View {
-        TabView {
-            Tab("Dashboard", systemImage: "heart.text.clipboard") {
+        TabView(selection: $navigation.selectedTab) {
+            NavigationStack(path: $navigation.dashboardPath) {
                 Text("Mission Control")
             }
+            .tabItem {
+                Label("Dashboard", systemImage: "heart.text.clipboard")
+            }
+            .tag(AppTab.dashboard)
 
-            Tab("Feeding", systemImage: "drop.fill") {
+            NavigationStack(path: $navigation.feedingPath) {
                 Text("Feeding")
             }
+            .tabItem {
+                Label("Feeding", systemImage: "drop.fill")
+            }
+            .tag(AppTab.feeding)
 
-            Tab("Self-Care", systemImage: "sparkles") {
+            NavigationStack(path: $navigation.selfCarePath) {
                 Text("Self-Care")
             }
+            .tabItem {
+                Label("Self-Care", systemImage: "sparkles")
+            }
+            .tag(AppTab.selfCare)
 
-            Tab("Insights", systemImage: "chart.xyaxis.line") {
+            NavigationStack(path: $navigation.insightsPath) {
                 Text("Insights")
             }
+            .tabItem {
+                Label("Insights", systemImage: "chart.xyaxis.line")
+            }
+            .tag(AppTab.insights)
         }
+        .environment(navigation)
     }
 }
 

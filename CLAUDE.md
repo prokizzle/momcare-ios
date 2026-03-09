@@ -113,7 +113,16 @@ xcodebuild -scheme MomCare -destination 'platform=iOS Simulator,name=iPhone 16'
 
 # Test
 xcodebuild test -scheme MomCare -destination 'platform=iOS Simulator,name=iPhone 16'
+
+# Lint (run after every task / before every commit)
+swiftlint --strict
 ```
+
+## Linting
+
+- **SwiftLint** with `--strict` is required after every task and before every commit
+- All warnings are treated as errors in strict mode
+- Fix all violations before committing -- no exceptions
 
 ## Conventions
 

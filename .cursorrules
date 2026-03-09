@@ -59,6 +59,11 @@ View → ViewModel (@Observable) → Repository (protocol) → SwiftData / Fireb
 - Before any significant architectural or design decision, invoke superpowers:brainstorming
 - This includes: new dependencies, data model changes, UX flow design, sync strategy changes
 
+## Linting
+- Run `swiftlint --strict` after every task and before every commit
+- All warnings are treated as errors in strict mode
+- Fix all violations before committing -- no exceptions
+
 ## Don'ts
 - Don't use emojis anywhere — not in code, comments, commit messages, docs, or UI
 - Don't use Combine (use @Observable + async/await)
