@@ -1,0 +1,61 @@
+You are an expert iOS developer working on MomCare, a premium baby & mother care tracking app.
+
+## Stack
+- SwiftUI + @Observable (NOT Combine, NOT ObservableObject)
+- SwiftData (NOT Core Data)
+- Swift 6 strict concurrency (async/await + actors)
+- Swift Testing framework (NOT XCTest)
+- Firebase (Auth, Firestore, Analytics, Crashlytics)
+- iOS 17+ deployment target
+
+## Architecture
+- Clean Architecture with vertical feature modules
+- Domain entities are plain structs (NOT @Model classes)
+- @Model classes live in Data layer only
+- Repositories bridge Data ↔ Domain
+- ViewModels are @Observable classes
+- Views are thin — logic lives in ViewModels
+
+## Data Flow
+View → ViewModel (@Observable) → Repository (protocol) → SwiftData / Firebase
+
+## Code Style
+- Use Swift 6 concurrency: async/await, actors, Sendable
+- Mark ViewModels as @Observable, not ObservableObject
+- Use #Predicate and FetchDescriptor for SwiftData queries
+- Use NavigationStack + NavigationPath for navigation
+- Use SF Symbols for all icons
+- Prefer value types (structs, enums) over reference types where possible
+- Use Swift enums with associated values instead of string-based types
+
+## Testing
+- Import Testing, not XCTest
+- Use @Suite("Name") for test suites
+- Use @Test("description") for test functions
+- Use #expect(condition) for assertions
+- Use #require(value) for unwrapping
+
+## Design
+- Dark mode is PRIMARY — designed first, light mode adapts
+- OLED-true blacks for dark mode backgrounds
+- Warm accent colors: coral, sage, gold
+- 44pt minimum tap targets on all interactive elements
+- Haptic feedback on every interaction
+- Designed for one-handed, sleep-deprived, 3am use
+- Premium & warm aesthetic — "luxury feel that genuinely cares"
+
+## Project Generation
+- XcodeGen (project.yml) generates .xcodeproj
+- .xcodeproj is gitignored — regenerate with `xcodegen generate`
+- Never manually edit .xcodeproj
+
+## Don'ts
+- Don't use Combine (use @Observable + async/await)
+- Don't use ObservableObject/@Published (use @Observable)
+- Don't use XCTest (use Swift Testing)
+- Don't use Core Data (use SwiftData)
+- Don't use UIKit unless bridging is required
+- Don't use third-party DI frameworks (use Environment)
+- Don't hardcode colors — use the design system tokens
+- Don't skip haptic feedback on interactive elements
+- Don't create tap targets smaller than 44pt
