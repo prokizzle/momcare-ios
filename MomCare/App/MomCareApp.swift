@@ -22,7 +22,13 @@ struct MomCareApp: App {
     }()
 
     init() {
-        FirebaseApp.configure()
+        if Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
+            FirebaseApp.configure()
+        } else {
+            #if DEBUG
+            print("Warning: GoogleService-Info.plist not found. Firebase is not configured.")
+            #endif
+        }
     }
 
     var body: some Scene {
