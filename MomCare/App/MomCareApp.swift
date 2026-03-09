@@ -34,7 +34,7 @@ struct MomCareApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
-                .environment(\.dependencies, AppDependencies())
+                .environment(\.dependencies, AppDependencies(modelContext: sharedModelContainer.mainContext))
         }
         .modelContainer(sharedModelContainer)
     }

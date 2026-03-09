@@ -1,16 +1,30 @@
 import SwiftUI
+import SwiftData
 
 protocol DependencyContainer: Sendable {
-    // Factory methods added here as features land.
+    func makeBabyRepository() -> any BabyRepositoryProtocol
 }
 
-final class AppDependencies: DependencyContainer, Sendable {
-    // Concrete factory methods added per feature.
-    // All stored properties must be let-bound and Sendable.
+final class AppDependencies: DependencyContainer, @unchecked Sendable {
+    private let modelContext: ModelContext
+
+    init(modelContext: ModelContext) {
+        self.modelContext = modelContext
+    }
+
+    func makeBabyRepository() -> any BabyRepositoryProtocol {
+        BabyRepository(modelContext: modelContext)
+    }
 }
 
-struct DependenciesKey: EnvironmentKey {
-    static let defaultValue: any DependencyContainer = AppDependencies()
+struct DependenciesKey: @preconcurrency EnvironmentKey {
+    @MainActor
+    static let defaultValue: any DependencyContainer = {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        // swiftlint:disable:next force_try
+        let container = try! ModelContainer(for: BabyModel.self, configurations: config)
+        return AppDependencies(modelContext: container.mainContext)
+    }()
 }
 
 extension EnvironmentValues {
