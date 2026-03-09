@@ -4,12 +4,14 @@ import Testing
 @Suite("AppNavigation Tests")
 struct AppNavigationTests {
     @Test("Default tab is dashboard")
+    @MainActor
     func defaultTab() {
         let nav = AppNavigation()
         #expect(nav.selectedTab == .dashboard)
     }
 
     @Test("Each tab has its own navigation path")
+    @MainActor
     func tabPaths() {
         let nav = AppNavigation()
         #expect(nav.dashboardPath.isEmpty)

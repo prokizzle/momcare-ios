@@ -4,8 +4,9 @@ protocol DependencyContainer: Sendable {
     // Factory methods added here as features land.
 }
 
-final class AppDependencies: DependencyContainer, @unchecked Sendable {
+final class AppDependencies: DependencyContainer, Sendable {
     // Concrete factory methods added per feature.
+    // All stored properties must be let-bound and Sendable.
 }
 
 struct DependenciesKey: EnvironmentKey {

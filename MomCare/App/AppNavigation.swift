@@ -7,6 +7,7 @@ enum AppTab: String, CaseIterable, Sendable {
     case insights
 }
 
+@MainActor
 @Observable
 final class AppNavigation {
     var selectedTab: AppTab = .dashboard
@@ -16,6 +17,6 @@ final class AppNavigation {
     var insightsPath = NavigationPath()
 
     func handleURL(_ url: URL) {
-        // Deep link routing added per feature
+        assertionFailure("Deep link received but routing not yet implemented: \(url)")
     }
 }
