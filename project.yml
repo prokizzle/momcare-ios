@@ -1,0 +1,140 @@
+name: MomCare
+options:
+  bundleIdPrefix: com.feelingmindful
+  deploymentTarget:
+    iOS: "17.0"
+  xcodeVersion: "16.0"
+  generateEmptyDirectories: true
+  groupSortPosition: top
+  createIntermediateGroups: true
+
+settings:
+  base:
+    SWIFT_VERSION: "6.0"
+    DEVELOPMENT_TEAM: ""
+    CODE_SIGN_STYLE: Automatic
+    ENABLE_USER_SCRIPT_SANDBOXING: "YES"
+    SWIFT_STRICT_CONCURRENCY: complete
+
+configs:
+  Debug: debug
+  Release: release
+
+targets:
+  MomCare:
+    type: application
+    platform: iOS
+    sources:
+      - path: MomCare
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.feelingmindful.momcare
+        INFOPLIST_FILE: MomCare/App/Info.plist
+        PRODUCT_NAME: MomCare
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD: "YES"
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_EMIT_LOC_STRINGS: "YES"
+      configs:
+        Debug:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: DEBUG
+        Release:
+          SWIFT_ACTIVE_COMPILATION_CONDITIONS: ""
+    entitlements:
+      path: MomCare/App/MomCare.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - group.com.feelingmindful.momcare
+    dependencies:
+      - target: MomCareWidgetExtension
+      - package: FirebaseAuth
+        product: FirebaseAuth
+      - package: FirebaseFirestore
+        product: FirebaseFirestore
+      - package: FirebaseAnalytics
+        product: FirebaseAnalytics
+      - package: FirebaseCrashlytics
+        product: FirebaseCrashlytics
+    scheme:
+      testTargets:
+        - MomCareTests
+        - MomCareUITests
+      environmentVariables:
+        - variable: IDEPreferLogStreaming
+          value: "YES"
+          isEnabled: true
+
+  MomCareTests:
+    type: bundle.unit-test
+    platform: iOS
+    sources:
+      - path: MomCareTests
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.feelingmindful.momcare.tests
+        GENERATE_INFOPLIST_FILE: "YES"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/MomCare.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/MomCare"
+        BUNDLE_LOADER: "$(TEST_HOST)"
+    dependencies:
+      - target: MomCare
+
+  MomCareUITests:
+    type: bundle.ui-testing
+    platform: iOS
+    sources:
+      - path: MomCareUITests
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.feelingmindful.momcare.uitests
+        GENERATE_INFOPLIST_FILE: "YES"
+        TEST_TARGET_NAME: MomCare
+    dependencies:
+      - target: MomCare
+
+  MomCareWidgetExtension:
+    type: app-extension
+    platform: iOS
+    sources:
+      - path: MomCareWidgetExtension
+        excludes:
+          - "**/.DS_Store"
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.feelingmindful.momcare.widgets
+        INFOPLIST_FILE: MomCareWidgetExtension/Info.plist
+        PRODUCT_NAME: MomCareWidgets
+        ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME: WidgetBackground
+        TARGETED_DEVICE_FAMILY: "1,2"
+        SWIFT_EMIT_LOC_STRINGS: "YES"
+    entitlements:
+      path: MomCareWidgetExtension/MomCareWidgetExtension.entitlements
+      properties:
+        com.apple.security.app-sandbox: true
+        com.apple.security.application-groups:
+          - group.com.feelingmindful.momcare
+
+packages:
+  FirebaseAuth:
+    url: https://github.com/firebase/firebase-ios-sdk
+    version: "11.0.0"
+    productName: FirebaseAuth
+  FirebaseFirestore:
+    url: https://github.com/firebase/firebase-ios-sdk
+    version: "11.0.0"
+    productName: FirebaseFirestore
+  FirebaseAnalytics:
+    url: https://github.com/firebase/firebase-ios-sdk
+    version: "11.0.0"
+    productName: FirebaseAnalytics
+  FirebaseCrashlytics:
+    url: https://github.com/firebase/firebase-ios-sdk
+    version: "11.0.0"
+    productName: FirebaseCrashlytics
