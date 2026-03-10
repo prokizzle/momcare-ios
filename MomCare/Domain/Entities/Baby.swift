@@ -36,15 +36,10 @@ struct Baby: Identifiable, Codable, Sendable, Equatable {
 
     var ageString: String {
         let months = ageInMonths
-        if months >= 2 {
-            return "\(months) months"
-        }
-        let days = ageInDays
-        if days < 14 {
-            return days == 1 ? "1 day" : "\(days) days"
-        }
-        let weeks = ageInWeeks
-        return "\(weeks) weeks"
+        let totalDays = ageInDays
+        if months >= 2 { return "\(months) months" }
+        if totalDays < 14 { return totalDays == 1 ? "1 day" : "\(totalDays) days" }
+        return "\(totalDays / 7) weeks"
     }
 }
 

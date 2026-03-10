@@ -33,7 +33,9 @@ enum FeedingPatternService {
 
         let totalMinutes = intervals.reduce(0, +)
         let avgMinutes = totalMinutes / intervals.count
-        let confidence = calculateConfidence(intervals: intervals, sampleSize: feedings.count)
+        let confidence = calculateConfidence(
+            intervals: intervals, totalMinutes: totalMinutes, sampleSize: feedings.count
+        )
 
         return FeedingPattern(
             averageInterval: TimeInterval(avgMinutes * 60),
@@ -43,7 +45,7 @@ enum FeedingPatternService {
         )
     }
 
-    private static func calculateConfidence(intervals: [Int], sampleSize: Int) -> Double {
+    private static func calculateConfidence(intervals: [Int], totalMinutes: Int, sampleSize: Int) -> Double {
         guard !intervals.isEmpty else { return 0 }
 
         let sizeConfidence: Double
@@ -57,7 +59,7 @@ enum FeedingPatternService {
             sizeConfidence = 0.3
         }
 
-        let avg = Double(intervals.reduce(0, +)) / Double(intervals.count)
+        let avg = Double(totalMinutes) / Double(intervals.count)
         let variance = intervals
             .map { (Double($0) - avg) * (Double($0) - avg) }
             .reduce(0, +) / Double(intervals.count)

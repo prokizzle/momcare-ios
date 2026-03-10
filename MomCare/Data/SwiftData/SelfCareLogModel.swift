@@ -39,13 +39,16 @@ final class SelfCareLogModel {
         self.updatedAt = Date.now
     }
 
+    private static let encoder = JSONEncoder()
+    private static let decoder = JSONDecoder()
+
     private static func encodeDetail(_ detail: LogDetail?) -> Data? {
         guard let detail else { return nil }
-        return try? JSONEncoder().encode(detail)
+        return try? encoder.encode(detail)
     }
 
     private static func decodeDetail(_ data: Data?) -> LogDetail? {
         guard let data else { return nil }
-        return try? JSONDecoder().decode(LogDetail.self, from: data)
+        return try? decoder.decode(LogDetail.self, from: data)
     }
 }

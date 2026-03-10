@@ -42,16 +42,15 @@ enum SelfCarePatternService {
     ) -> ActionPattern {
         let sortedLogs = logs.sorted { $0.timestamp > $1.timestamp }
 
+        // Compute unique days once — reused for average, streak, and compliance
+        let uniqueDays = Set(sortedLogs.map { calendar.startOfDay(for: $0.timestamp) })
+
         // Average times per day
-        let daysWithData = Set(sortedLogs.map { calendar.startOfDay(for: $0.timestamp) }).count
-        let activeDays = max(daysWithData, 1)
+        let activeDays = max(uniqueDays.count, 1)
         let averageTimesPerDay = Double(sortedLogs.count) / Double(min(activeDays, analysisDayCount))
 
         // Streak
-        let streakDays = calculateStreak(logs: sortedLogs, calendar: calendar, now: now)
-
-        // Compliance (days with at least one log / span of days covered)
-        let uniqueDays = Set(sortedLogs.map { calendar.startOfDay(for: $0.timestamp) })
+        let streakDays = calculateStreak(uniqueDays: uniqueDays, calendar: calendar, now: now)
         let earliestDay = uniqueDays.min() ?? calendar.startOfDay(for: now)
         let spanDays = max(
             calendar.dateComponents([.day], from: earliestDay, to: calendar.startOfDay(for: now)).day ?? 0,
@@ -88,12 +87,10 @@ enum SelfCarePatternService {
     }
 
     private static func calculateStreak(
-        logs: [SelfCareLog],
+        uniqueDays: Set<Date>,
         calendar: Calendar,
         now: Date
     ) -> Int {
-        let uniqueDays = Set(logs.map { calendar.startOfDay(for: $0.timestamp) })
-
         var streak = 0
         var checkDate = calendar.startOfDay(for: now)
 
@@ -122,9 +119,10 @@ enum SelfCarePatternService {
 
         var offsets: [TimeInterval] = []
         for log in logs {
-            // Find the closest feeding end BEFORE this log
-            if let closestFeedingEnd = sortedFeedingEnds.last(where: { $0 <= log.timestamp }) {
-                let offset = log.timestamp.timeIntervalSince(closestFeedingEnd)
+            // Binary search for the closest feeding end BEFORE this log
+            let idx = binarySearchLastLE(sortedFeedingEnds, target: log.timestamp)
+            if let idx {
+                let offset = log.timestamp.timeIntervalSince(sortedFeedingEnds[idx])
                 let offsetMinutes = offset / 60
                 if offsetMinutes > 0 && offsetMinutes <= Double(maxRelativeToFeedingMinutes) {
                     offsets.append(offset)
@@ -184,5 +182,21 @@ enum SelfCarePatternService {
         let relativeBonus: Double = hasRelativePattern ? 0.1 : 0.0
 
         return min(sizeScore * 0.5 + daysScore * 0.5 + relativeBonus, 1.0)
+    }
+
+    private static func binarySearchLastLE(_ dates: [Date], target: Date) -> Int? {
+        var low = 0
+        var high = dates.count - 1
+        var result: Int?
+        while low <= high {
+            let mid = low + (high - low) / 2
+            if dates[mid] <= target {
+                result = mid
+                low = mid + 1
+            } else {
+                high = mid - 1
+            }
+        }
+        return result
     }
 }

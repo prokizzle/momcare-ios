@@ -7,20 +7,25 @@ struct ContentLibrary: Sendable {
     let nudgeTemplates: [NudgeTemplate]
 
     static func loadFromBundle(bundle: Bundle = .main) throws -> ContentLibrary {
-        ContentLibrary(
-            affirmations: try loadJSON("affirmations", bundle: bundle),
-            pepTalks: try loadJSON("pep-talks", bundle: bundle),
-            checkInPrompts: try loadJSON("check-in-prompts", bundle: bundle),
-            nudgeTemplates: try loadJSON("nudge-templates", bundle: bundle)
+        let decoder = JSONDecoder()
+        return ContentLibrary(
+            affirmations: try loadJSON("affirmations", bundle: bundle, decoder: decoder),
+            pepTalks: try loadJSON("pep-talks", bundle: bundle, decoder: decoder),
+            checkInPrompts: try loadJSON("check-in-prompts", bundle: bundle, decoder: decoder),
+            nudgeTemplates: try loadJSON("nudge-templates", bundle: bundle, decoder: decoder)
         )
     }
 
-    private static func loadJSON<T: Decodable>(_ name: String, bundle: Bundle) throws -> [T] {
+    private static func loadJSON<T: Decodable>(
+        _ name: String,
+        bundle: Bundle,
+        decoder: JSONDecoder
+    ) throws -> [T] {
         guard let url = bundle.url(forResource: name, withExtension: "json") else {
             throw ContentLibraryError.fileNotFound(name)
         }
         let data = try Data(contentsOf: url)
-        return try JSONDecoder().decode([T].self, from: data)
+        return try decoder.decode([T].self, from: data)
     }
 }
 
