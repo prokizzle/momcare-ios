@@ -29,7 +29,11 @@ struct DependenciesKey: @preconcurrency EnvironmentKey {
     static let defaultValue: any DependencyContainer = {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         // swiftlint:disable:next force_try
-        let container = try! ModelContainer(for: BabyModel.self, FeedingModel.self, configurations: config)
+        let container = try! ModelContainer(
+            for: BabyModel.self, FeedingModel.self,
+            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
+            configurations: config
+        )
         return AppDependencies(modelContext: container.mainContext)
     }()
 }
