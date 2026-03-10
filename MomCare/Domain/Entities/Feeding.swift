@@ -41,15 +41,17 @@ struct Feeding: Identifiable, Codable, Sendable, Equatable {
     }
 
     enum BreastSide: String, Codable, CaseIterable, Sendable {
-        case left, right, both
+        case left, right
     }
 
     enum BottleContent: String, Codable, CaseIterable, Sendable {
-        case breastMilk, formula, mixed
+        case breastMilk, formula
     }
 
     enum FeedingQuality: String, Codable, CaseIterable, Sendable {
-        case good, fussy, distracted, sleepy
+        case good
+        case okay = "ok"
+        case poor
     }
 }
 
@@ -114,7 +116,6 @@ extension Feeding.BreastSide {
         switch self {
         case .left: "Left"
         case .right: "Right"
-        case .both: "Both"
         }
     }
 }
@@ -124,7 +125,6 @@ extension Feeding.BottleContent {
         switch self {
         case .breastMilk: "Breast Milk"
         case .formula: "Formula"
-        case .mixed: "Mixed"
         }
     }
 }
@@ -133,9 +133,8 @@ extension Feeding.FeedingQuality {
     var displayName: String {
         switch self {
         case .good: "Good"
-        case .fussy: "Fussy"
-        case .distracted: "Distracted"
-        case .sleepy: "Sleepy"
+        case .okay: "OK"
+        case .poor: "Poor"
         }
     }
 }

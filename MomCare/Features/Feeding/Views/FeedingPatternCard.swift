@@ -35,7 +35,7 @@ struct FeedingPatternCard: View {
         HStack(spacing: MCSpacing.xs) {
             ForEach(0..<5, id: \.self) { dotIndex in
                 Circle()
-                    .fill(Double(dotIndex) / 5.0 < pattern.confidence
+                    .fill(Double(dotIndex) / 4.0 <= pattern.confidence
                           ? MCColor.feeding
                           : Color.secondary.opacity(0.3))
                     .frame(width: 6, height: 6)

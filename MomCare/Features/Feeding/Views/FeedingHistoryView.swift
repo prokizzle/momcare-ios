@@ -40,7 +40,6 @@ struct FeedingHistoryView: View {
                 }
             }
         }
-        .navigationTitle("Feeding History")
         .confirmationDialog(
             "Delete Feeding?",
             isPresented: Binding(

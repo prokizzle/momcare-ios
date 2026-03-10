@@ -18,8 +18,8 @@ struct FeedingScreen: View {
 
     @ViewBuilder
     private func loadedView(viewModel: FeedingViewModel, babyId: UUID) -> some View {
-        ScrollView {
-            VStack(spacing: MCSpacing.lg) {
+        VStack(spacing: 0) {
+            VStack(spacing: MCSpacing.md) {
                 if let pattern = viewModel.pattern, !pattern.isInsufficient {
                     FeedingPatternCard(
                         pattern: pattern,
@@ -33,12 +33,11 @@ struct FeedingScreen: View {
                     showTimer = true
                 }
                 .padding(.horizontal, MCSpacing.md)
-
-                if !viewModel.feedings.isEmpty {
-                    FeedingHistoryView(viewModel: viewModel, babyId: babyId)
-                }
+                .padding(.bottom, MCSpacing.sm)
             }
             .padding(.top, MCSpacing.md)
+
+            FeedingHistoryView(viewModel: viewModel, babyId: babyId)
         }
         .navigationTitle("Feeding")
         .navigationDestination(isPresented: $showTimer) {
