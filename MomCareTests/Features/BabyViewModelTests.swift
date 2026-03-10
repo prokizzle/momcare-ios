@@ -66,6 +66,7 @@ struct BabyViewModelTests {
     }
 }
 
+@MainActor
 private final class StubBabyRepository: BabyRepositoryProtocol {
     private var store: [Baby]
 

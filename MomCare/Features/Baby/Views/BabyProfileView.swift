@@ -3,7 +3,7 @@ import PhotosUI
 
 struct BabyProfileView: View {
     @Bindable var viewModel: BabyViewModel
-    let baby: Baby
+    let babyId: UUID
 
     @State private var editedBaby: Baby
     @State private var isEditing = false
@@ -12,9 +12,13 @@ struct BabyProfileView: View {
     @State private var showError = false
     @Environment(\.dismiss) private var dismiss
 
+    private var baby: Baby {
+        viewModel.babies.first { $0.id == babyId } ?? editedBaby
+    }
+
     init(viewModel: BabyViewModel, baby: Baby) {
         self.viewModel = viewModel
-        self.baby = baby
+        self.babyId = baby.id
         self._editedBaby = State(initialValue: baby)
     }
 
@@ -42,7 +46,7 @@ struct BabyProfileView: View {
         .confirmationDialog("Delete Baby", isPresented: $showDeleteConfirmation) {
             Button("Delete", role: .destructive) {
                 Task {
-                    await viewModel.deleteBaby(baby.id)
+                    await viewModel.deleteBaby(babyId)
                     dismiss()
                 }
             }
@@ -86,7 +90,12 @@ struct BabyProfileView: View {
         Section("Details") {
             if isEditing {
                 TextField("Name", text: $editedBaby.name)
-                DatePicker("Birthday", selection: $editedBaby.dateOfBirth, displayedComponents: .date)
+                DatePicker(
+                    "Birthday",
+                    selection: $editedBaby.dateOfBirth,
+                    in: ...Date.now,
+                    displayedComponents: .date
+                )
                 Picker("Biological Sex", selection: $editedBaby.biologicalSex) {
                     Text("Not specified").tag(nil as Baby.BiologicalSex?)
                     ForEach(Baby.BiologicalSex.allCases, id: \.self) { sex in

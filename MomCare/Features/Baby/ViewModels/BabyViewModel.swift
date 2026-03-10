@@ -15,6 +15,7 @@ final class BabyViewModel {
     }
 
     func loadBabies() async {
+        error = nil
         isLoading = true
         defer { isLoading = false }
         do {
@@ -28,6 +29,7 @@ final class BabyViewModel {
     }
 
     func createBaby(_ baby: Baby) async {
+        error = nil
         do {
             let created = try await repository.create(baby)
             babies.append(created)
@@ -56,6 +58,7 @@ final class BabyViewModel {
     }
 
     func updateBaby(_ baby: Baby) async {
+        error = nil
         do {
             let updated = try await repository.update(baby)
             if let idx = babies.firstIndex(where: { $0.id == updated.id }) {
@@ -70,6 +73,7 @@ final class BabyViewModel {
     }
 
     func deleteBaby(_ id: UUID) async {
+        error = nil
         do {
             try await repository.delete(id)
             babies.removeAll { $0.id == id }

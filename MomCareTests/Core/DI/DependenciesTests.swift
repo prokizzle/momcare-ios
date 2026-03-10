@@ -31,6 +31,7 @@ struct DependenciesTests {
     }
 }
 
+@MainActor
 private final class MockBabyRepository: BabyRepositoryProtocol {
     func getAll() async throws -> [Baby] { [] }
     func getById(_ id: UUID) async throws -> Baby? { nil }

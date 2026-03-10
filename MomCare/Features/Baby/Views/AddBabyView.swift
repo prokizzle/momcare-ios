@@ -49,7 +49,7 @@ struct AddBabyView: View {
         Section {
             TextField("Baby's name", text: $name)
                 .textContentType(.name)
-            DatePicker("Birthday", selection: $dateOfBirth, displayedComponents: .date)
+            DatePicker("Birthday", selection: $dateOfBirth, in: ...Date.now, displayedComponents: .date)
         }
     }
 
