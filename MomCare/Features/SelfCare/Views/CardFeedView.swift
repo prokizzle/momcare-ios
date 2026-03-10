@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct CardFeedView: View {
     let cards: [SelfCareCard]
     let onDismiss: (UUID) -> Void
@@ -15,13 +16,6 @@ struct CardFeedView: View {
                             insertion: .opacity.combined(with: .move(edge: .top)),
                             removal: .opacity.combined(with: .move(edge: .trailing))
                         ))
-                        .swipeActions(edge: .trailing) {
-                            Button(role: .destructive) {
-                                onDismiss(card.id)
-                            } label: {
-                                Label("Dismiss", systemImage: "xmark")
-                            }
-                        }
                 }
             }
             .padding(.horizontal, MCSpacing.lg)
@@ -34,6 +28,7 @@ struct CardFeedView: View {
             .font(MCTypography.cardBody)
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)
+            .frame(maxWidth: .infinity)
             .padding(.vertical, MCSpacing.xxl)
             .padding(.horizontal, MCSpacing.lg)
     }

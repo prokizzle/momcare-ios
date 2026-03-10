@@ -1,8 +1,11 @@
 import SwiftUI
 
+@MainActor
 struct SelfCareCardView: View {
     let card: SelfCareCard
     let onDismiss: () -> Void
+
+    @State private var dragOffset: CGFloat = 0
 
     var body: some View {
         HStack(alignment: .top, spacing: MCSpacing.md) {
@@ -29,7 +32,27 @@ struct SelfCareCardView: View {
             RoundedRectangle(cornerRadius: 16)
                 .fill(.ultraThinMaterial)
         }
-        .accessibilityElement(children: .combine)
+        .offset(x: dragOffset)
+        .gesture(
+            DragGesture()
+                .onChanged { value in
+                    dragOffset = min(0, value.translation.width)
+                }
+                .onEnded { value in
+                    if value.translation.width < -80 {
+                        withAnimation(.easeOut(duration: 0.2)) {
+                            dragOffset = -400
+                        }
+                        onDismiss()
+                    } else {
+                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                            dragOffset = 0
+                        }
+                    }
+                }
+        )
+        .accessibilityAddTraits(.isButton)
+        .accessibilityAction(named: "Dismiss") { onDismiss() }
     }
 
     private func iconForCardType(_ type: SelfCareCard.CardType) -> String {
