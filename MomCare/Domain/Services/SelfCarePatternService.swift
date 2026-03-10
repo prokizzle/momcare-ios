@@ -8,18 +8,18 @@ enum SelfCarePatternService {
 
     static func analyzePatterns(
         logs: [SelfCareLog],
-        feedingEndTimes: [Date]
+        feedingEndTimes: [Date],
+        now: Date = .now
     ) -> [ActionPattern] {
         let calendar = Calendar.current
-        let now = Date.now
         guard let analysisStart = calendar.date(byAdding: .day, value: -analysisDays, to: now) else {
             return []
         }
-        let recentLogs = logs.filter { $0.timestamp >= analysisStart }
+        let recentLogs = logs.filter { $0.timestamp >= analysisStart && $0.timestamp <= now }
 
         let grouped = Dictionary(grouping: recentLogs) { $0.actionType }
 
-        return grouped.compactMap { actionType, actionLogs in
+        return grouped.map { actionType, actionLogs in
             analyzeAction(
                 actionType: actionType,
                 logs: actionLogs,
