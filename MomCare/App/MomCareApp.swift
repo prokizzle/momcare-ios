@@ -34,17 +34,19 @@ struct MomCareApp: App {
     }
 
     @State private var babyViewModel: BabyViewModel?
+    @State private var feedingViewModel: FeedingViewModel?
 
     var body: some Scene {
         WindowGroup {
-            ContentView(babyViewModel: babyViewModel)
+            ContentView(babyViewModel: babyViewModel, feedingViewModel: feedingViewModel)
                 .environment(\.dependencies, AppDependencies(modelContext: sharedModelContainer.mainContext))
                 .task {
                     if babyViewModel == nil {
                         let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)
-                        let viewModel = BabyViewModel(repository: deps.makeBabyRepository())
-                        await viewModel.loadBabies()
-                        babyViewModel = viewModel
+                        let babyVM = BabyViewModel(repository: deps.makeBabyRepository())
+                        await babyVM.loadBabies()
+                        babyViewModel = babyVM
+                        feedingViewModel = FeedingViewModel(repository: deps.makeFeedingRepository())
                     }
                 }
         }

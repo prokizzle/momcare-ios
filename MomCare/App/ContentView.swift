@@ -3,6 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var navigation = AppNavigation()
     var babyViewModel: BabyViewModel?
+    var feedingViewModel: FeedingViewModel?
     @State private var showAddBaby = false
 
     var body: some View {
@@ -43,7 +44,7 @@ struct ContentView: View {
             .tag(AppTab.dashboard)
 
             NavigationStack(path: $navigation.feedingPath) {
-                Text("Feeding")
+                FeedingScreen(viewModel: feedingViewModel, babyId: babyViewModel.selectedBaby?.id)
                     .toolbar {
                         ToolbarItem(placement: .topBarLeading) {
                             BabySelectorView(viewModel: babyViewModel)
