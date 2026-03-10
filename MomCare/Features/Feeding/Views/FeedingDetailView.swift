@@ -98,10 +98,11 @@ struct FeedingDetailView: View {
             ToolbarItem(placement: .primaryAction) {
                 Button(isEditing ? "Done" : "Edit") {
                     if isEditing {
-                        saveChanges()
+                        Task { await saveChanges() }
+                    } else {
+                        isEditing = true
+                        MCHaptic.tap()
                     }
-                    isEditing.toggle()
-                    MCHaptic.tap()
                 }
             }
         }
@@ -112,15 +113,14 @@ struct FeedingDetailView: View {
         }
     }
 
-    private func saveChanges() {
+    private func saveChanges() async {
         editedFeeding.updatedAt = .now
-        Task {
-            await viewModel.updateFeeding(editedFeeding)
-            if viewModel.error != nil {
-                showError = true
-            } else {
-                MCHaptic.success()
-            }
+        await viewModel.updateFeeding(editedFeeding)
+        if viewModel.error != nil {
+            showError = true
+        } else {
+            MCHaptic.success()
+            isEditing = false
         }
     }
 }

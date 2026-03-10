@@ -16,9 +16,11 @@ struct FeedingHistoryView: View {
                 return feeding.startTime.formatted(date: .abbreviated, time: .omitted)
             }
         }
-        return grouped.sorted { lhs, rhs in
-            let lhsDate = lhs.value.first?.startTime ?? .distantPast
-            let rhsDate = rhs.value.first?.startTime ?? .distantPast
+        return grouped.map { key, feedings in
+            (key, feedings.sorted { $0.startTime > $1.startTime })
+        }.sorted { lhs, rhs in
+            let lhsDate = lhs.1.first?.startTime ?? .distantPast
+            let rhsDate = rhs.1.first?.startTime ?? .distantPast
             return lhsDate > rhsDate
         }
     }
@@ -53,7 +55,7 @@ struct FeedingHistoryView: View {
                 }
             }
         } message: {
-            Text("This feeding record will be permanently removed.")
+            Text("This feeding record will be removed.")
         }
     }
 }

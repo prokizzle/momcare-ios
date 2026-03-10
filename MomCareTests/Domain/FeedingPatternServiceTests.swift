@@ -37,7 +37,7 @@ struct FeedingPatternServiceTests {
         let result = FeedingPatternService.analyzePattern(from: feedings)
         #expect(result.isInsufficient == false)
         let avgMinutes = Int(result.averageInterval) / 60
-        #expect(avgMinutes >= 95 && avgMinutes <= 105)
+        #expect(avgMinutes == 100)
     }
 
     @Test("Filters intervals outside 30-480 minute range")

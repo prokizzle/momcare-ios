@@ -90,11 +90,15 @@ final class FeedingRepository: FeedingRepositoryProtocol {
 
     func getInProgressFeeding(babyId: UUID) async throws -> Feeding? {
         let fetchBabyId = babyId
-        let descriptor = FetchDescriptor<FeedingModel>(
+        // #Predicate nil comparison ($0.endTime == nil) doesn't compile under Swift 6;
+        // limit fetch to recent feedings to keep the in-memory scan cheap.
+        var descriptor = FetchDescriptor<FeedingModel>(
             predicate: #Predicate<FeedingModel> {
                 $0.babyId == fetchBabyId && $0.isSoftDeleted == false
-            }
+            },
+            sortBy: [SortDescriptor(\.startTime, order: .reverse)]
         )
+        descriptor.fetchLimit = 20
         return try modelContext.fetch(descriptor).first { $0.endTime == nil }?.toEntity()
     }
 }

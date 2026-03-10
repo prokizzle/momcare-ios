@@ -29,8 +29,12 @@ struct FeedingScreen: View {
                 }
 
                 QuickFeedButton {
-                    Task { await viewModel.startFeeding(babyId: babyId, type: viewModel.selectedType) }
-                    showTimer = true
+                    Task {
+                        await viewModel.startFeeding(babyId: babyId, type: viewModel.selectedType)
+                        if viewModel.inProgressFeeding != nil {
+                            showTimer = true
+                        }
+                    }
                 }
                 .padding(.horizontal, MCSpacing.md)
                 .padding(.bottom, MCSpacing.sm)

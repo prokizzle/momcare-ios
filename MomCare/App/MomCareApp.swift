@@ -39,7 +39,6 @@ struct MomCareApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView(babyViewModel: babyViewModel, feedingViewModel: feedingViewModel)
-                .environment(\.dependencies, AppDependencies(modelContext: sharedModelContainer.mainContext))
                 .task {
                     if babyViewModel == nil {
                         let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)

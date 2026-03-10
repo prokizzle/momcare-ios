@@ -61,7 +61,8 @@ enum FeedingPatternService {
         let variance = intervals
             .map { (Double($0) - avg) * (Double($0) - avg) }
             .reduce(0, +) / Double(intervals.count)
-        let coefficientOfVariation = avg > 0 ? variance / avg : 0
+        let stdDev = variance.squareRoot()
+        let coefficientOfVariation = avg > 0 ? stdDev / avg : 0
 
         let consistencyConfidence: Double
         if coefficientOfVariation < 0.2 {

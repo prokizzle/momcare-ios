@@ -142,11 +142,11 @@ final class FeedingViewModel {
 
     private func startTimerTick() {
         stopTimerTick()
-        timerTask = Task { [weak self] in
+        timerTask = Task {
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1))
                 guard !Task.isCancelled else { break }
-                self?.updateElapsedTime()
+                self.updateElapsedTime()
             }
         }
     }
