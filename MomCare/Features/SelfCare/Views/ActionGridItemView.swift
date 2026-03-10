@@ -55,7 +55,7 @@ struct ActionGridItemView: View {
             .scaleEffect(isAnimating ? 0.92 : 1.0)
         }
         .buttonStyle(.plain)
-        .simultaneousGesture(
+        .highPriorityGesture(
             LongPressGesture(minimumDuration: 0.5)
                 .onEnded { _ in
                     MCHaptic.toggle()

@@ -10,6 +10,15 @@ struct LogDetailSheet: View {
     @State private var selectedMealType: MealType = .breakfast
     @State private var note = ""
 
+    private var isSaveDisabled: Bool {
+        switch actionType {
+        case .water, .meal:
+            return false
+        default:
+            return note.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+    }
+
     var body: some View {
         NavigationStack {
             Form {
@@ -46,11 +55,12 @@ struct LogDetailSheet: View {
                         case .meal:
                             detail = .meal(selectedMealType)
                         default:
-                            detail = note.isEmpty ? .freeNote("") : .freeNote(note)
+                            detail = .freeNote(note)
                         }
                         onSave(detail)
                         dismiss()
                     }
+                    .disabled(isSaveDisabled)
                 }
             }
         }

@@ -43,7 +43,7 @@ final class SelfCareViewModel {
 
             let analysisStart = Calendar.current.date(
                 byAdding: .day, value: -SelfCarePatternService.analysisDays, to: date
-            )!
+            ) ?? date
             allRecentLogs = try await repository.getLogsForDateRange(
                 start: analysisStart,
                 end: date.addingTimeInterval(86400)
