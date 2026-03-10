@@ -78,7 +78,7 @@ final class SelfCareRepository: SelfCareRepositoryProtocol {
             predicate: #Predicate<SelfCareLogModel> {
                 $0.isSoftDeleted == false &&
                 $0.timestamp >= rangeStart &&
-                $0.timestamp <= rangeEnd
+                $0.timestamp < rangeEnd
             },
             sortBy: [SortDescriptor(\.timestamp, order: .reverse)]
         )
