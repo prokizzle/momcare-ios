@@ -64,7 +64,7 @@ struct SelfCareRepositoryTests {
     func getLogsForDate() async throws {
         let repo = try makeSUT()
         let today = Date.now
-        let yesterday = Calendar.current.date(byAdding: .day, value: -1, to: today)!
+        let yesterday = try #require(Calendar.current.date(byAdding: .day, value: -1, to: today))
         _ = try await repo.create(SelfCareLog.fixture(timestamp: today))
         _ = try await repo.create(SelfCareLog.fixture(timestamp: today))
         _ = try await repo.create(SelfCareLog.fixture(timestamp: yesterday))
