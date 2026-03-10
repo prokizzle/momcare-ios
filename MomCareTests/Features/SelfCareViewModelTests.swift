@@ -47,9 +47,11 @@ struct SelfCareViewModelTests {
         await sut.loadDay(.now)
         await sut.logAction(.water, detail: .water(glasses: 2))
         #expect(sut.todayLogs.first?.detail != nil)
-        if case .water(let glasses) = sut.todayLogs.first?.detail {
-            #expect(glasses == 2)
+        guard case .water(let glasses) = sut.todayLogs.first?.detail else {
+            Issue.record("Expected .water detail but got \(String(describing: sut.todayLogs.first?.detail))")
+            return
         }
+        #expect(glasses == 2)
     }
 
     @Test("waterCountToday counts water logs for today")

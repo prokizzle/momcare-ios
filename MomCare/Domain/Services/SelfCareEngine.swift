@@ -143,7 +143,8 @@ struct SelfCareEngine: Sendable {
                 message: affirmation.text,
                 score: score,
                 relatedAction: nil,
-                timestamp: currentDate
+                timestamp: currentDate,
+                contentId: affirmation.id
             )
         ]
     }
@@ -163,7 +164,8 @@ struct SelfCareEngine: Sendable {
                 message: pepTalk.text,
                 score: 0.35,
                 relatedAction: nil,
-                timestamp: currentDate
+                timestamp: currentDate,
+                contentId: pepTalk.id
             )
         ]
     }
@@ -181,7 +183,8 @@ struct SelfCareEngine: Sendable {
                 message: prompt.text,
                 score: 0.25,
                 relatedAction: nil,
-                timestamp: currentDate
+                timestamp: currentDate,
+                contentId: prompt.id
             )
         ]
     }

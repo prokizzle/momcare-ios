@@ -7,6 +7,7 @@ struct SelfCareCard: Identifiable, Sendable, Equatable {
     var score: Double
     var relatedAction: SelfCareActionType?
     var timestamp: Date
+    var contentId: String?
 
     enum CardType: String, Sendable {
         case selfCareWindow

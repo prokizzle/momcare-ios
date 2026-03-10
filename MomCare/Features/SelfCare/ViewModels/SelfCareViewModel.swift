@@ -36,6 +36,8 @@ final class SelfCareViewModel {
         isLoading = true
         defer { isLoading = false }
 
+        recentTaps = [:]
+
         do {
             todayLogs = try await repository.getLogsForDate(date)
 
@@ -121,9 +123,9 @@ final class SelfCareViewModel {
         cards = engine.scoreCards(after: event)
 
         // Track shown content
-        for card in cards where card.type == .affirmation || card.type == .pepTalk || card.type == .checkIn {
-            if !shownContentIds.contains(card.message) {
-                shownContentIds.append(card.message)
+        for card in cards {
+            if let contentId = card.contentId, !shownContentIds.contains(contentId) {
+                shownContentIds.append(contentId)
             }
         }
     }
