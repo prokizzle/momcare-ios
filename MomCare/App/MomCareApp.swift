@@ -61,6 +61,11 @@ struct MomCareApp: App {
                         repository: deps.makeSelfCareRepository(),
                         contentLibrary: contentLibrary
                     )
+                    feedingViewModel?.onFeedingEnded = { babyId, duration in
+                        Task { @MainActor in
+                            await selfCareViewModel?.handleEvent(.feedingEnded(babyId: babyId, duration: duration))
+                        }
+                    }
                 }
             }
         }
