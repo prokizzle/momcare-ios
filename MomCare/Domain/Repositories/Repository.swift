@@ -1,6 +1,7 @@
 import Foundation
 
-protocol Repository<Entity>: Sendable {
+@MainActor
+protocol Repository<Entity> {
     associatedtype Entity: Identifiable & Sendable
 
     func getAll() async throws -> [Entity]
