@@ -16,6 +16,9 @@ final class BabyModel {
     var createdAt: Date
     var updatedAt: Date
 
+    @Relationship(deleteRule: .cascade, inverse: \FeedingModel.baby)
+    var feedings: [FeedingModel]? = []
+
     init(from baby: Baby) {
         self.id = baby.id
         self.name = baby.name
