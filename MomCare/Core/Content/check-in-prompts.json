@@ -1,0 +1,57 @@
+[
+  {
+    "id": "cip-001",
+    "text": "How are you feeling right now?",
+    "responseOptions": ["Calm", "Tired", "Anxious", "Happy", "Overwhelmed"]
+  },
+  {
+    "id": "cip-002",
+    "text": "Did you get a chance to eat something today?",
+    "responseOptions": ["Yes, a full meal", "Just a snack", "Not yet"]
+  },
+  {
+    "id": "cip-003",
+    "text": "How did last night go?",
+    "responseOptions": ["Restful", "Okay", "Rough", "Did not sleep"]
+  },
+  {
+    "id": "cip-004",
+    "text": "Have you had some water recently?",
+    "responseOptions": ["Yes", "Not enough", "Remind me later"]
+  },
+  {
+    "id": "cip-005",
+    "text": "What would help you most right now?",
+    "responseOptions": ["A break", "A kind word", "A plan", "Nothing, I am okay"]
+  },
+  {
+    "id": "cip-006",
+    "text": "How is your energy level?",
+    "responseOptions": ["Good", "Getting by", "Running low", "Empty"]
+  },
+  {
+    "id": "cip-007",
+    "text": "Have you stepped outside today?",
+    "responseOptions": ["Yes", "Not yet", "Planning to"]
+  },
+  {
+    "id": "cip-008",
+    "text": "Is there something weighing on your mind?",
+    "responseOptions": ["Yes, a lot", "A little", "Not really", "I am at peace"]
+  },
+  {
+    "id": "cip-009",
+    "text": "Have you had a moment to yourself today?",
+    "responseOptions": ["Yes", "Briefly", "Not at all"]
+  },
+  {
+    "id": "cip-010",
+    "text": "How connected do you feel to your support network?",
+    "responseOptions": ["Very supported", "Somewhat", "A bit isolated", "I could use help"]
+  },
+  {
+    "id": "cip-011",
+    "text": "What is one word to describe your day so far?",
+    "responseOptions": ["Peaceful", "Busy", "Hard", "Good", "Chaotic"]
+  }
+]

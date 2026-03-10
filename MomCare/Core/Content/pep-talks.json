@@ -1,0 +1,82 @@
+[
+  {
+    "id": "pep-001",
+    "text": "You have made it through every tough day so far. That is a perfect track record.",
+    "tags": ["tired", "overwhelmed"]
+  },
+  {
+    "id": "pep-002",
+    "text": "Remember when you thought you could not do this? Look at you now.",
+    "tags": ["milestone", "general"]
+  },
+  {
+    "id": "pep-003",
+    "text": "Your baby chose the right person. They are lucky to have you.",
+    "tags": ["newMom", "general"]
+  },
+  {
+    "id": "pep-004",
+    "text": "Rough nights do not make rough parents. You are doing this.",
+    "tags": ["tired", "evening"]
+  },
+  {
+    "id": "pep-005",
+    "text": "The hardest part of parenting is that nobody tells you how well you are doing. So here it is: you are doing wonderfully.",
+    "tags": ["general", "overwhelmed"]
+  },
+  {
+    "id": "pep-006",
+    "text": "Even on the messy days, you are still someone's whole world.",
+    "tags": ["tired", "newMom"]
+  },
+  {
+    "id": "pep-007",
+    "text": "You do not need to have it all figured out. Nobody does. You just need to keep showing up.",
+    "tags": ["overwhelmed", "general"]
+  },
+  {
+    "id": "pep-008",
+    "text": "Three a.m. feeds, endless laundry, zero thanks -- and you still do it all with love. That is extraordinary.",
+    "tags": ["tired", "newMom"]
+  },
+  {
+    "id": "pep-009",
+    "text": "Some days surviving is thriving. And surviving with a baby? That is elite-level stuff.",
+    "tags": ["tired", "overwhelmed"]
+  },
+  {
+    "id": "pep-010",
+    "text": "Your patience will be one of the first things your child remembers. It matters more than you know.",
+    "tags": ["general", "milestone"]
+  },
+  {
+    "id": "pep-011",
+    "text": "A morning like this calls for one thing: grace. Give yourself plenty of it.",
+    "tags": ["morning", "overwhelmed"]
+  },
+  {
+    "id": "pep-012",
+    "text": "You are not just keeping a tiny human alive. You are shaping a whole person. And you are doing it beautifully.",
+    "tags": ["newMom", "general"]
+  },
+  {
+    "id": "pep-013",
+    "text": "It takes courage to ask if you are doing okay. The answer is yes.",
+    "tags": ["general", "overwhelmed"]
+  },
+  {
+    "id": "pep-014",
+    "text": "Every small step you take for yourself ripples out to your whole family. Self-care is family care.",
+    "tags": ["general", "tired"]
+  },
+  {
+    "id": "pep-015",
+    "text": "Tomorrow you will be stronger than today, because today made you that way.",
+    "tags": ["evening", "tired"]
+  },
+  {
+    "id": "pep-016",
+    "text": "No one sees the invisible work you do. But it holds everything together.",
+    "tags": ["general", "overwhelmed"]
+  }
+]
