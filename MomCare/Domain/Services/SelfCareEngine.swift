@@ -72,8 +72,8 @@ struct SelfCareEngine: Sendable {
         let windowTemplates = contentLibrary.nudgeTemplates.filter {
             $0.type == .selfCareWindow
         }
-        let message = rotateContent(windowTemplates, idKeyPath: \.id)?
-            .render(substitutions: [:])
+        let selectedWindow = rotateContent(windowTemplates, idKeyPath: \.id)
+        let message = selectedWindow?.render(substitutions: [:])
             ?? "You have a moment. What do you need?"
 
         return [
@@ -83,7 +83,8 @@ struct SelfCareEngine: Sendable {
                 message: message,
                 score: 0.9,
                 relatedAction: nil,
-                timestamp: currentDate
+                timestamp: currentDate,
+                contentId: selectedWindow?.id
             )
         ]
     }
@@ -104,7 +105,8 @@ struct SelfCareEngine: Sendable {
         let hydrationTemplates = contentLibrary.nudgeTemplates.filter {
             $0.type == .hydration
         }
-        let message = rotateContent(hydrationTemplates, idKeyPath: \.id)?
+        let selectedHydration = rotateContent(hydrationTemplates, idKeyPath: \.id)
+        let message = selectedHydration?
             .render(substitutions: ["hours": "\(Int(hours))"])
             ?? "Staying hydrated helps you keep going."
 
@@ -115,7 +117,8 @@ struct SelfCareEngine: Sendable {
                 message: message,
                 score: score,
                 relatedAction: .water,
-                timestamp: currentDate
+                timestamp: currentDate,
+                contentId: selectedHydration?.id
             )
         ]
     }
@@ -143,7 +146,8 @@ struct SelfCareEngine: Sendable {
                 message: affirmation.text,
                 score: score,
                 relatedAction: nil,
-                timestamp: currentDate
+                timestamp: currentDate,
+                contentId: affirmation.id
             )
         ]
     }
@@ -163,7 +167,8 @@ struct SelfCareEngine: Sendable {
                 message: pepTalk.text,
                 score: 0.35,
                 relatedAction: nil,
-                timestamp: currentDate
+                timestamp: currentDate,
+                contentId: pepTalk.id
             )
         ]
     }
@@ -181,7 +186,8 @@ struct SelfCareEngine: Sendable {
                 message: prompt.text,
                 score: 0.25,
                 relatedAction: nil,
-                timestamp: currentDate
+                timestamp: currentDate,
+                contentId: prompt.id
             )
         ]
     }
@@ -195,7 +201,8 @@ struct SelfCareEngine: Sendable {
             .filter { $0.streakDays >= Self.minStreakForCard }
             .map { pattern in
                 let score = 0.5 + min(Double(pattern.streakDays) * 0.05, 0.3)
-                let message = rotateContent(streakTemplates, idKeyPath: \.id)?
+                let selectedStreak = rotateContent(streakTemplates, idKeyPath: \.id)
+                let message = selectedStreak?
                     .render(substitutions: [
                         "count": "\(pattern.streakDays)",
                         "action": pattern.actionType.label
@@ -207,7 +214,8 @@ struct SelfCareEngine: Sendable {
                     message: message,
                     score: score,
                     relatedAction: pattern.actionType,
-                    timestamp: currentDate
+                    timestamp: currentDate,
+                    contentId: selectedStreak?.id
                 )
             }
     }
@@ -238,7 +246,8 @@ struct SelfCareEngine: Sendable {
                 message: message,
                 score: score,
                 relatedAction: pattern.actionType,
-                timestamp: currentDate
+                timestamp: currentDate,
+                contentId: template.id
             )
         }
     }

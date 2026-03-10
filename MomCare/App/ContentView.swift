@@ -4,6 +4,7 @@ struct ContentView: View {
     @State private var navigation = AppNavigation()
     var babyViewModel: BabyViewModel?
     var feedingViewModel: FeedingViewModel?
+    var selfCareViewModel: SelfCareViewModel?
     @State private var showAddBaby = false
 
     var body: some View {
@@ -57,7 +58,12 @@ struct ContentView: View {
             .tag(AppTab.feeding)
 
             NavigationStack(path: $navigation.selfCarePath) {
-                Text("Self-Care")
+                SelfCareScreen(viewModel: selfCareViewModel)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            BabySelectorView(viewModel: babyViewModel)
+                        }
+                    }
             }
             .tabItem {
                 Label("Self-Care", systemImage: "sparkles")

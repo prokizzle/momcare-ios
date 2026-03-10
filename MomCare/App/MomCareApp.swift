@@ -35,19 +35,34 @@ struct MomCareApp: App {
 
     @State private var babyViewModel: BabyViewModel?
     @State private var feedingViewModel: FeedingViewModel?
+    @State private var selfCareViewModel: SelfCareViewModel?
 
     var body: some Scene {
         WindowGroup {
-            ContentView(babyViewModel: babyViewModel, feedingViewModel: feedingViewModel)
-                .task {
-                    if babyViewModel == nil {
-                        let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)
-                        let babyVM = BabyViewModel(repository: deps.makeBabyRepository())
-                        await babyVM.loadBabies()
-                        babyViewModel = babyVM
-                        feedingViewModel = FeedingViewModel(repository: deps.makeFeedingRepository())
-                    }
+            ContentView(
+                babyViewModel: babyViewModel,
+                feedingViewModel: feedingViewModel,
+                selfCareViewModel: selfCareViewModel
+            )
+            .task {
+                if babyViewModel == nil {
+                    let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)
+                    let babyVM = BabyViewModel(repository: deps.makeBabyRepository())
+                    await babyVM.loadBabies()
+                    babyViewModel = babyVM
+                    feedingViewModel = FeedingViewModel(repository: deps.makeFeedingRepository())
+                    let contentLibrary = (try? ContentLibrary.loadFromBundle()) ?? ContentLibrary(
+                        affirmations: [],
+                        pepTalks: [],
+                        checkInPrompts: [],
+                        nudgeTemplates: []
+                    )
+                    selfCareViewModel = SelfCareViewModel(
+                        repository: deps.makeSelfCareRepository(),
+                        contentLibrary: contentLibrary
+                    )
                 }
+            }
         }
         .modelContainer(sharedModelContainer)
     }
