@@ -15,6 +15,7 @@ struct BabyAvatarView: View {
             } else {
                 Text(baby.name.prefix(1).uppercased())
                     .font(.system(size: size * 0.45, weight: .semibold, design: .rounded))
+                    .minimumScaleFactor(0.5)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)
                     .background(MCColor.accent.gradient)
@@ -24,7 +25,10 @@ struct BabyAvatarView: View {
         .clipShape(Circle())
         .overlay(Circle().stroke(MCColor.accent.opacity(0.3), lineWidth: 1))
         .task(id: baby.photoData) {
-            cachedImage = baby.photoData.flatMap { UIImage(data: $0) }
+            guard let data = baby.photoData else { cachedImage = nil; return }
+            cachedImage = await Task.detached(priority: .userInitiated) {
+                UIImage(data: data)
+            }.value
         }
     }
 }
