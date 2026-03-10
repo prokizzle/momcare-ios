@@ -1,6 +1,6 @@
 import Foundation
 
-struct SelfCareCard: Identifiable, Sendable {
+struct SelfCareCard: Identifiable, Sendable, Equatable {
     var id: UUID
     var type: CardType
     var message: String

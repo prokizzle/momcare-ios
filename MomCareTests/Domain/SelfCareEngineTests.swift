@@ -5,12 +5,16 @@ import Foundation
 @Suite("SelfCareEngine Tests")
 struct SelfCareEngineTests {
 
+    // Fixed reference date for deterministic tests
+    private let referenceDate = Calendar.current.date(
+        from: DateComponents(year: 2026, month: 3, day: 10, hour: 14)
+    )!
+
     private func makeEngine(
         logs: [SelfCareLog] = [],
         patterns: [ActionPattern] = [],
         library: ContentLibrary? = nil,
-        shownContentIds: [String] = [],
-        currentDate: Date = .now
+        shownContentIds: Set<String> = []
     ) -> SelfCareEngine {
         SelfCareEngine(
             logs: logs,
@@ -20,17 +24,29 @@ struct SelfCareEngineTests {
                     Affirmation(id: "aff-1", text: "You are doing great.", tags: [.general])
                 ],
                 pepTalks: [
-                    PepTalk(id: "pep-1", text: "Every day you show up for your baby is a victory.", tags: [.general])
+                    PepTalk(
+                        id: "pep-1",
+                        text: "Every day you show up for your baby is a victory.",
+                        tags: [.general]
+                    )
                 ],
                 checkInPrompts: [
-                    CheckInPrompt(id: "ci-1", text: "How are you feeling?", responseOptions: ["Great", "OK", "Tired"])
+                    CheckInPrompt(
+                        id: "ci-1",
+                        text: "How are you feeling?",
+                        responseOptions: ["Great", "OK", "Tired"]
+                    )
                 ],
                 nudgeTemplates: [
-                    NudgeTemplate(id: "nudge-1", template: "You usually {action} around now.", type: .patternDeviation)
+                    NudgeTemplate(
+                        id: "nudge-1",
+                        template: "You usually {action} around now.",
+                        type: .patternDeviation
+                    )
                 ]
             ),
             shownContentIds: shownContentIds,
-            currentDate: currentDate
+            currentDate: referenceDate
         )
     }
 
@@ -45,12 +61,11 @@ struct SelfCareEngineTests {
 
     @Test("Hydration nudge when no water in 2+ hours")
     func hydrationNudgeWhenDehydrated() {
-        let now = Date.now
         let oldWaterLog = SelfCareLog.fixture(
             actionType: .water,
-            timestamp: now.addingTimeInterval(-7800) // 2h10m ago
+            timestamp: referenceDate.addingTimeInterval(-7800) // 2h10m ago
         )
-        let engine = makeEngine(logs: [oldWaterLog], currentDate: now)
+        let engine = makeEngine(logs: [oldWaterLog])
         let cards = engine.scoreCards(after: .timeTick)
         let hydrationCards = cards.filter { $0.type == .hydrationNudge }
         #expect(!hydrationCards.isEmpty)
@@ -58,12 +73,11 @@ struct SelfCareEngineTests {
 
     @Test("No hydration nudge when water logged within 30 min")
     func noHydrationNudgeWhenHydrated() {
-        let now = Date.now
         let recentWater = SelfCareLog.fixture(
             actionType: .water,
-            timestamp: now.addingTimeInterval(-1800) // 30 min ago
+            timestamp: referenceDate.addingTimeInterval(-1800) // 30 min ago
         )
-        let engine = makeEngine(logs: [recentWater], currentDate: now)
+        let engine = makeEngine(logs: [recentWater])
         let cards = engine.scoreCards(after: .timeTick)
         let hydrationCards = cards.filter { $0.type == .hydrationNudge }
         #expect(hydrationCards.isEmpty)
@@ -104,16 +118,15 @@ struct SelfCareEngineTests {
             checkInPrompts: [],
             nudgeTemplates: []
         )
-        let now = Date.now
         let recentWater = SelfCareLog.fixture(
             actionType: .water,
-            timestamp: now.addingTimeInterval(-300) // 5 min ago
+            timestamp: referenceDate.addingTimeInterval(-300) // 5 min ago
         )
-        let engine = makeEngine(logs: [recentWater], library: emptyLibrary, currentDate: now)
+        let engine = makeEngine(logs: [recentWater], library: emptyLibrary)
         let cards = engine.scoreCards(after: .timeTick)
-        // No affirmation, no pep talk, no check-in, no hydration (recent water)
         let contentCards = cards.filter {
-            $0.type == .affirmation || $0.type == .pepTalk || $0.type == .checkIn || $0.type == .hydrationNudge
+            $0.type == .affirmation || $0.type == .pepTalk
+                || $0.type == .checkIn || $0.type == .hydrationNudge
         }
         #expect(contentCards.isEmpty)
     }

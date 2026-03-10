@@ -12,7 +12,7 @@ struct SelfCareEngine: Sendable {
     let logs: [SelfCareLog]
     let patterns: [ActionPattern]
     let contentLibrary: ContentLibrary
-    let shownContentIds: [String]
+    let shownContentIds: Set<String>
     let currentDate: Date
 
     private static let scoreThreshold = 0.2
@@ -175,13 +175,13 @@ struct SelfCareEngine: Sendable {
         let nudgeTemplates = contentLibrary.nudgeTemplates.filter {
             $0.type == .patternDeviation
         }
-        guard let template = nudgeTemplates.first else { return [] }
+        guard let template = rotateContent(nudgeTemplates, idKeyPath: \.id) else { return [] }
 
         return relevantPatterns.map { pattern in
             let message = template.render(substitutions: [
                 "action": pattern.actionType.label
             ])
-            let score = 0.4 * pattern.confidence
+            let score = 0.9 * pattern.confidence
             return SelfCareCard(
                 id: UUID(),
                 type: .gentleNudge,
