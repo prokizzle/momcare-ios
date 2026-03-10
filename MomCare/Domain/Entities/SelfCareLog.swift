@@ -22,6 +22,7 @@ enum MealType: String, Codable, CaseIterable, Sendable {
 enum LogDetail: Codable, Sendable, Equatable {
     case water(glasses: Int)
     case meal(MealType)
+    // Reserved for future exercise action type — not yet constructible from LogDetailSheet
     case exercise(minutes: Int)
     case freeNote(String)
 }

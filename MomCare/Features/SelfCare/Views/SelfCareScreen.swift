@@ -6,6 +6,7 @@ struct SelfCareScreen: View {
 
     @State private var showDetailSheet = false
     @State private var detailActionType: SelfCareActionType?
+    @State private var didLoad = false
 
     var body: some View {
         Group {
@@ -43,6 +44,8 @@ struct SelfCareScreen: View {
             .padding(.vertical, MCSpacing.lg)
         }
         .task {
+            guard !didLoad else { return }
+            didLoad = true
             await viewModel.loadDay(.now)
             await viewModel.handleEvent(.appOpened)
         }
