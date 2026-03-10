@@ -67,7 +67,7 @@ enum SelfCarePatternService {
         )
 
         // Time clusters (simplified: group by hour)
-        let typicalTimestamps = detectTimeClusters(logs: sortedLogs, calendar: calendar)
+        let typicalTimestamps = detectTimeClusters(logs: sortedLogs, calendar: calendar, now: now)
 
         // Confidence
         let confidence = calculateConfidence(
@@ -93,7 +93,6 @@ enum SelfCarePatternService {
         now: Date
     ) -> Int {
         let uniqueDays = Set(logs.map { calendar.startOfDay(for: $0.timestamp) })
-            .sorted(by: >)
 
         var streak = 0
         var checkDate = calendar.startOfDay(for: now)
@@ -147,7 +146,8 @@ enum SelfCarePatternService {
 
     private static func detectTimeClusters(
         logs: [SelfCareLog],
-        calendar: Calendar
+        calendar: Calendar,
+        now: Date
     ) -> [DateInterval] {
         let hourGroups = Dictionary(grouping: logs) { calendar.component(.hour, from: $0.timestamp) }
 
@@ -155,8 +155,8 @@ enum SelfCarePatternService {
             .filter { $0.value.count >= 2 }
             .sorted { $0.key < $1.key }
             .compactMap { hour, _ -> DateInterval? in
-                guard let start = calendar.date(bySettingHour: hour, minute: 0, second: 0, of: .now),
-                      let end = calendar.date(bySettingHour: hour, minute: 59, second: 59, of: .now) else {
+                guard let start = calendar.date(bySettingHour: hour, minute: 0, second: 0, of: now),
+                      let end = calendar.date(bySettingHour: hour, minute: 59, second: 59, of: now) else {
                     return nil
                 }
                 return DateInterval(start: start, end: end)
