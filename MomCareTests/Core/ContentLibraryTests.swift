@@ -8,25 +8,25 @@ struct ContentLibraryTests {
     @Test("Loads affirmations from bundle")
     func loadsAffirmations() throws {
         let library = try ContentLibrary.loadFromBundle()
-        #expect(library.affirmations.count >= 20)
+        #expect(library.affirmations.count >= 30)
     }
 
     @Test("Loads pep talks from bundle")
     func loadsPepTalks() throws {
         let library = try ContentLibrary.loadFromBundle()
-        #expect(library.pepTalks.count >= 10)
+        #expect(library.pepTalks.count >= 15)
     }
 
     @Test("Loads check-in prompts from bundle")
     func loadsCheckInPrompts() throws {
         let library = try ContentLibrary.loadFromBundle()
-        #expect(library.checkInPrompts.count >= 5)
+        #expect(library.checkInPrompts.count >= 10)
     }
 
     @Test("Loads nudge templates from bundle")
     func loadsNudgeTemplates() throws {
         let library = try ContentLibrary.loadFromBundle()
-        #expect(library.nudgeTemplates.count >= 5)
+        #expect(library.nudgeTemplates.count >= 10)
     }
 
     @Test("All affirmations have non-empty text and at least one tag")
