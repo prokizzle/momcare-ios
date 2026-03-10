@@ -5,6 +5,7 @@ import SwiftData
 protocol DependencyContainer {
     func makeBabyRepository() -> any BabyRepositoryProtocol
     func makeFeedingRepository() -> any FeedingRepositoryProtocol
+    func makeSelfCareRepository() -> any SelfCareRepositoryProtocol
 }
 
 @MainActor
@@ -21,6 +22,10 @@ final class AppDependencies: DependencyContainer {
 
     func makeFeedingRepository() -> any FeedingRepositoryProtocol {
         FeedingRepository(modelContext: modelContext)
+    }
+
+    func makeSelfCareRepository() -> any SelfCareRepositoryProtocol {
+        SelfCareRepository(modelContext: modelContext)
     }
 }
 

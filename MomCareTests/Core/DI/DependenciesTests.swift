@@ -17,7 +17,11 @@ struct DependenciesTests {
     @MainActor
     func appDependenciesCreatesBabyRepo() throws {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let modelContainer = try ModelContainer(for: BabyModel.self, FeedingModel.self, configurations: config)
+        let modelContainer = try ModelContainer(
+            for: BabyModel.self, FeedingModel.self,
+            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
+            configurations: config
+        )
         let deps = AppDependencies(modelContext: modelContainer.mainContext)
         let repo = deps.makeBabyRepository()
         #expect(repo is BabyRepository)
@@ -27,10 +31,28 @@ struct DependenciesTests {
     @MainActor
     func appDependenciesCreatesFeedingRepo() throws {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let modelContainer = try ModelContainer(for: BabyModel.self, FeedingModel.self, configurations: config)
+        let modelContainer = try ModelContainer(
+            for: BabyModel.self, FeedingModel.self,
+            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
+            configurations: config
+        )
         let deps = AppDependencies(modelContext: modelContainer.mainContext)
         let repo = deps.makeFeedingRepository()
         #expect(repo is FeedingRepository)
+    }
+
+    @Test("AppDependencies creates real SelfCareRepository")
+    @MainActor
+    func appDependenciesCreatesSelfCareRepo() throws {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let modelContainer = try ModelContainer(
+            for: BabyModel.self, FeedingModel.self,
+            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
+            configurations: config
+        )
+        let deps = AppDependencies(modelContext: modelContainer.mainContext)
+        let repo = deps.makeSelfCareRepository()
+        #expect(repo is SelfCareRepository)
     }
 
     @Test("Environment key has default value")
@@ -64,6 +86,23 @@ private final class MockFeedingRepository: FeedingRepositoryProtocol {
 }
 
 @MainActor
+private final class MockSelfCareRepository: SelfCareRepositoryProtocol {
+    func getAll() async throws -> [SelfCareLog] { [] }
+    func getById(_ id: UUID) async throws -> SelfCareLog? { nil }
+    func create(_ entity: SelfCareLog) async throws -> SelfCareLog { entity }
+    func update(_ entity: SelfCareLog) async throws -> SelfCareLog { entity }
+    func delete(_ id: UUID) async throws {}
+    func getLogsForDate(_ date: Date) async throws -> [SelfCareLog] { [] }
+    func getLogsForDateRange(start: Date, end: Date) async throws -> [SelfCareLog] { [] }
+    func getLogsByActionType(_ type: SelfCareActionType, limit: Int?) async throws -> [SelfCareLog] { [] }
+    func getGridItems() async throws -> [SelfCareGridItem] { [] }
+    func saveGridItem(_ item: SelfCareGridItem) async throws {}
+    func deleteGridItem(_ id: UUID) async throws {}
+    func recordContentShown(contentId: String) async throws {}
+    func isContentRecentlyShown(contentId: String, within seconds: TimeInterval) async throws -> Bool { false }
+}
+
+@MainActor
 private final class TestDependencies: DependencyContainer {
     func makeBabyRepository() -> any BabyRepositoryProtocol {
         MockBabyRepository()
@@ -71,5 +110,9 @@ private final class TestDependencies: DependencyContainer {
 
     func makeFeedingRepository() -> any FeedingRepositoryProtocol {
         MockFeedingRepository()
+    }
+
+    func makeSelfCareRepository() -> any SelfCareRepositoryProtocol {
+        MockSelfCareRepository()
     }
 }
