@@ -36,6 +36,7 @@ struct MomCareApp: App {
     @State private var babyViewModel: BabyViewModel?
     @State private var feedingViewModel: FeedingViewModel?
     @State private var selfCareViewModel: SelfCareViewModel?
+    @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
@@ -61,11 +62,23 @@ struct MomCareApp: App {
                         repository: deps.makeSelfCareRepository(),
                         contentLibrary: contentLibrary
                     )
-                    feedingViewModel?.onFeedingEnded = { @MainActor babyId, duration in
-                        Task {
-                            await selfCareViewModel?.handleEvent(.feedingEnded(babyId: babyId, duration: duration))
+                    if let scVM = selfCareViewModel {
+                        feedingViewModel?.onFeedingEnded = { @MainActor [weak scVM] babyId, duration in
+                            Task {
+                                await scVM?.handleEvent(.feedingEnded(babyId: babyId, duration: duration))
+                            }
                         }
                     }
+                }
+            }
+            .onChange(of: scenePhase) { _, newPhase in
+                switch newPhase {
+                case .active:
+                    feedingViewModel?.resumeTimerIfNeeded()
+                case .background:
+                    feedingViewModel?.pauseTimer()
+                default:
+                    break
                 }
             }
         }

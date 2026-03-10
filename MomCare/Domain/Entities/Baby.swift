@@ -35,8 +35,10 @@ struct Baby: Identifiable, Codable, Sendable, Equatable {
     }
 
     var ageString: String {
-        let months = ageInMonths
-        let totalDays = ageInDays
+        let cal = Calendar.current
+        let now = Date.now
+        let months = cal.dateComponents([.month], from: dateOfBirth, to: now).month ?? 0
+        let totalDays = cal.dateComponents([.day], from: dateOfBirth, to: now).day ?? 0
         if months >= 2 { return "\(months) months" }
         if totalDays < 14 { return totalDays == 1 ? "1 day" : "\(totalDays) days" }
         return "\(totalDays / 7) weeks"

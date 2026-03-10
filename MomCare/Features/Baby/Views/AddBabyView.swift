@@ -1,6 +1,7 @@
 import SwiftUI
 import PhotosUI
 
+@MainActor
 struct AddBabyView: View {
     @Environment(\.dismiss) private var dismiss
     let viewModel: BabyViewModel

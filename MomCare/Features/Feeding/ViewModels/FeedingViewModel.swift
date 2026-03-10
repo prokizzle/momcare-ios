@@ -152,6 +152,16 @@ final class FeedingViewModel {
 
     // MARK: - Timer
 
+    func pauseTimer() {
+        stopTimerTick()
+    }
+
+    func resumeTimerIfNeeded() {
+        guard isTimerRunning, inProgressFeeding != nil else { return }
+        updateElapsedTime()
+        startTimerTick()
+    }
+
     private func updateElapsedTime() {
         guard let start = inProgressFeeding?.startTime else { return }
         elapsedTime = Date.now.timeIntervalSince(start)
@@ -161,7 +171,11 @@ final class FeedingViewModel {
         stopTimerTick()
         timerTask = Task { [weak self] in
             while !Task.isCancelled {
-                try? await Task.sleep(for: .seconds(1))
+                do {
+                    try await Task.sleep(for: .seconds(1))
+                } catch {
+                    break
+                }
                 guard !Task.isCancelled, let self else { break }
                 self.updateElapsedTime()
             }

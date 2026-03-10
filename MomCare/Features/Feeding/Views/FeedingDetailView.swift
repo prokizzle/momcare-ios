@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct FeedingDetailView: View {
     @Bindable var viewModel: FeedingViewModel
     let feedingId: UUID
@@ -9,7 +10,7 @@ struct FeedingDetailView: View {
     @Environment(\.dismiss) private var dismiss
 
     private var feeding: Feeding {
-        viewModel.feedings.first { $0.id == feedingId } ?? editedFeeding
+        viewModel.feedingsById[feedingId] ?? editedFeeding
     }
 
     init(viewModel: FeedingViewModel, feedingId: UUID, feeding: Feeding) {

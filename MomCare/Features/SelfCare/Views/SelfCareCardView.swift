@@ -6,12 +6,13 @@ struct SelfCareCardView: View {
     let onDismiss: () -> Void
 
     @State private var dragOffset: CGFloat = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         HStack(alignment: .top, spacing: MCSpacing.md) {
-            Image(systemName: iconForCardType(card.type))
+            Image(systemName: card.type.systemImage)
                 .font(.title3)
-                .foregroundStyle(colorForCardType(card.type))
+                .foregroundStyle(card.type.accentColor)
                 .frame(width: 24)
 
             VStack(alignment: .leading, spacing: MCSpacing.xs) {
@@ -40,12 +41,12 @@ struct SelfCareCardView: View {
                 }
                 .onEnded { value in
                     if value.translation.width < -80 {
-                        withAnimation(.easeOut(duration: 0.2)) {
+                        withAnimation(reduceMotion ? nil : .easeOut(duration: 0.2)) {
                             dragOffset = -400
                         }
                         onDismiss()
                     } else {
-                        withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.7)) {
                             dragOffset = 0
                         }
                     }
@@ -55,8 +56,11 @@ struct SelfCareCardView: View {
         .accessibilityAction(named: "Dismiss") { onDismiss() }
     }
 
-    private func iconForCardType(_ type: SelfCareCard.CardType) -> String {
-        switch type {
+}
+
+extension SelfCareCard.CardType {
+    var systemImage: String {
+        switch self {
         case .selfCareWindow: "sparkles"
         case .hydrationNudge: "cup.and.saucer.fill"
         case .affirmation: "heart.fill"
@@ -67,8 +71,8 @@ struct SelfCareCardView: View {
         }
     }
 
-    private func colorForCardType(_ type: SelfCareCard.CardType) -> Color {
-        switch type {
+    var accentColor: Color {
+        switch self {
         case .selfCareWindow: MCColor.selfCare
         case .hydrationNudge: .blue
         case .affirmation: .pink

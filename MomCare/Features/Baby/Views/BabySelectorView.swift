@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct BabySelectorView: View {
     @Bindable var viewModel: BabyViewModel
     @State private var showAddBaby = false

@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct FeedingHistoryView: View {
     @Bindable var viewModel: FeedingViewModel
     let babyId: UUID

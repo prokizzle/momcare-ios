@@ -11,7 +11,7 @@ struct ActionGridView: View {
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: MCSpacing.sm) {
-            ForEach(gridItems.filter(\.isVisible).sorted { $0.sortOrder < $1.sortOrder }) { item in
+            ForEach(gridItems) { item in
                 ActionGridItemView(
                     item: item,
                     isRecentlyTapped: recentlyTapped(item.actionType),

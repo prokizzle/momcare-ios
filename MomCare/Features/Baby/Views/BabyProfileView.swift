@@ -1,6 +1,7 @@
 import SwiftUI
 import PhotosUI
 
+@MainActor
 struct BabyProfileView: View {
     @Bindable var viewModel: BabyViewModel
     let babyId: UUID
