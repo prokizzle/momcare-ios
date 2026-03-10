@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct ActionGridItemView: View {
     let item: SelfCareGridItem
     let isRecentlyTapped: Bool
