@@ -135,10 +135,41 @@ struct SelfCareEngineTests {
     func cardsSortedByScoreDescending() {
         let engine = makeEngine()
         let cards = engine.scoreCards(after: .feedingEnded(babyId: UUID(), duration: 600))
-        guard cards.count >= 2 else { return }
+        #expect(cards.count >= 2)
         for index in 0..<(cards.count - 1) {
             #expect(cards[index].score >= cards[index + 1].score)
         }
+    }
+
+    @Test("PepTalk suppressed when more than 2 logs today")
+    func pepTalkSuppressedWithManyLogs() {
+        let logs = (0..<5).map { index in
+            SelfCareLog.fixture(
+                actionType: .water,
+                timestamp: referenceDate.addingTimeInterval(Double(-index) * 600)
+            )
+        }
+        let engine = makeEngine(logs: logs)
+        let cards = engine.scoreCards(after: .timeTick)
+        let pepCards = cards.filter { $0.type == .pepTalk }
+        #expect(pepCards.isEmpty)
+    }
+
+    @Test("feedingStarted produces no selfCareWindow card")
+    func feedingStartedNoSelfCareWindow() {
+        let engine = makeEngine()
+        let cards = engine.scoreCards(after: .feedingStarted(babyId: UUID()))
+        let windowCards = cards.filter { $0.type == .selfCareWindow }
+        #expect(windowCards.isEmpty)
+    }
+
+    @Test("selfCareLogged produces no selfCareWindow card")
+    func selfCareLoggedNoSelfCareWindow() {
+        let log = SelfCareLog.fixture(actionType: .water, timestamp: referenceDate)
+        let engine = makeEngine()
+        let cards = engine.scoreCards(after: .selfCareLogged(log))
+        let windowCards = cards.filter { $0.type == .selfCareWindow }
+        #expect(windowCards.isEmpty)
     }
 
     @Test("Pattern nudge fires on feedingEnded with relativeToFeeding pattern")

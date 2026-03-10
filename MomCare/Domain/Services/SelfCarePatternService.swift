@@ -43,7 +43,7 @@ enum SelfCarePatternService {
         let sortedLogs = logs.sorted { $0.timestamp > $1.timestamp }
 
         // Compute unique days once — reused for average, streak, and compliance
-        let uniqueDays = Set(sortedLogs.map { calendar.startOfDay(for: $0.timestamp) })
+        let uniqueDays = Set(sortedLogs.lazy.map { calendar.startOfDay(for: $0.timestamp) })
 
         // Average times per day
         let activeDays = max(uniqueDays.count, 1)
@@ -133,7 +133,10 @@ enum SelfCarePatternService {
         guard offsets.count >= minDataPointsForRelativePattern else { return nil }
 
         let avg = offsets.reduce(0, +) / Double(offsets.count)
-        let variance = offsets.map { ($0 - avg) * ($0 - avg) }.reduce(0, +) / Double(offsets.count)
+        let variance = offsets.reduce(0.0) { acc, offset in
+            let diff = offset - avg
+            return acc + diff * diff
+        } / Double(offsets.count)
         let stdDev = variance.squareRoot()
         let coefficientOfVariation = avg > 0 ? stdDev / avg : 1.0
 
