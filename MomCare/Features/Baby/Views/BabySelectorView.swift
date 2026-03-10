@@ -43,11 +43,7 @@ struct BabySelectorView: View {
             }
         }
         .sheet(isPresented: $showAddBaby) {
-            AddBabyView { baby in
-                Task {
-                    await viewModel.createBaby(baby)
-                }
-            }
+            AddBabyView(viewModel: viewModel)
         }
     }
 }

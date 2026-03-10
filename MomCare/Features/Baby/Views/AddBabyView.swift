@@ -3,7 +3,7 @@ import PhotosUI
 
 struct AddBabyView: View {
     @Environment(\.dismiss) private var dismiss
-    let onSave: (Baby) -> Void
+    let viewModel: BabyViewModel
 
     @State private var name = ""
     @State private var dateOfBirth = Date.now
@@ -84,22 +84,18 @@ struct AddBabyView: View {
     }
 
     private func saveBaby() {
-        let baby = Baby(
-            id: UUID(),
-            name: name.trimmingCharacters(in: .whitespaces),
+        let formData = BabyFormData(
+            name: name,
             dateOfBirth: dateOfBirth,
             biologicalSex: biologicalSex,
+            feedingMethod: feedingMethod,
             birthWeight: Double(birthWeight),
             birthLength: Double(birthLength),
             birthHeadCircumference: Double(birthHeadCircumference),
-            feedingMethod: feedingMethod,
-            photoData: photoData,
-            isDeleted: false,
-            createdAt: .now,
-            updatedAt: .now
+            photoData: photoData
         )
         MCHaptic.success()
-        onSave(baby)
+        Task { await viewModel.createBaby(from: formData) }
         dismiss()
     }
 }

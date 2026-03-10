@@ -1,11 +1,13 @@
 import SwiftUI
 import SwiftData
 
-protocol DependencyContainer: Sendable {
+@MainActor
+protocol DependencyContainer {
     func makeBabyRepository() -> any BabyRepositoryProtocol
 }
 
-final class AppDependencies: DependencyContainer, @unchecked Sendable {
+@MainActor
+final class AppDependencies: DependencyContainer {
     private let modelContext: ModelContext
 
     init(modelContext: ModelContext) {

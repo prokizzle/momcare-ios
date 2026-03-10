@@ -31,7 +31,7 @@ struct DependenciesTests {
     }
 }
 
-private final class MockBabyRepository: BabyRepositoryProtocol, @unchecked Sendable {
+private final class MockBabyRepository: BabyRepositoryProtocol {
     func getAll() async throws -> [Baby] { [] }
     func getById(_ id: UUID) async throws -> Baby? { nil }
     func create(_ entity: Baby) async throws -> Baby { entity }
@@ -40,7 +40,8 @@ private final class MockBabyRepository: BabyRepositoryProtocol, @unchecked Senda
     func getActiveBabies() async throws -> [Baby] { [] }
 }
 
-private final class TestDependencies: DependencyContainer, @unchecked Sendable {
+@MainActor
+private final class TestDependencies: DependencyContainer {
     func makeBabyRepository() -> any BabyRepositoryProtocol {
         MockBabyRepository()
     }

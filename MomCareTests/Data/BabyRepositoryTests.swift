@@ -6,6 +6,7 @@ import SwiftData
 @Suite("BabyRepository Tests")
 struct BabyRepositoryTests {
 
+    @MainActor
     private func makeSUT() throws -> (BabyRepository, ModelContext) {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         let container = try ModelContainer(for: BabyModel.self, configurations: config)
@@ -15,6 +16,7 @@ struct BabyRepositoryTests {
     }
 
     @Test("create inserts baby and returns it")
+    @MainActor
     func create() async throws {
         let (repo, _) = try makeSUT()
         let baby = Baby.fixture(name: "Ava")
@@ -23,6 +25,7 @@ struct BabyRepositoryTests {
     }
 
     @Test("getAll returns all babies")
+    @MainActor
     func getAll() async throws {
         let (repo, _) = try makeSUT()
         _ = try await repo.create(Baby.fixture(name: "A"))
@@ -32,6 +35,7 @@ struct BabyRepositoryTests {
     }
 
     @Test("getById returns matching baby")
+    @MainActor
     func getById() async throws {
         let (repo, _) = try makeSUT()
         let baby = Baby.fixture(name: "Find Me")
@@ -41,6 +45,7 @@ struct BabyRepositoryTests {
     }
 
     @Test("getById returns nil for unknown ID")
+    @MainActor
     func getByIdNotFound() async throws {
         let (repo, _) = try makeSUT()
         let found = try await repo.getById(UUID())
@@ -48,6 +53,7 @@ struct BabyRepositoryTests {
     }
 
     @Test("update modifies existing baby")
+    @MainActor
     func update() async throws {
         let (repo, _) = try makeSUT()
         var baby = try await repo.create(Baby.fixture(name: "Old"))
@@ -57,6 +63,7 @@ struct BabyRepositoryTests {
     }
 
     @Test("delete sets isDeleted flag (soft delete)")
+    @MainActor
     func softDelete() async throws {
         let (repo, _) = try makeSUT()
         let baby = try await repo.create(Baby.fixture())
@@ -66,6 +73,7 @@ struct BabyRepositoryTests {
     }
 
     @Test("getActiveBabies excludes soft-deleted")
+    @MainActor
     func getActiveBabies() async throws {
         let (repo, _) = try makeSUT()
         _ = try await repo.create(Baby.fixture(name: "Active"))

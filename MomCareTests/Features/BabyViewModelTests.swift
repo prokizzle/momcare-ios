@@ -66,7 +66,7 @@ struct BabyViewModelTests {
     }
 }
 
-private final class StubBabyRepository: BabyRepositoryProtocol, @unchecked Sendable {
+private final class StubBabyRepository: BabyRepositoryProtocol {
     private var store: [Baby]
 
     init(babies: [Baby] = []) {

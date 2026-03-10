@@ -9,6 +9,7 @@ struct BabyProfileView: View {
     @State private var isEditing = false
     @State private var showDeleteConfirmation = false
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var showError = false
     @Environment(\.dismiss) private var dismiss
 
     init(viewModel: BabyViewModel, baby: Baby) {
@@ -47,6 +48,11 @@ struct BabyProfileView: View {
             }
         } message: {
             Text("This will remove \(baby.name) from your babies. This action cannot be undone.")
+        }
+        .alert("Save Failed", isPresented: $showError) {
+            Button("OK", role: .cancel) {}
+        } message: {
+            Text(viewModel.error?.localizedDescription ?? "An unknown error occurred.")
         }
         .onChange(of: selectedPhoto) { _, newItem in
             Task {
@@ -121,7 +127,11 @@ struct BabyProfileView: View {
         editedBaby.updatedAt = .now
         Task {
             await viewModel.updateBaby(editedBaby)
+            if viewModel.error != nil {
+                showError = true
+            } else {
+                MCHaptic.success()
+            }
         }
-        MCHaptic.success()
     }
 }

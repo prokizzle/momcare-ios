@@ -4,10 +4,12 @@ struct BabyAvatarView: View {
     let baby: Baby
     var size: CGFloat = 40
 
+    @State private var cachedImage: UIImage?
+
     var body: some View {
         Group {
-            if let photoData = baby.photoData, let uiImage = UIImage(data: photoData) {
-                Image(uiImage: uiImage)
+            if let cachedImage {
+                Image(uiImage: cachedImage)
                     .resizable()
                     .scaledToFill()
             } else {
@@ -21,6 +23,9 @@ struct BabyAvatarView: View {
         .frame(width: size, height: size)
         .clipShape(Circle())
         .overlay(Circle().stroke(MCColor.accent.opacity(0.3), lineWidth: 1))
+        .task(id: baby.photoData) {
+            cachedImage = baby.photoData.flatMap { UIImage(data: $0) }
+        }
     }
 }
 

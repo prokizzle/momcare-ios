@@ -2,8 +2,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State private var navigation = AppNavigation()
-    @State private var babyViewModel: BabyViewModel?
-    @Environment(\.dependencies) private var dependencies
+    var babyViewModel: BabyViewModel?
     @State private var showAddBaby = false
 
     var body: some View {
@@ -14,21 +13,14 @@ struct ContentView: View {
                 ProgressView()
             }
         }
-        .task {
-            let repo = dependencies.makeBabyRepository()
-            let viewModel = BabyViewModel(repository: repo)
-            await viewModel.loadBabies()
-            babyViewModel = viewModel
-
-            if viewModel.babies.isEmpty {
+        .onChange(of: babyViewModel?.babies.isEmpty) { _, isEmpty in
+            if isEmpty == true {
                 showAddBaby = true
             }
         }
         .sheet(isPresented: $showAddBaby) {
-            AddBabyView { baby in
-                if let babyViewModel {
-                    Task { await babyViewModel.createBaby(baby) }
-                }
+            if let babyViewModel {
+                AddBabyView(viewModel: babyViewModel)
             }
         }
         .environment(navigation)

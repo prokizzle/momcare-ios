@@ -1,7 +1,8 @@
 import Foundation
 import SwiftData
 
-final class BabyRepository: BabyRepositoryProtocol, @unchecked Sendable {
+@MainActor
+final class BabyRepository: BabyRepositoryProtocol {
     private let modelContext: ModelContext
 
     init(modelContext: ModelContext) {

@@ -5,9 +5,7 @@ import FirebaseCore
 @main
 struct MomCareApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            BabyModel.self
-        ])
+        let schema = Schema(versionedSchema: SchemaV1.self)
         let modelConfiguration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
@@ -15,7 +13,11 @@ struct MomCareApp: App {
         )
 
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            return try ModelContainer(
+                for: schema,
+                migrationPlan: MomCareMigrationPlan.self,
+                configurations: [modelConfiguration]
+            )
         } catch {
             fatalError("Could not create ModelContainer: \(error)")
         }
@@ -31,10 +33,20 @@ struct MomCareApp: App {
         }
     }
 
+    @State private var babyViewModel: BabyViewModel?
+
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            ContentView(babyViewModel: babyViewModel)
                 .environment(\.dependencies, AppDependencies(modelContext: sharedModelContainer.mainContext))
+                .task {
+                    if babyViewModel == nil {
+                        let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)
+                        let viewModel = BabyViewModel(repository: deps.makeBabyRepository())
+                        await viewModel.loadBabies()
+                        babyViewModel = viewModel
+                    }
+                }
         }
         .modelContainer(sharedModelContainer)
     }

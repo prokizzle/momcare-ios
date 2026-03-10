@@ -37,6 +37,24 @@ final class BabyViewModel {
         }
     }
 
+    func createBaby(from formData: BabyFormData) async {
+        let baby = Baby(
+            id: UUID(),
+            name: formData.name.trimmingCharacters(in: .whitespaces),
+            dateOfBirth: formData.dateOfBirth,
+            biologicalSex: formData.biologicalSex,
+            birthWeight: formData.birthWeight,
+            birthLength: formData.birthLength,
+            birthHeadCircumference: formData.birthHeadCircumference,
+            feedingMethod: formData.feedingMethod,
+            photoData: formData.photoData,
+            isDeleted: false,
+            createdAt: .now,
+            updatedAt: .now
+        )
+        await createBaby(baby)
+    }
+
     func updateBaby(_ baby: Baby) async {
         do {
             let updated = try await repository.update(baby)
