@@ -48,7 +48,7 @@ struct FeedingScreen: View {
             FeedingTimerView(viewModel: viewModel)
         }
         .navigationDestination(for: UUID.self) { (feedingId: UUID) in
-            if let feeding = viewModel.feedings.first(where: { $0.id == feedingId }) {
+            if let feeding = viewModel.feedingsById[feedingId] {
                 FeedingDetailView(viewModel: viewModel, feedingId: feedingId, feeding: feeding)
             }
         }

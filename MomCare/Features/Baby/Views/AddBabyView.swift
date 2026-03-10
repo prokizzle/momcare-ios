@@ -15,6 +15,7 @@ struct AddBabyView: View {
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var photoData: Data?
     @State private var showOptionalDetails = false
+    @State private var showError = false
 
     private var isValid: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty
@@ -41,6 +42,11 @@ struct AddBabyView: View {
                 Task {
                     photoData = try? await newItem?.loadTransferable(type: Data.self)
                 }
+            }
+            .alert("Save Failed", isPresented: $showError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text(viewModel.error?.localizedDescription ?? "An unknown error occurred.")
             }
         }
     }
@@ -94,8 +100,14 @@ struct AddBabyView: View {
             birthHeadCircumference: Double(birthHeadCircumference),
             photoData: photoData
         )
-        MCHaptic.success()
-        Task { await viewModel.createBaby(from: formData) }
-        dismiss()
+        Task {
+            await viewModel.createBaby(from: formData)
+            if viewModel.error == nil {
+                MCHaptic.success()
+                dismiss()
+            } else {
+                showError = true
+            }
+        }
     }
 }

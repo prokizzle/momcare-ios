@@ -47,22 +47,13 @@ struct FeedingTimerView: View {
     }
 
     private var timerDisplay: some View {
-        Text(formattedTime)
+        Text(viewModel.elapsedTimeFormatted)
             .font(MCTypography.largeTimer)
             .monospacedDigit()
             .foregroundStyle(.white)
             .contentTransition(.numericText())
-    }
-
-    private var formattedTime: String {
-        let totalSeconds = Int(viewModel.elapsedTime)
-        let hours = totalSeconds / 3600
-        let minutes = (totalSeconds % 3600) / 60
-        let seconds = totalSeconds % 60
-        if hours > 0 {
-            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
-        }
-        return String(format: "%02d:%02d", minutes, seconds)
+            .animation(.default, value: viewModel.elapsedTimeFormatted)
+            .accessibilityLabel("Timer: \(viewModel.elapsedTimeFormatted)")
     }
 
     private var breastSideToggle: some View {

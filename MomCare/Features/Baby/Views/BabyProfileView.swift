@@ -36,10 +36,11 @@ struct BabyProfileView: View {
             ToolbarItem(placement: .primaryAction) {
                 Button(isEditing ? "Done" : "Edit") {
                     if isEditing {
-                        saveChanges()
+                        Task { await saveChanges() }
+                    } else {
+                        isEditing = true
+                        MCHaptic.tap()
                     }
-                    isEditing.toggle()
-                    MCHaptic.tap()
                 }
             }
         }
@@ -132,15 +133,14 @@ struct BabyProfileView: View {
         }
     }
 
-    private func saveChanges() {
+    private func saveChanges() async {
         editedBaby.updatedAt = .now
-        Task {
-            await viewModel.updateBaby(editedBaby)
-            if viewModel.error != nil {
-                showError = true
-            } else {
-                MCHaptic.success()
-            }
+        await viewModel.updateBaby(editedBaby)
+        if viewModel.error != nil {
+            showError = true
+        } else {
+            MCHaptic.success()
+            isEditing = false
         }
     }
 }
