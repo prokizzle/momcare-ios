@@ -1,0 +1,162 @@
+[
+  {
+    "id": "aff-001",
+    "text": "You are doing better than you think.",
+    "tags": ["general", "tired"]
+  },
+  {
+    "id": "aff-002",
+    "text": "Every moment of care you give matters, even the quiet ones.",
+    "tags": ["general", "newMom"]
+  },
+  {
+    "id": "aff-003",
+    "text": "It is okay to rest while the world keeps spinning.",
+    "tags": ["tired", "evening"]
+  },
+  {
+    "id": "aff-004",
+    "text": "You showed up today, and that is enough.",
+    "tags": ["tired", "overwhelmed"]
+  },
+  {
+    "id": "aff-005",
+    "text": "Your patience is a gift your baby feels every day.",
+    "tags": ["general", "newMom"]
+  },
+  {
+    "id": "aff-006",
+    "text": "A fresh morning is a fresh start. Yesterday does not define today.",
+    "tags": ["morning"]
+  },
+  {
+    "id": "aff-007",
+    "text": "You are learning something new every single day, and so is your baby.",
+    "tags": ["newMom", "milestone"]
+  },
+  {
+    "id": "aff-008",
+    "text": "Taking a moment for yourself is not selfish. It is necessary.",
+    "tags": ["overwhelmed", "general"]
+  },
+  {
+    "id": "aff-009",
+    "text": "Your love is enough. Your best is enough. You are enough.",
+    "tags": ["tired", "overwhelmed"]
+  },
+  {
+    "id": "aff-010",
+    "text": "Some days are harder than others, and that is perfectly normal.",
+    "tags": ["general", "tired"]
+  },
+  {
+    "id": "aff-011",
+    "text": "You are building something beautiful, one day at a time.",
+    "tags": ["general", "milestone"]
+  },
+  {
+    "id": "aff-012",
+    "text": "Tonight, let go of what went undone. You did what mattered most.",
+    "tags": ["evening", "tired"]
+  },
+  {
+    "id": "aff-013",
+    "text": "Your body brought life into the world. Give it the kindness it deserves.",
+    "tags": ["general", "newMom"]
+  },
+  {
+    "id": "aff-014",
+    "text": "Progress does not always look the way you expect. Trust the process.",
+    "tags": ["general", "milestone"]
+  },
+  {
+    "id": "aff-015",
+    "text": "The fact that you worry about being a good parent means you already are one.",
+    "tags": ["overwhelmed", "newMom"]
+  },
+  {
+    "id": "aff-016",
+    "text": "A deep breath right now is a small act of self-care.",
+    "tags": ["overwhelmed", "general"]
+  },
+  {
+    "id": "aff-017",
+    "text": "You are not behind. You are exactly where you need to be.",
+    "tags": ["general", "overwhelmed"]
+  },
+  {
+    "id": "aff-018",
+    "text": "Morning light brings new energy. Soak it in.",
+    "tags": ["morning"]
+  },
+  {
+    "id": "aff-019",
+    "text": "Your baby does not need perfection. They need you.",
+    "tags": ["newMom", "overwhelmed"]
+  },
+  {
+    "id": "aff-020",
+    "text": "Rest is productive. Stillness is valuable. Quiet is powerful.",
+    "tags": ["evening", "tired"]
+  },
+  {
+    "id": "aff-021",
+    "text": "You carry so much, and you carry it with grace.",
+    "tags": ["general", "tired"]
+  },
+  {
+    "id": "aff-022",
+    "text": "This season is temporary. You will look back and be proud.",
+    "tags": ["overwhelmed", "general"]
+  },
+  {
+    "id": "aff-023",
+    "text": "Asking for help is a sign of strength, not weakness.",
+    "tags": ["overwhelmed", "general"]
+  },
+  {
+    "id": "aff-024",
+    "text": "A new morning means a new chance to be gentle with yourself.",
+    "tags": ["morning", "general"]
+  },
+  {
+    "id": "aff-025",
+    "text": "You are the calm in the storm, even when you do not feel calm inside.",
+    "tags": ["overwhelmed", "tired"]
+  },
+  {
+    "id": "aff-026",
+    "text": "Every feeding, every soothing, every diaper -- it all adds up to love.",
+    "tags": ["newMom", "general"]
+  },
+  {
+    "id": "aff-027",
+    "text": "Sleep will come. Routine will come. Confidence will come.",
+    "tags": ["evening", "newMom"]
+  },
+  {
+    "id": "aff-028",
+    "text": "You have already survived your hardest days. You can handle today too.",
+    "tags": ["tired", "general"]
+  },
+  {
+    "id": "aff-029",
+    "text": "Celebrating the small wins keeps the big picture in focus.",
+    "tags": ["milestone", "general"]
+  },
+  {
+    "id": "aff-030",
+    "text": "Tonight, let your shoulders drop. You have earned this rest.",
+    "tags": ["evening", "tired"]
+  },
+  {
+    "id": "aff-031",
+    "text": "Comparison steals joy. Your journey is uniquely yours.",
+    "tags": ["general", "overwhelmed"]
+  },
+  {
+    "id": "aff-032",
+    "text": "Your instincts are sharper than you give them credit for.",
+    "tags": ["newMom", "general"]
+  }
+]

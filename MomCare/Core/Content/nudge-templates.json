@@ -1,0 +1,62 @@
+[
+  {
+    "id": "nudge-001",
+    "template": "It has been about {hours} hours since your last glass of water. A sip goes a long way.",
+    "type": "hydration"
+  },
+  {
+    "id": "nudge-002",
+    "template": "You usually {action} around this time. Just a gentle heads-up.",
+    "type": "patternDeviation"
+  },
+  {
+    "id": "nudge-003",
+    "template": "{count} days in a row -- look at you keeping it going.",
+    "type": "streak"
+  },
+  {
+    "id": "nudge-004",
+    "template": "Staying hydrated helps you keep going. Your last water was a while ago.",
+    "type": "hydration"
+  },
+  {
+    "id": "nudge-005",
+    "template": "You have a quiet window right now. A small self-care moment could fit nicely.",
+    "type": "selfCareWindow"
+  },
+  {
+    "id": "nudge-006",
+    "template": "It has been {hours} hours since your last meal. Even a small bite helps.",
+    "type": "timeGap"
+  },
+  {
+    "id": "nudge-007",
+    "template": "That is {count} days of logging in a row. Consistency like that builds real insight.",
+    "type": "streak"
+  },
+  {
+    "id": "nudge-008",
+    "template": "You usually take a moment for yourself around now. Today could be that day too.",
+    "type": "patternDeviation"
+  },
+  {
+    "id": "nudge-009",
+    "template": "Baby seems settled. This might be a good moment to take care of something for you.",
+    "type": "selfCareWindow"
+  },
+  {
+    "id": "nudge-010",
+    "template": "A glass of water now could make the next hour feel a little easier.",
+    "type": "hydration"
+  },
+  {
+    "id": "nudge-011",
+    "template": "It looks like you skipped {action} today. No pressure -- just noticing.",
+    "type": "patternDeviation"
+  },
+  {
+    "id": "nudge-012",
+    "template": "You have been going for a while. Even a two-minute pause counts as a break.",
+    "type": "selfCareWindow"
+  }
+]

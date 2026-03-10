@@ -12,11 +12,11 @@ struct FeedingTimerProvider: TimelineProvider {
         FeedingTimerEntry(date: .now, lastFeedingTime: .now, isFeeding: false)
     }
 
-    func getSnapshot(in context: Context, completion: @escaping (FeedingTimerEntry) -> Void) {
+    func getSnapshot(in context: Context, completion: @escaping @Sendable (FeedingTimerEntry) -> Void) {
         completion(FeedingTimerEntry(date: .now, lastFeedingTime: .now, isFeeding: false))
     }
 
-    func getTimeline(in context: Context, completion: @escaping (Timeline<FeedingTimerEntry>) -> Void) {
+    func getTimeline(in context: Context, completion: @escaping @Sendable (Timeline<FeedingTimerEntry>) -> Void) {
         let entry = FeedingTimerEntry(date: .now, lastFeedingTime: .now, isFeeding: false)
         let timeline = Timeline(entries: [entry], policy: .after(.now.addingTimeInterval(15 * 60)))
         completion(timeline)
