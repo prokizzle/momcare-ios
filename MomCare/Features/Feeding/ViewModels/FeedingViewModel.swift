@@ -3,7 +3,11 @@ import Foundation
 @MainActor
 @Observable
 final class FeedingViewModel {
-    var feedings: [Feeding] = []
+    var feedings: [Feeding] = [] {
+        didSet { rebuildDerivedData() }
+    }
+    private(set) var groupedFeedings: [(String, [Feeding])] = []
+    private(set) var feedingsById: [UUID: Feeding] = [:]
     var inProgressFeeding: Feeding?
     var pattern: FeedingPattern?
     var selectedType: Feeding.FeedingType = .breast
@@ -13,6 +17,17 @@ final class FeedingViewModel {
 
     var isTimerRunning = false
     var elapsedTime: TimeInterval = 0
+
+    var elapsedTimeFormatted: String {
+        let totalSeconds = Int(elapsedTime)
+        let hours = totalSeconds / 3600
+        let minutes = (totalSeconds % 3600) / 60
+        let seconds = totalSeconds % 60
+        if hours > 0 {
+            return String(format: "%d:%02d:%02d", hours, minutes, seconds)
+        }
+        return String(format: "%02d:%02d", minutes, seconds)
+    }
 
     private let repository: any FeedingRepositoryProtocol
     private var timerTask: Task<Void, Never>?
@@ -142,10 +157,10 @@ final class FeedingViewModel {
 
     private func startTimerTick() {
         stopTimerTick()
-        timerTask = Task {
+        timerTask = Task { [weak self] in
             while !Task.isCancelled {
                 try? await Task.sleep(for: .seconds(1))
-                guard !Task.isCancelled else { break }
+                guard !Task.isCancelled, let self else { break }
                 self.updateElapsedTime()
             }
         }
@@ -154,5 +169,26 @@ final class FeedingViewModel {
     private func stopTimerTick() {
         timerTask?.cancel()
         timerTask = nil
+    }
+
+    // MARK: - Derived Data
+
+    private func rebuildDerivedData() {
+        feedingsById = Dictionary(uniqueKeysWithValues: feedings.map { ($0.id, $0) })
+        let calendar = Calendar.current
+        let grouped = Dictionary(grouping: feedings) { feeding -> String in
+            if calendar.isDateInToday(feeding.startTime) {
+                return "Today"
+            } else if calendar.isDateInYesterday(feeding.startTime) {
+                return "Yesterday"
+            } else {
+                return feeding.startTime.formatted(date: .abbreviated, time: .omitted)
+            }
+        }
+        groupedFeedings = grouped.map { key, items in
+            (key, items.sorted { $0.startTime > $1.startTime })
+        }.sorted { lhs, rhs in
+            (lhs.1.first?.startTime ?? .distantPast) > (rhs.1.first?.startTime ?? .distantPast)
+        }
     }
 }

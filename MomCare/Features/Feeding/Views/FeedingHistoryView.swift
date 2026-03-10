@@ -5,29 +5,9 @@ struct FeedingHistoryView: View {
     let babyId: UUID
     @State private var feedingToDelete: Feeding?
 
-    private var groupedFeedings: [(String, [Feeding])] {
-        let calendar = Calendar.current
-        let grouped = Dictionary(grouping: viewModel.feedings) { feeding -> String in
-            if calendar.isDateInToday(feeding.startTime) {
-                return "Today"
-            } else if calendar.isDateInYesterday(feeding.startTime) {
-                return "Yesterday"
-            } else {
-                return feeding.startTime.formatted(date: .abbreviated, time: .omitted)
-            }
-        }
-        return grouped.map { key, feedings in
-            (key, feedings.sorted { $0.startTime > $1.startTime })
-        }.sorted { lhs, rhs in
-            let lhsDate = lhs.1.first?.startTime ?? .distantPast
-            let rhsDate = rhs.1.first?.startTime ?? .distantPast
-            return lhsDate > rhsDate
-        }
-    }
-
     var body: some View {
         List {
-            ForEach(groupedFeedings, id: \.0) { section in
+            ForEach(viewModel.groupedFeedings, id: \.0) { section in
                 Section(section.0) {
                     ForEach(section.1) { feeding in
                         NavigationLink(value: feeding.id) {

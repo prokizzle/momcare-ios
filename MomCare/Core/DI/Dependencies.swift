@@ -5,6 +5,7 @@ import SwiftData
 protocol DependencyContainer {
     func makeBabyRepository() -> any BabyRepositoryProtocol
     func makeFeedingRepository() -> any FeedingRepositoryProtocol
+    func makeSelfCareRepository() -> any SelfCareRepositoryProtocol
 }
 
 @MainActor
@@ -22,6 +23,10 @@ final class AppDependencies: DependencyContainer {
     func makeFeedingRepository() -> any FeedingRepositoryProtocol {
         FeedingRepository(modelContext: modelContext)
     }
+
+    func makeSelfCareRepository() -> any SelfCareRepositoryProtocol {
+        SelfCareRepository(modelContext: modelContext)
+    }
 }
 
 struct DependenciesKey: @preconcurrency EnvironmentKey {
@@ -29,7 +34,11 @@ struct DependenciesKey: @preconcurrency EnvironmentKey {
     static let defaultValue: any DependencyContainer = {
         let config = ModelConfiguration(isStoredInMemoryOnly: true)
         // swiftlint:disable:next force_try
-        let container = try! ModelContainer(for: BabyModel.self, FeedingModel.self, configurations: config)
+        let container = try! ModelContainer(
+            for: BabyModel.self, FeedingModel.self,
+            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
+            configurations: config
+        )
         return AppDependencies(modelContext: container.mainContext)
     }()
 }

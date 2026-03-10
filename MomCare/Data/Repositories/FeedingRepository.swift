@@ -81,7 +81,7 @@ final class FeedingRepository: FeedingRepositoryProtocol {
                 $0.babyId == fetchBabyId &&
                 $0.isSoftDeleted == false &&
                 $0.startTime >= rangeStart &&
-                $0.startTime <= rangeEnd
+                $0.startTime < rangeEnd
             },
             sortBy: [SortDescriptor(\.startTime, order: .reverse)]
         )
