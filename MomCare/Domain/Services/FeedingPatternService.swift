@@ -60,9 +60,10 @@ enum FeedingPatternService {
         }
 
         let avg = Double(totalMinutes) / Double(intervals.count)
-        let variance = intervals
-            .map { (Double($0) - avg) * (Double($0) - avg) }
-            .reduce(0, +) / Double(intervals.count)
+        let variance = intervals.reduce(0.0) { acc, interval in
+            let diff = Double(interval) - avg
+            return acc + diff * diff
+        } / Double(intervals.count)
         let stdDev = variance.squareRoot()
         let coefficientOfVariation = avg > 0 ? stdDev / avg : 0
 
