@@ -17,7 +17,7 @@ final class FeedingViewModel {
 
     var isTimerRunning = false
     var elapsedTime: TimeInterval = 0
-    var onFeedingEnded: ((UUID, TimeInterval) -> Void)?
+    var onFeedingEnded: (@MainActor (UUID, TimeInterval) -> Void)?
 
     var elapsedTimeFormatted: String {
         let totalSeconds = Int(elapsedTime)
@@ -94,9 +94,7 @@ final class FeedingViewModel {
         do {
             let updated = try await repository.update(feeding)
             feedings.insert(updated, at: 0)
-            if updated.endTime != nil {
-                onFeedingEnded?(updated.babyId, updated.duration)
-            }
+            onFeedingEnded?(updated.babyId, updated.duration)
             inProgressFeeding = nil
             isTimerRunning = false
             elapsedTime = 0
