@@ -3,10 +3,7 @@ import SwiftUI
 struct ContentView: View {
     @State private var navigation = AppNavigation()
     var babyViewModel: BabyViewModel?
-    var feedingViewModel: FeedingViewModel?
     var selfCareViewModel: SelfCareViewModel?
-    var dashboardViewModel: DashboardViewModel?
-    var diaperViewModel: DiaperViewModel?
     @State private var showAddBaby = false
 
     var body: some View {
@@ -31,72 +28,89 @@ struct ContentView: View {
     }
 
     @ViewBuilder
-    // swiftlint:disable:next function_body_length
     private func mainTabView(babyViewModel: BabyViewModel) -> some View {
         TabView(selection: $navigation.selectedTab) {
-            NavigationStack(path: $navigation.dashboardPath) {
-                DashboardScreen(
-                    viewModel: dashboardViewModel,
-                    babyId: babyViewModel.selectedBaby?.id
-                )
+            nowTab(babyViewModel: babyViewModel)
+            babyTab(babyViewModel: babyViewModel)
+            selfCareTab(babyViewModel: babyViewModel)
+            journalTab(babyViewModel: babyViewModel)
+            planTab()
+        }
+    }
+
+    @ViewBuilder
+    private func nowTab(babyViewModel: BabyViewModel) -> some View {
+        NavigationStack(path: $navigation.nowPath) {
+            Text("Now")
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         BabySelectorView(viewModel: babyViewModel)
                     }
                 }
-            }
-            .tabItem {
-                Label("Dashboard", systemImage: "heart.text.clipboard")
-            }
-            .tag(AppTab.dashboard)
-
-            NavigationStack(path: $navigation.feedingPath) {
-                FeedingScreen(viewModel: feedingViewModel, babyId: babyViewModel.selectedBaby?.id)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            BabySelectorView(viewModel: babyViewModel)
-                        }
-                    }
-            }
-            .tabItem {
-                Label("Feeding", systemImage: "drop.fill")
-            }
-            .tag(AppTab.feeding)
-
-            NavigationStack(path: $navigation.diapersPath) {
-                DiaperScreen(viewModel: diaperViewModel, babyId: babyViewModel.selectedBaby?.id)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            BabySelectorView(viewModel: babyViewModel)
-                        }
-                    }
-            }
-            .tabItem {
-                Label("Diapers", systemImage: "drop.circle")
-            }
-            .tag(AppTab.diapers)
-
-            NavigationStack(path: $navigation.selfCarePath) {
-                SelfCareScreen(viewModel: selfCareViewModel)
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            BabySelectorView(viewModel: babyViewModel)
-                        }
-                    }
-            }
-            .tabItem {
-                Label("Self-Care", systemImage: "sparkles")
-            }
-            .tag(AppTab.selfCare)
-
-            NavigationStack(path: $navigation.insightsPath) {
-                Text("Insights")
-            }
-            .tabItem {
-                Label("Insights", systemImage: "chart.xyaxis.line")
-            }
-            .tag(AppTab.insights)
         }
+        .tabItem {
+            Label("Now", systemImage: "sun.horizon.fill")
+        }
+        .tag(AppTab.now)
+    }
+
+    @ViewBuilder
+    private func babyTab(babyViewModel: BabyViewModel) -> some View {
+        NavigationStack(path: $navigation.babyPath) {
+            Text("Baby")
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        BabySelectorView(viewModel: babyViewModel)
+                    }
+                }
+        }
+        .tabItem {
+            Label("Baby", systemImage: "figure.and.child.holdinghands")
+        }
+        .tag(AppTab.baby)
+    }
+
+    @ViewBuilder
+    private func selfCareTab(babyViewModel: BabyViewModel) -> some View {
+        NavigationStack(path: $navigation.selfCarePath) {
+            SelfCareScreen(viewModel: selfCareViewModel)
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        BabySelectorView(viewModel: babyViewModel)
+                    }
+                }
+        }
+        .tabItem {
+            Label("Self-Care", systemImage: "sparkles")
+        }
+        .tag(AppTab.selfCare)
+    }
+
+    @ViewBuilder
+    private func journalTab(babyViewModel: BabyViewModel) -> some View {
+        NavigationStack(path: $navigation.journalPath) {
+            Text("Journal")
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        BabySelectorView(viewModel: babyViewModel)
+                    }
+                }
+        }
+        .tabItem {
+            Label("Journal", systemImage: "book.pages")
+        }
+        .tag(AppTab.journal)
+    }
+
+    @ViewBuilder
+    private func planTab() -> some View {
+        NavigationStack(path: $navigation.planPath) {
+            Text("Plan")
+        }
+        .tabItem {
+            Label("Plan", systemImage: "map")
+        }
+        .tag(AppTab.plan)
     }
 }
 

@@ -3,32 +3,32 @@ import Testing
 
 @Suite("AppNavigation Tests")
 struct AppNavigationTests {
-    @Test("Default tab is dashboard")
+    @Test("Default tab is now")
     @MainActor
     func defaultTab() {
         let nav = AppNavigation()
-        #expect(nav.selectedTab == .dashboard)
+        #expect(nav.selectedTab == .now)
     }
 
     @Test("Each tab has its own navigation path")
     @MainActor
     func tabPaths() {
         let nav = AppNavigation()
-        #expect(nav.dashboardPath.isEmpty)
-        #expect(nav.feedingPath.isEmpty)
-        #expect(nav.diapersPath.isEmpty)
+        #expect(nav.nowPath.isEmpty)
+        #expect(nav.babyPath.isEmpty)
         #expect(nav.selfCarePath.isEmpty)
-        #expect(nav.insightsPath.isEmpty)
+        #expect(nav.journalPath.isEmpty)
+        #expect(nav.planPath.isEmpty)
     }
 
-    @Test("Tab enum has all five cases")
+    @Test("Tab enum has five cases")
     func allTabs() {
         let tabs = AppTab.allCases
         #expect(tabs.count == 5)
-        #expect(tabs.contains(.dashboard))
-        #expect(tabs.contains(.feeding))
-        #expect(tabs.contains(.diapers))
+        #expect(tabs.contains(.now))
+        #expect(tabs.contains(.baby))
         #expect(tabs.contains(.selfCare))
-        #expect(tabs.contains(.insights))
+        #expect(tabs.contains(.journal))
+        #expect(tabs.contains(.plan))
     }
 }
