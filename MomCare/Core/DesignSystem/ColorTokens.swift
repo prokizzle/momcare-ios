@@ -6,6 +6,7 @@ enum MCColor {
     static let selfCare = Color("SelfCareColor")
     static let babyStatus = Color("BabyStatusColor")
     static let diaper = Color("DiaperColor")
+    static let baby = Color("BabyColor")
 
     enum Urgency {
         static let safe = Color.green
