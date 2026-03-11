@@ -13,7 +13,7 @@ final class SelfCareViewModel {
     private let repository: any SelfCareRepositoryProtocol
     private let contentLibrary: ContentLibrary
     private var recentTaps: [SelfCareActionType: Date] = [:]
-    private var shownContentIds: [String] = []
+    private var shownContentIds: Set<String> = []
     private var allRecentLogs: [SelfCareLog] = []
     private var feedingEndTimes: [Date] = []
 
@@ -24,6 +24,10 @@ final class SelfCareViewModel {
 
     var waterCountToday: Int {
         todayLogs.filter { $0.actionType == .water }.count
+    }
+
+    var visibleGridItems: [SelfCareGridItem] {
+        gridItems.filter(\.isVisible).sorted { $0.sortOrder < $1.sortOrder }
     }
 
     func isRecentlyTapped(_ actionType: SelfCareActionType) -> Bool {
@@ -116,7 +120,7 @@ final class SelfCareViewModel {
             logs: allRecentLogs,
             patterns: patterns,
             contentLibrary: contentLibrary,
-            shownContentIds: Set(shownContentIds),
+            shownContentIds: shownContentIds,
             currentDate: .now
         )
 
@@ -124,8 +128,8 @@ final class SelfCareViewModel {
 
         // Track shown content
         for card in cards {
-            if let contentId = card.contentId, !shownContentIds.contains(contentId) {
-                shownContentIds.append(contentId)
+            if let contentId = card.contentId {
+                shownContentIds.insert(contentId)
             }
         }
     }

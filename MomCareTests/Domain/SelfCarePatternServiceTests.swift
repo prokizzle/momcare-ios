@@ -21,7 +21,7 @@ struct SelfCarePatternServiceTests {
     }
 
     @Test("Computes averageTimesPerDay for water")
-    func averageTimesPerDay() {
+    func averageTimesPerDay() throws {
         var logs: [SelfCareLog] = []
         // 3 water logs per day for 3 days
         for day in 0..<3 {
@@ -39,14 +39,13 @@ struct SelfCarePatternServiceTests {
         let patterns = SelfCarePatternService.analyzePatterns(
             logs: logs, feedingEndTimes: [], now: referenceDate
         )
-        let waterPattern = patterns.first { $0.actionType == .water }
-        #expect(waterPattern != nil)
-        #expect(waterPattern!.averageTimesPerDay >= 2.5)
-        #expect(waterPattern!.averageTimesPerDay <= 3.5)
+        let waterPattern = try #require(patterns.first { $0.actionType == .water })
+        #expect(waterPattern.averageTimesPerDay >= 2.5)
+        #expect(waterPattern.averageTimesPerDay <= 3.5)
     }
 
     @Test("Detects relativeToFeeding pattern")
-    func relativeToFeeding() {
+    func relativeToFeeding() throws {
         var logs: [SelfCareLog] = []
         var feedingEndTimes: [Date] = []
 
@@ -63,15 +62,14 @@ struct SelfCarePatternServiceTests {
             feedingEndTimes: feedingEndTimes,
             now: referenceDate
         )
-        let showerPattern = patterns.first { $0.actionType == .shower }
-        #expect(showerPattern != nil)
-        #expect(showerPattern!.relativeToFeeding != nil)
-        let relativeMinutes = Int(showerPattern!.relativeToFeeding! / 60)
+        let showerPattern = try #require(patterns.first { $0.actionType == .shower })
+        let relativeToFeeding = try #require(showerPattern.relativeToFeeding)
+        let relativeMinutes = Int(relativeToFeeding / 60)
         #expect(relativeMinutes >= 15 && relativeMinutes <= 25)
     }
 
     @Test("Streak counts consecutive days")
-    func streakDays() {
+    func streakDays() throws {
         var logs: [SelfCareLog] = []
         // Skincare every day for 5 days
         for day in 0..<5 {
@@ -84,25 +82,23 @@ struct SelfCarePatternServiceTests {
         let patterns = SelfCarePatternService.analyzePatterns(
             logs: logs, feedingEndTimes: [], now: referenceDate
         )
-        let skincarePattern = patterns.first { $0.actionType == .skincare }
-        #expect(skincarePattern != nil)
-        #expect(skincarePattern!.streakDays == 5)
+        let skincarePattern = try #require(patterns.first { $0.actionType == .skincare })
+        #expect(skincarePattern.streakDays == 5)
     }
 
     @Test("Confidence is low with few data points")
-    func lowConfidence() {
+    func lowConfidence() throws {
         let timestamp = referenceDate.addingTimeInterval(-3600)
         let logs = [SelfCareLog.fixture(actionType: .meditate, timestamp: timestamp)]
         let patterns = SelfCarePatternService.analyzePatterns(
             logs: logs, feedingEndTimes: [], now: referenceDate
         )
-        let pattern = patterns.first { $0.actionType == .meditate }
-        #expect(pattern != nil)
-        #expect(pattern!.confidence <= 0.4)
+        let pattern = try #require(patterns.first { $0.actionType == .meditate })
+        #expect(pattern.confidence <= 0.4)
     }
 
     @Test("Confidence is high with many consistent data points")
-    func highConfidence() {
+    func highConfidence() throws {
         var logs: [SelfCareLog] = []
         // Water 6x per day for 14 days = 84 data points
         for day in 0..<14 {
@@ -120,13 +116,12 @@ struct SelfCarePatternServiceTests {
         let patterns = SelfCarePatternService.analyzePatterns(
             logs: logs, feedingEndTimes: [], now: referenceDate
         )
-        let waterPattern = patterns.first { $0.actionType == .water }
-        #expect(waterPattern != nil)
-        #expect(waterPattern!.confidence >= 0.8)
+        let waterPattern = try #require(patterns.first { $0.actionType == .water })
+        #expect(waterPattern.confidence >= 0.8)
     }
 
     @Test("Compliance measures percentage of days with at least one log")
-    func compliance() {
+    func compliance() throws {
         var logs: [SelfCareLog] = []
         // Skincare on 5 of the last 7 days
         for day in [0, 1, 2, 4, 6] {
@@ -139,9 +134,8 @@ struct SelfCarePatternServiceTests {
         let patterns = SelfCarePatternService.analyzePatterns(
             logs: logs, feedingEndTimes: [], now: referenceDate
         )
-        let skincarePattern = patterns.first { $0.actionType == .skincare }
-        #expect(skincarePattern != nil)
-        #expect(skincarePattern!.compliance >= 0.6)
-        #expect(skincarePattern!.compliance <= 0.8)
+        let skincarePattern = try #require(patterns.first { $0.actionType == .skincare })
+        #expect(skincarePattern.compliance >= 0.6)
+        #expect(skincarePattern.compliance <= 0.8)
     }
 }

@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct BabyAvatarView: View {
     let baby: Baby
     var size: CGFloat = 40
@@ -26,7 +27,9 @@ struct BabyAvatarView: View {
         .overlay(Circle().stroke(MCColor.accent.opacity(0.3), lineWidth: 1))
         .task(id: baby.photoData) {
             guard let data = baby.photoData else { cachedImage = nil; return }
-            cachedImage = UIImage(data: data)
+            cachedImage = await Task.detached(priority: .userInitiated) {
+                UIImage(data: data)
+            }.value
         }
     }
 }

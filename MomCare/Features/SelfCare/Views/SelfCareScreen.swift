@@ -24,7 +24,7 @@ struct SelfCareScreen: View {
         ScrollView {
             VStack(spacing: MCSpacing.xl) {
                 ActionGridView(
-                    gridItems: viewModel.gridItems,
+                    gridItems: viewModel.visibleGridItems,
                     recentlyTapped: { viewModel.isRecentlyTapped($0) },
                     waterCount: viewModel.waterCountToday,
                     onTap: { actionType in

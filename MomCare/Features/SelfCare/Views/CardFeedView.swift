@@ -4,6 +4,7 @@ import SwiftUI
 struct CardFeedView: View {
     let cards: [SelfCareCard]
     let onDismiss: (UUID) -> Void
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         if cards.isEmpty {
@@ -19,7 +20,7 @@ struct CardFeedView: View {
                 }
             }
             .padding(.horizontal, MCSpacing.lg)
-            .animation(.easeInOut(duration: 0.3), value: cards.map(\.id))
+            .animation(reduceMotion ? nil : .easeInOut(duration: 0.3), value: cards.map(\.id))
         }
     }
 

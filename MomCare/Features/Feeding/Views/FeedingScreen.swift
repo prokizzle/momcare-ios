@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct FeedingScreen: View {
     var viewModel: FeedingViewModel?
     let babyId: UUID?

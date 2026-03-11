@@ -1,8 +1,10 @@
 import SwiftUI
 
+@MainActor
 struct FeedingTimerView: View {
     @Bindable var viewModel: FeedingViewModel
     @Environment(\.dismiss) private var dismiss
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
     @State private var showEndConfirmation = false
 
     var body: some View {
@@ -52,7 +54,7 @@ struct FeedingTimerView: View {
             .monospacedDigit()
             .foregroundStyle(.white)
             .contentTransition(.numericText())
-            .animation(.default, value: viewModel.elapsedTimeFormatted)
+            .animation(reduceMotion ? nil : .default, value: viewModel.elapsedTimeFormatted)
             .accessibilityLabel("Timer: \(viewModel.elapsedTimeFormatted)")
     }
 
@@ -90,6 +92,8 @@ struct FeedingTimerView: View {
                 )
         }
         .foregroundStyle(.white)
+        .accessibilityLabel("\(side.label) breast")
+        .accessibilityAddTraits(viewModel.selectedSide == side ? .isSelected : [])
     }
 
     private var endButton: some View {

@@ -44,11 +44,25 @@ final class SelfCareLogModel {
 
     private static func encodeDetail(_ detail: LogDetail?) -> Data? {
         guard let detail else { return nil }
-        return try? encoder.encode(detail)
+        do {
+            return try encoder.encode(detail)
+        } catch {
+            #if DEBUG
+            print("SelfCareLogModel: failed to encode detail: \(error)")
+            #endif
+            return nil
+        }
     }
 
     private static func decodeDetail(_ data: Data?) -> LogDetail? {
         guard let data else { return nil }
-        return try? decoder.decode(LogDetail.self, from: data)
+        do {
+            return try decoder.decode(LogDetail.self, from: data)
+        } catch {
+            #if DEBUG
+            print("SelfCareLogModel: failed to decode detail: \(error)")
+            #endif
+            return nil
+        }
     }
 }
