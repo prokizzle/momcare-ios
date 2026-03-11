@@ -132,6 +132,18 @@ private final class MockDiaperRepository: DiaperRepositoryProtocol {
 }
 
 @MainActor
+private final class MockSleepRepository: SleepRepositoryProtocol {
+    func getAll() async throws -> [BabySleep] { [] }
+    func getById(_ id: UUID) async throws -> BabySleep? { nil }
+    func create(_ entity: BabySleep) async throws -> BabySleep { entity }
+    func update(_ entity: BabySleep) async throws -> BabySleep { entity }
+    func delete(_ id: UUID) async throws {}
+    func getSleepsForBaby(_ babyId: UUID, limit: Int?) async throws -> [BabySleep] { [] }
+    func getSleepsForDateRange(babyId: UUID, start: Date, end: Date) async throws -> [BabySleep] { [] }
+    func getInProgressSleep(babyId: UUID) async throws -> BabySleep? { nil }
+}
+
+@MainActor
 private final class TestDependencies: DependencyContainer {
     func makeBabyRepository() -> any BabyRepositoryProtocol {
         MockBabyRepository()
@@ -147,5 +159,9 @@ private final class TestDependencies: DependencyContainer {
 
     func makeDiaperRepository() -> any DiaperRepositoryProtocol {
         MockDiaperRepository()
+    }
+
+    func makeSleepRepository() -> any SleepRepositoryProtocol {
+        MockSleepRepository()
     }
 }
