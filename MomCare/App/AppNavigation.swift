@@ -3,6 +3,7 @@ import SwiftUI
 enum AppTab: String, CaseIterable, Sendable {
     case dashboard
     case feeding
+    case diapers
     case selfCare
     case insights
 }
@@ -13,6 +14,7 @@ final class AppNavigation {
     var selectedTab: AppTab = .dashboard
     var dashboardPath = NavigationPath()
     var feedingPath = NavigationPath()
+    var diapersPath = NavigationPath()
     var selfCarePath = NavigationPath()
     var insightsPath = NavigationPath()
 

@@ -6,6 +6,7 @@ struct ContentView: View {
     var feedingViewModel: FeedingViewModel?
     var selfCareViewModel: SelfCareViewModel?
     var dashboardViewModel: DashboardViewModel?
+    var diaperViewModel: DiaperViewModel?
     @State private var showAddBaby = false
 
     var body: some View {
@@ -30,6 +31,7 @@ struct ContentView: View {
     }
 
     @ViewBuilder
+    // swiftlint:disable:next function_body_length
     private func mainTabView(babyViewModel: BabyViewModel) -> some View {
         TabView(selection: $navigation.selectedTab) {
             NavigationStack(path: $navigation.dashboardPath) {
@@ -60,6 +62,19 @@ struct ContentView: View {
                 Label("Feeding", systemImage: "drop.fill")
             }
             .tag(AppTab.feeding)
+
+            NavigationStack(path: $navigation.diapersPath) {
+                DiaperScreen(viewModel: diaperViewModel, babyId: babyViewModel.selectedBaby?.id)
+                    .toolbar {
+                        ToolbarItem(placement: .topBarLeading) {
+                            BabySelectorView(viewModel: babyViewModel)
+                        }
+                    }
+            }
+            .tabItem {
+                Label("Diapers", systemImage: "drop.circle")
+            }
+            .tag(AppTab.diapers)
 
             NavigationStack(path: $navigation.selfCarePath) {
                 SelfCareScreen(viewModel: selfCareViewModel)

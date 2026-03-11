@@ -16,16 +16,18 @@ struct AppNavigationTests {
         let nav = AppNavigation()
         #expect(nav.dashboardPath.isEmpty)
         #expect(nav.feedingPath.isEmpty)
+        #expect(nav.diapersPath.isEmpty)
         #expect(nav.selfCarePath.isEmpty)
         #expect(nav.insightsPath.isEmpty)
     }
 
-    @Test("Tab enum has all four cases")
+    @Test("Tab enum has all five cases")
     func allTabs() {
         let tabs = AppTab.allCases
-        #expect(tabs.count == 4)
+        #expect(tabs.count == 5)
         #expect(tabs.contains(.dashboard))
         #expect(tabs.contains(.feeding))
+        #expect(tabs.contains(.diapers))
         #expect(tabs.contains(.selfCare))
         #expect(tabs.contains(.insights))
     }

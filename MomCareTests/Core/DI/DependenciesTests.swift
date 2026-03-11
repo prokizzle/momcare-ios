@@ -20,6 +20,7 @@ struct DependenciesTests {
         let modelContainer = try ModelContainer(
             for: BabyModel.self, FeedingModel.self,
             SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
+            DiaperModel.self,
             configurations: config
         )
         let deps = AppDependencies(modelContext: modelContainer.mainContext)
@@ -34,6 +35,7 @@ struct DependenciesTests {
         let modelContainer = try ModelContainer(
             for: BabyModel.self, FeedingModel.self,
             SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
+            DiaperModel.self,
             configurations: config
         )
         let deps = AppDependencies(modelContext: modelContainer.mainContext)
@@ -48,11 +50,27 @@ struct DependenciesTests {
         let modelContainer = try ModelContainer(
             for: BabyModel.self, FeedingModel.self,
             SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
+            DiaperModel.self,
             configurations: config
         )
         let deps = AppDependencies(modelContext: modelContainer.mainContext)
         let repo = deps.makeSelfCareRepository()
         #expect(repo is SelfCareRepository)
+    }
+
+    @Test("AppDependencies creates real DiaperRepository")
+    @MainActor
+    func appDependenciesCreatesDiaperRepo() throws {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let modelContainer = try ModelContainer(
+            for: BabyModel.self, FeedingModel.self,
+            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
+            DiaperModel.self,
+            configurations: config
+        )
+        let deps = AppDependencies(modelContext: modelContainer.mainContext)
+        let repo = deps.makeDiaperRepository()
+        #expect(repo is DiaperRepository)
     }
 
     @Test("Environment key has default value")
@@ -103,6 +121,17 @@ private final class MockSelfCareRepository: SelfCareRepositoryProtocol {
 }
 
 @MainActor
+private final class MockDiaperRepository: DiaperRepositoryProtocol {
+    func getAll() async throws -> [Diaper] { [] }
+    func getById(_ id: UUID) async throws -> Diaper? { nil }
+    func create(_ entity: Diaper) async throws -> Diaper { entity }
+    func update(_ entity: Diaper) async throws -> Diaper { entity }
+    func delete(_ id: UUID) async throws {}
+    func getDiapersForBaby(_ babyId: UUID, limit: Int?) async throws -> [Diaper] { [] }
+    func getDiapersForDateRange(babyId: UUID, start: Date, end: Date) async throws -> [Diaper] { [] }
+}
+
+@MainActor
 private final class TestDependencies: DependencyContainer {
     func makeBabyRepository() -> any BabyRepositoryProtocol {
         MockBabyRepository()
@@ -114,5 +143,9 @@ private final class TestDependencies: DependencyContainer {
 
     func makeSelfCareRepository() -> any SelfCareRepositoryProtocol {
         MockSelfCareRepository()
+    }
+
+    func makeDiaperRepository() -> any DiaperRepositoryProtocol {
+        MockDiaperRepository()
     }
 }
