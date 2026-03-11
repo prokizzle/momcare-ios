@@ -7,13 +7,17 @@ struct BabyTests {
 
     @Test("ageInDays returns correct value")
     func ageInDays() {
-        let baby = Baby.fixture(dateOfBirth: Calendar.current.date(byAdding: .day, value: -5, to: .now)!)
+        let cal = Calendar.current
+        let dob = cal.date(byAdding: .day, value: -5, to: cal.startOfDay(for: .now))!
+        let baby = Baby.fixture(dateOfBirth: dob)
         #expect(baby.ageInDays == 5)
     }
 
     @Test("ageInWeeks returns correct value")
     func ageInWeeks() {
-        let baby = Baby.fixture(dateOfBirth: Calendar.current.date(byAdding: .day, value: -14, to: .now)!)
+        let cal = Calendar.current
+        let dob = cal.date(byAdding: .day, value: -14, to: cal.startOfDay(for: .now))!
+        let baby = Baby.fixture(dateOfBirth: dob)
         #expect(baby.ageInWeeks == 2)
     }
 
@@ -29,7 +33,10 @@ struct BabyTests {
         (13, "13 days")
     ])
     func ageStringDays(daysAgo: Int, expected: String) {
-        let baby = Baby.fixture(dateOfBirth: Calendar.current.date(byAdding: .day, value: -daysAgo, to: .now)!)
+        let cal = Calendar.current
+        let startOfToday = cal.startOfDay(for: .now)
+        let dob = cal.date(byAdding: .day, value: -daysAgo, to: startOfToday)!
+        let baby = Baby.fixture(dateOfBirth: dob)
         #expect(baby.ageString == expected)
     }
 
@@ -39,7 +46,10 @@ struct BabyTests {
         (49, "7 weeks")
     ])
     func ageStringWeeks(daysAgo: Int, expected: String) {
-        let baby = Baby.fixture(dateOfBirth: Calendar.current.date(byAdding: .day, value: -daysAgo, to: .now)!)
+        let cal = Calendar.current
+        let startOfToday = cal.startOfDay(for: .now)
+        let dob = cal.date(byAdding: .day, value: -daysAgo, to: startOfToday)!
+        let baby = Baby.fixture(dateOfBirth: dob)
         #expect(baby.ageString == expected)
     }
 

@@ -20,7 +20,7 @@ struct DependenciesTests {
         let modelContainer = try ModelContainer(
             for: BabyModel.self, FeedingModel.self,
             SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self,
+            DiaperModel.self, BabySleepModel.self,
             configurations: config
         )
         let deps = AppDependencies(modelContext: modelContainer.mainContext)
@@ -35,7 +35,7 @@ struct DependenciesTests {
         let modelContainer = try ModelContainer(
             for: BabyModel.self, FeedingModel.self,
             SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self,
+            DiaperModel.self, BabySleepModel.self,
             configurations: config
         )
         let deps = AppDependencies(modelContext: modelContainer.mainContext)
@@ -50,7 +50,7 @@ struct DependenciesTests {
         let modelContainer = try ModelContainer(
             for: BabyModel.self, FeedingModel.self,
             SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self,
+            DiaperModel.self, BabySleepModel.self,
             configurations: config
         )
         let deps = AppDependencies(modelContext: modelContainer.mainContext)
@@ -65,12 +65,27 @@ struct DependenciesTests {
         let modelContainer = try ModelContainer(
             for: BabyModel.self, FeedingModel.self,
             SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self,
+            DiaperModel.self, BabySleepModel.self,
             configurations: config
         )
         let deps = AppDependencies(modelContext: modelContainer.mainContext)
         let repo = deps.makeDiaperRepository()
         #expect(repo is DiaperRepository)
+    }
+
+    @Test("AppDependencies creates real SleepRepository")
+    @MainActor
+    func appDependenciesCreatesSleepRepo() throws {
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let modelContainer = try ModelContainer(
+            for: BabyModel.self, FeedingModel.self,
+            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
+            DiaperModel.self, BabySleepModel.self,
+            configurations: config
+        )
+        let deps = AppDependencies(modelContext: modelContainer.mainContext)
+        let repo = deps.makeSleepRepository()
+        #expect(repo is SleepRepository)
     }
 
     @Test("Environment key has default value")
