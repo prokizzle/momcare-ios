@@ -7,6 +7,7 @@ protocol DependencyContainer {
     func makeFeedingRepository() -> any FeedingRepositoryProtocol
     func makeSelfCareRepository() -> any SelfCareRepositoryProtocol
     func makeDiaperRepository() -> any DiaperRepositoryProtocol
+    func makeSleepRepository() -> any SleepRepositoryProtocol
 }
 
 @MainActor
@@ -32,6 +33,10 @@ final class AppDependencies: DependencyContainer {
     func makeDiaperRepository() -> any DiaperRepositoryProtocol {
         DiaperRepository(modelContext: modelContext)
     }
+
+    func makeSleepRepository() -> any SleepRepositoryProtocol {
+        SleepRepository(modelContext: modelContext)
+    }
 }
 
 struct DependenciesKey: @preconcurrency EnvironmentKey {
@@ -42,7 +47,7 @@ struct DependenciesKey: @preconcurrency EnvironmentKey {
         let container = try! ModelContainer(
             for: BabyModel.self, FeedingModel.self,
             SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self,
+            DiaperModel.self, BabySleepModel.self,
             configurations: config
         )
         return AppDependencies(modelContext: container.mainContext)
