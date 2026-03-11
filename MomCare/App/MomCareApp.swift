@@ -5,7 +5,7 @@ import FirebaseCore
 @main
 struct MomCareApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema(versionedSchema: SchemaV2.self)
+        let schema = Schema(versionedSchema: SchemaV3.self)
         let modelConfiguration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
@@ -55,6 +55,7 @@ struct MomCareApp: App {
     @State private var feedingViewModel: FeedingViewModel?
     @State private var selfCareViewModel: SelfCareViewModel?
     @State private var dashboardViewModel: DashboardViewModel?
+    @State private var diaperViewModel: DiaperViewModel?
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -63,7 +64,8 @@ struct MomCareApp: App {
                 babyViewModel: babyViewModel,
                 feedingViewModel: feedingViewModel,
                 selfCareViewModel: selfCareViewModel,
-                dashboardViewModel: dashboardViewModel
+                dashboardViewModel: dashboardViewModel,
+                diaperViewModel: diaperViewModel
             )
             .task {
                 if babyViewModel == nil {
@@ -86,6 +88,7 @@ struct MomCareApp: App {
                         repository: deps.makeSelfCareRepository(),
                         contentLibrary: contentLibrary
                     )
+                    diaperViewModel = DiaperViewModel(repository: deps.makeDiaperRepository())
                     if let scVM = selfCareViewModel {
                         feedingViewModel?.onFeedingEnded = { @MainActor [weak scVM] babyId, duration in
                             Task {
