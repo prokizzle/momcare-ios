@@ -19,7 +19,25 @@ struct MomCareApp: App {
                 configurations: [modelConfiguration]
             )
         } catch {
+#if DEBUG
+            // In development, an unknown schema version means a store from a previous
+            // intermediate build is on disk. Delete it and start fresh rather than crashing.
+            print("ModelContainer failed (\(error)). Attempting store recovery in DEBUG mode.")
+            let storeURL = modelConfiguration.url
+            let fileManager = FileManager.default
+            let storeFiles = [storeURL, storeURL.appendingPathExtension("shm"), storeURL.appendingPathExtension("wal")]
+            for url in storeFiles where fileManager.fileExists(atPath: url.path) {
+                try? fileManager.removeItem(at: url)
+            }
+            print("Deleted corrupt store at \(storeURL). Starting fresh.")
+            do {
+                return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            } catch {
+                fatalError("Could not create ModelContainer even after store reset: \(error)")
+            }
+#else
             fatalError("Could not create ModelContainer: \(error)")
+#endif
         }
     }()
 
@@ -36,6 +54,7 @@ struct MomCareApp: App {
     @State private var babyViewModel: BabyViewModel?
     @State private var feedingViewModel: FeedingViewModel?
     @State private var selfCareViewModel: SelfCareViewModel?
+    @State private var dashboardViewModel: DashboardViewModel?
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -43,7 +62,8 @@ struct MomCareApp: App {
             ContentView(
                 babyViewModel: babyViewModel,
                 feedingViewModel: feedingViewModel,
-                selfCareViewModel: selfCareViewModel
+                selfCareViewModel: selfCareViewModel,
+                dashboardViewModel: dashboardViewModel
             )
             .task {
                 if babyViewModel == nil {
@@ -52,6 +72,10 @@ struct MomCareApp: App {
                     await babyVM.loadBabies()
                     babyViewModel = babyVM
                     feedingViewModel = FeedingViewModel(repository: deps.makeFeedingRepository())
+                    dashboardViewModel = DashboardViewModel(
+                        feedingRepository: deps.makeFeedingRepository(),
+                        selfCareRepository: deps.makeSelfCareRepository()
+                    )
                     let contentLibrary = (try? ContentLibrary.loadFromBundle()) ?? ContentLibrary(
                         affirmations: [],
                         pepTalks: [],

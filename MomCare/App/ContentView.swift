@@ -5,6 +5,7 @@ struct ContentView: View {
     var babyViewModel: BabyViewModel?
     var feedingViewModel: FeedingViewModel?
     var selfCareViewModel: SelfCareViewModel?
+    var dashboardViewModel: DashboardViewModel?
     @State private var showAddBaby = false
 
     var body: some View {
@@ -32,12 +33,15 @@ struct ContentView: View {
     private func mainTabView(babyViewModel: BabyViewModel) -> some View {
         TabView(selection: $navigation.selectedTab) {
             NavigationStack(path: $navigation.dashboardPath) {
-                Text("Mission Control")
-                    .toolbar {
-                        ToolbarItem(placement: .topBarLeading) {
-                            BabySelectorView(viewModel: babyViewModel)
-                        }
+                DashboardScreen(
+                    viewModel: dashboardViewModel,
+                    babyId: babyViewModel.selectedBaby?.id
+                )
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        BabySelectorView(viewModel: babyViewModel)
                     }
+                }
             }
             .tabItem {
                 Label("Dashboard", systemImage: "heart.text.clipboard")
