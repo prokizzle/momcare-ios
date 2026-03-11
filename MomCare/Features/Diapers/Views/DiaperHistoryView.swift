@@ -4,6 +4,7 @@ import SwiftUI
 struct DiaperHistoryView: View {
     let viewModel: DiaperViewModel
     let babyId: UUID
+    @State private var diaperToDelete: Diaper?
 
     private let dayFormatter: DateFormatter = {
         let fmt = DateFormatter()
@@ -31,6 +32,21 @@ struct DiaperHistoryView: View {
         .task(id: babyId) {
             await viewModel.loadDiapers(babyId: babyId)
         }
+        .confirmationDialog(
+            "Delete Diaper?",
+            isPresented: Binding(
+                get: { diaperToDelete != nil },
+                set: { if !$0 { diaperToDelete = nil } }
+            )
+        ) {
+            Button("Delete", role: .destructive) {
+                if let diaper = diaperToDelete {
+                    Task { await viewModel.deleteDiaper(id: diaper.id) }
+                }
+            }
+        } message: {
+            Text("This diaper record will be removed.")
+        }
     }
 
     @ViewBuilder
@@ -41,10 +57,8 @@ struct DiaperHistoryView: View {
                     ForEach(group.entries) { diaper in
                         DiaperRow(diaper: diaper, timeFormatter: timeFormatter)
                             .swipeActions(edge: .trailing) {
-                                Button(role: .destructive) {
-                                    Task { await viewModel.deleteDiaper(id: diaper.id) }
-                                } label: {
-                                    Label("Delete", systemImage: "trash")
+                                Button("Delete", role: .destructive) {
+                                    diaperToDelete = diaper
                                 }
                             }
                     }

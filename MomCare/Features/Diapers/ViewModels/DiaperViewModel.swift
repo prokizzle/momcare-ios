@@ -40,6 +40,7 @@ final class DiaperViewModel {
     // MARK: - Load
 
     func loadDiapers(babyId: UUID) async {
+        error = nil
         isLoading = true
         defer { isLoading = false }
         do {
@@ -65,6 +66,7 @@ final class DiaperViewModel {
     }
 
     func deleteDiaper(id: UUID) async {
+        error = nil
         do {
             try await repository.delete(id)
             diapers.removeAll { $0.id == id }

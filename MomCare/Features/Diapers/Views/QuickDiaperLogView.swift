@@ -197,7 +197,7 @@ struct QuickDiaperLogView: View {
         Button {
             guard !isLogging else { return }
             isLogging = true
-            Task {
+            Task { @MainActor in
                 let diaper = Diaper(
                     id: UUID(),
                     babyId: babyId,

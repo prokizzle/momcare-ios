@@ -1,18 +1,6 @@
 import Foundation
 import SwiftData
 
-// MARK: - Protocol
-
-protocol DiaperRepositoryProtocol: Sendable {
-    func getAll() async throws -> [Diaper]
-    func getById(_ id: UUID) async throws -> Diaper?
-    func create(_ entity: Diaper) async throws -> Diaper
-    func update(_ entity: Diaper) async throws -> Diaper
-    func delete(_ id: UUID) async throws
-    func getDiapersForBaby(_ babyId: UUID, limit: Int?) async throws -> [Diaper]
-    func getDiapersForDateRange(babyId: UUID, start: Date, end: Date) async throws -> [Diaper]
-}
-
 // MARK: - Implementation
 
 @MainActor
