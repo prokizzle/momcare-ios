@@ -53,13 +53,19 @@ struct MomCareApp: App {
 
     @State private var babyViewModel: BabyViewModel?
     @State private var selfCareViewModel: SelfCareViewModel?
+    @State private var dashboardViewModel: DashboardViewModel?
+    @State private var babyActivityEngine: BabyActivityEngine?
+    @State private var journalViewModel: JournalViewModel?
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
             ContentView(
                 babyViewModel: babyViewModel,
-                selfCareViewModel: selfCareViewModel
+                selfCareViewModel: selfCareViewModel,
+                dashboardViewModel: dashboardViewModel,
+                babyActivityEngine: babyActivityEngine,
+                journalViewModel: journalViewModel
             )
             .task {
                 if babyViewModel == nil {
@@ -77,6 +83,41 @@ struct MomCareApp: App {
                         repository: deps.makeSelfCareRepository(),
                         contentLibrary: contentLibrary
                     )
+
+                    // Dashboard
+                    let dashboardVM = DashboardViewModel(
+                        feedingRepository: deps.makeFeedingRepository(),
+                        selfCareRepository: deps.makeSelfCareRepository()
+                    )
+                    dashboardViewModel = dashboardVM
+
+                    // BabyActivityEngine
+                    let engine = BabyActivityEngine(
+                        sleepRepository: deps.makeSleepRepository(),
+                        feedingRepository: deps.makeFeedingRepository(),
+                        diaperRepository: deps.makeDiaperRepository()
+                    )
+                    if let babyId = babyVM.selectedBaby?.id {
+                        await engine.loadInProgress(babyId: babyId)
+                    }
+                    babyActivityEngine = engine
+
+                    // Journal
+                    journalViewModel = JournalViewModel(
+                        sleepRepository: deps.makeSleepRepository(),
+                        feedingRepository: deps.makeFeedingRepository(),
+                        diaperRepository: deps.makeDiaperRepository()
+                    )
+                }
+            }
+            .onChange(of: scenePhase) { _, newPhase in
+                switch newPhase {
+                case .background:
+                    babyActivityEngine?.pauseTimers()
+                case .active:
+                    babyActivityEngine?.resumeTimersIfNeeded()
+                default:
+                    break
                 }
             }
         }

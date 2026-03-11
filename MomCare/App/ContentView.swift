@@ -1,28 +1,35 @@
 import SwiftUI
 
+@MainActor
 struct ContentView: View {
     @State private var navigation = AppNavigation()
+
     var babyViewModel: BabyViewModel?
     var selfCareViewModel: SelfCareViewModel?
+    var dashboardViewModel: DashboardViewModel?
+    var babyActivityEngine: BabyActivityEngine?
+    var journalViewModel: JournalViewModel?
+
     @State private var showAddBaby = false
 
     var body: some View {
         Group {
             if let babyViewModel {
-                mainTabView(babyViewModel: babyViewModel)
+                if let engine = babyActivityEngine {
+                    mainTabView(babyViewModel: babyViewModel)
+                        .environment(engine)
+                } else {
+                    ProgressView()
+                }
             } else {
                 ProgressView()
             }
         }
         .onChange(of: babyViewModel?.babies.isEmpty) { _, isEmpty in
-            if isEmpty == true {
-                showAddBaby = true
-            }
+            if isEmpty == true { showAddBaby = true }
         }
         .sheet(isPresented: $showAddBaby) {
-            if let babyViewModel {
-                AddBabyView(viewModel: babyViewModel)
-            }
+            if let babyViewModel { AddBabyView(viewModel: babyViewModel) }
         }
         .environment(navigation)
     }
@@ -41,32 +48,31 @@ struct ContentView: View {
     @ViewBuilder
     private func nowTab(babyViewModel: BabyViewModel) -> some View {
         NavigationStack(path: $navigation.nowPath) {
-            Text("Now")
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        BabySelectorView(viewModel: babyViewModel)
-                    }
+            NowScreen(
+                dashboardViewModel: dashboardViewModel,
+                babyId: babyViewModel.selectedBaby?.id
+            )
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    BabySelectorView(viewModel: babyViewModel)
                 }
+            }
         }
-        .tabItem {
-            Label("Now", systemImage: "sun.horizon.fill")
-        }
+        .tabItem { Label("Now", systemImage: "sun.horizon.fill") }
         .tag(AppTab.now)
     }
 
     @ViewBuilder
     private func babyTab(babyViewModel: BabyViewModel) -> some View {
         NavigationStack(path: $navigation.babyPath) {
-            Text("Baby")
+            BabyScreen(babyId: babyViewModel.selectedBaby?.id)
                 .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         BabySelectorView(viewModel: babyViewModel)
                     }
                 }
         }
-        .tabItem {
-            Label("Baby", systemImage: "figure.and.child.holdinghands")
-        }
+        .tabItem { Label("Baby", systemImage: "figure.and.child.holdinghands") }
         .tag(AppTab.baby)
     }
 
@@ -80,36 +86,33 @@ struct ContentView: View {
                     }
                 }
         }
-        .tabItem {
-            Label("Self-Care", systemImage: "sparkles")
-        }
+        .tabItem { Label("Self-Care", systemImage: "sparkles") }
         .tag(AppTab.selfCare)
     }
 
     @ViewBuilder
     private func journalTab(babyViewModel: BabyViewModel) -> some View {
         NavigationStack(path: $navigation.journalPath) {
-            Text("Journal")
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        BabySelectorView(viewModel: babyViewModel)
-                    }
+            JournalScreen(
+                viewModel: journalViewModel,
+                babyId: babyViewModel.selectedBaby?.id
+            )
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    BabySelectorView(viewModel: babyViewModel)
                 }
+            }
         }
-        .tabItem {
-            Label("Journal", systemImage: "book.pages")
-        }
+        .tabItem { Label("Journal", systemImage: "book.pages") }
         .tag(AppTab.journal)
     }
 
     @ViewBuilder
     private func planTab() -> some View {
         NavigationStack(path: $navigation.planPath) {
-            Text("Plan")
+            PlanScreen()
         }
-        .tabItem {
-            Label("Plan", systemImage: "map")
-        }
+        .tabItem { Label("Plan", systemImage: "map.fill") }
         .tag(AppTab.plan)
     }
 }
