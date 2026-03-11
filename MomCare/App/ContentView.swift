@@ -2,7 +2,7 @@ import SwiftUI
 
 @MainActor
 struct ContentView: View {
-    @State private var navigation = AppNavigation()
+    @Environment(AppNavigation.self) private var navigation
 
     var babyViewModel: BabyViewModel?
     var selfCareViewModel: SelfCareViewModel?
@@ -31,7 +31,6 @@ struct ContentView: View {
         .sheet(isPresented: $showAddBaby) {
             if let babyViewModel { AddBabyView(viewModel: babyViewModel) }
         }
-        .environment(navigation)
     }
 
     @ViewBuilder

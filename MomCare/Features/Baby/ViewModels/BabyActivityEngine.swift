@@ -97,18 +97,25 @@ final class BabyActivityEngine {
             createdAt: start,
             updatedAt: start
         )
-        _ = try? await sleepRepository.create(sleep)
+        do {
+            _ = try await sleepRepository.create(sleep)
+        } catch {
+            // Creation failures are non-fatal for timers; consider logging in future
+        }
     }
 
     func endNap(babyId: UUID) async {
         guard napStartTime != nil else { return }
         stopNapTick()
         let end = Date.now
-        if let existing = try? await sleepRepository.getInProgressSleep(babyId: babyId) {
-            var updated = existing
-            updated.endTime = end
-            updated.updatedAt = end
-            _ = try? await sleepRepository.update(updated)
+        do {
+            if var existing = try await sleepRepository.getInProgressSleep(babyId: babyId) {
+                existing.endTime = end
+                existing.updatedAt = end
+                _ = try await sleepRepository.update(existing)
+            }
+        } catch {
+            // Non-fatal: UI timers still stop even if persistence fails
         }
         napStartTime = nil
         napElapsed = 0
@@ -141,7 +148,11 @@ final class BabyActivityEngine {
             createdAt: start,
             updatedAt: start
         )
-        _ = try? await feedingRepository.create(feeding)
+        do {
+            _ = try await feedingRepository.create(feeding)
+        } catch {
+            // Non-fatal: user-visible timers remain accurate even if save fails
+        }
     }
 
     func endFeeding(babyId: UUID) async {
@@ -149,11 +160,14 @@ final class BabyActivityEngine {
         stopFeedingTick()
         let end = Date.now
         let duration = end.timeIntervalSince(start)
-        if let existing = try? await feedingRepository.getInProgressFeeding(babyId: babyId) {
-            var updated = existing
-            updated.endTime = end
-            updated.updatedAt = end
-            _ = try? await feedingRepository.update(updated)
+        do {
+            if var existing = try await feedingRepository.getInProgressFeeding(babyId: babyId) {
+                existing.endTime = end
+                existing.updatedAt = end
+                _ = try await feedingRepository.update(existing)
+            }
+        } catch {
+            // Non-fatal: duration callback still fires
         }
         onFeedingEnded?(babyId, duration)
         feedingStartTime = nil
@@ -189,7 +203,11 @@ final class BabyActivityEngine {
             createdAt: now,
             updatedAt: now
         )
-        _ = try? await diaperRepository.create(diaper)
+        do {
+            _ = try await diaperRepository.create(diaper)
+        } catch {
+            // Non-fatal: quick-log interaction should not block on persistence
+        }
     }
 
     // MARK: - Background / Foreground

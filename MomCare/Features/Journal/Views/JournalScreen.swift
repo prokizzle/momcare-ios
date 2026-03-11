@@ -40,9 +40,6 @@ struct JournalScreen: View {
             didLoad = true
             await viewModel.load(babyId: babyId)
         }
-        .onChange(of: viewModel.selectedFilter) { _, _ in
-            Task { if let babyId { await viewModel.load(babyId: babyId) } }
-        }
     }
 
     @ViewBuilder

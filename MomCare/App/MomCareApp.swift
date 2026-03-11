@@ -56,6 +56,7 @@ struct MomCareApp: App {
     @State private var dashboardViewModel: DashboardViewModel?
     @State private var babyActivityEngine: BabyActivityEngine?
     @State private var journalViewModel: JournalViewModel?
+    @State private var appNavigation = AppNavigation()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
@@ -67,6 +68,7 @@ struct MomCareApp: App {
                 babyActivityEngine: babyActivityEngine,
                 journalViewModel: journalViewModel
             )
+            .environment(appNavigation)
             .task {
                 if babyViewModel == nil {
                     let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)
@@ -119,6 +121,9 @@ struct MomCareApp: App {
                 default:
                     break
                 }
+            }
+            .onOpenURL { url in
+                appNavigation.handleURL(url)
             }
         }
         .modelContainer(sharedModelContainer)

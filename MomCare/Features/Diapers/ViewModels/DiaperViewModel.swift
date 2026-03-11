@@ -65,6 +65,33 @@ final class DiaperViewModel {
         }
     }
 
+    struct QuickLogParams {
+        let babyId: UUID
+        let type: Diaper.DiaperType
+        let stoolConsistency: Diaper.StoolConsistency?
+        let stoolColor: Diaper.StoolColor?
+        let hasRash: Bool
+        let notes: String
+    }
+
+    @discardableResult
+    func logQuickDiaper(_ params: QuickLogParams) async -> Bool {
+        let now = Date.now
+        let diaper = Diaper(
+            id: UUID(),
+            babyId: params.babyId,
+            timestamp: now,
+            type: params.type,
+            stoolConsistency: params.stoolConsistency,
+            stoolColor: params.stoolColor,
+            hasRash: params.hasRash,
+            notes: params.notes.isEmpty ? nil : params.notes,
+            createdAt: now,
+            updatedAt: now
+        )
+        return await logDiaper(diaper)
+    }
+
     func deleteDiaper(id: UUID) async {
         error = nil
         do {

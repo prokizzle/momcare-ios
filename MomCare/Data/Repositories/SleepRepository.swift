@@ -92,13 +92,16 @@ final class SleepRepository: SleepRepositoryProtocol {
 
     func getInProgressSleep(babyId: UUID) async throws -> BabySleep? {
         let fetchBabyId = babyId
-        let descriptor = FetchDescriptor<BabySleepModel>(
+        // #Predicate nil comparison ($0.endTime == nil) doesn't compile under Swift 6;
+        // limit fetch to recent sleeps to keep the in-memory scan cheap.
+        var descriptor = FetchDescriptor<BabySleepModel>(
             predicate: #Predicate<BabySleepModel> {
                 $0.babyId == fetchBabyId &&
-                $0.isSoftDeleted == false &&
-                $0.endTime == nil
-            }
+                $0.isSoftDeleted == false
+            },
+            sortBy: [SortDescriptor(\.startTime, order: .reverse)]
         )
-        return try modelContext.fetch(descriptor).first?.toEntity()
+        descriptor.fetchLimit = 20
+        return try modelContext.fetch(descriptor).first { $0.endTime == nil }?.toEntity()
     }
 }

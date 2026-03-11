@@ -198,19 +198,15 @@ struct QuickDiaperLogView: View {
             guard !isLogging else { return }
             isLogging = true
             Task { @MainActor in
-                let diaper = Diaper(
-                    id: UUID(),
+                let params = DiaperViewModel.QuickLogParams(
                     babyId: babyId,
-                    timestamp: .now,
                     type: selectedType,
                     stoolConsistency: stoolConsistency,
                     stoolColor: stoolColor,
                     hasRash: hasRash,
-                    notes: notes.isEmpty ? nil : notes,
-                    createdAt: .now,
-                    updatedAt: .now
+                    notes: notes
                 )
-                if await viewModel.logDiaper(diaper) {
+                if await viewModel.logQuickDiaper(params) {
                     MCHaptic.success()
                     onDismiss()
                 } else {

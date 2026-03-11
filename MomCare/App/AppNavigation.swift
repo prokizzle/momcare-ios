@@ -19,6 +19,17 @@ final class AppNavigation {
     var planPath = NavigationPath()
 
     func handleURL(_ url: URL) {
-        assertionFailure("Deep link received but routing not yet implemented: \(url)")
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return
+        }
+
+        let pathComponents = components.path
+            .split(separator: "/")
+            .map(String.init)
+
+        if let first = pathComponents.first,
+           let tab = AppTab(rawValue: first) {
+            selectedTab = tab
+        }
     }
 }

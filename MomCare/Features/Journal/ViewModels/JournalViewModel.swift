@@ -5,12 +5,22 @@ import Foundation
 final class JournalViewModel {
     private(set) var entries: [JournalEntry] = []
     private(set) var groupedEntries: [(String, [JournalEntry])] = []
-    var selectedFilter: JournalEntryKind?
+    var selectedFilter: JournalEntryKind? {
+        didSet {
+            rebuildGrouped()
+        }
+    }
     var isLoading = false
 
     private let sleepRepository: any SleepRepositoryProtocol
     private let feedingRepository: any FeedingRepositoryProtocol
     private let diaperRepository: any DiaperRepositoryProtocol
+
+    private lazy var dateFormatter: DateFormatter = {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "EEE MMM d"
+        return fmt
+    }()
 
     init(
         sleepRepository: any SleepRepositoryProtocol,
@@ -76,26 +86,27 @@ final class JournalViewModel {
 
     private func rebuildGrouped() {
         let calendar = Calendar.current
-        let grouped = Dictionary(grouping: filteredEntries) { entry -> String in
+        let groupedDict = Dictionary(grouping: filteredEntries) { entry -> String in
             groupKey(entry, calendar: calendar)
         }
-        let sortedKeys = grouped
-            .sorted { lhs, rhs in
-                let lDate = filteredEntries
-                    .first { groupKey($0, calendar: calendar) == lhs.key }?.timestamp ?? .distantPast
-                let rDate = filteredEntries
-                    .first { groupKey($0, calendar: calendar) == rhs.key }?.timestamp ?? .distantPast
-                return lDate > rDate
-            }
-        groupedEntries = sortedKeys
-            .map { ($0.key, $0.value.sorted { $0.timestamp > $1.timestamp }) }
+
+        let keyedEntries: [(key: String, entries: [JournalEntry])] = groupedDict.map { key, value in
+            let sortedEntries = value.sorted { $0.timestamp > $1.timestamp }
+            return (key: key, entries: sortedEntries)
+        }
+
+        let sorted = keyedEntries.sorted { lhs, rhs in
+            let lDate = lhs.entries.first?.timestamp ?? .distantPast
+            let rDate = rhs.entries.first?.timestamp ?? .distantPast
+            return lDate > rDate
+        }
+
+        groupedEntries = sorted.map { ($0.key, $0.entries) }
     }
 
     private func groupKey(_ entry: JournalEntry, calendar: Calendar = .current) -> String {
         if calendar.isDateInToday(entry.timestamp) { return "Today" }
         if calendar.isDateInYesterday(entry.timestamp) { return "Yesterday" }
-        let fmt = DateFormatter()
-        fmt.dateFormat = "EEE MMM d"
-        return fmt.string(from: entry.timestamp)
+        return dateFormatter.string(from: entry.timestamp)
     }
 }

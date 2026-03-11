@@ -26,6 +26,8 @@ struct BabyStatusCard: View {
 
     @ViewBuilder
     private var inProgressRow: some View {
+        @Environment(\.accessibilityReduceMotion) var reduceMotion
+
         HStack {
             VStack(alignment: .leading, spacing: MCSpacing.xs) {
                 Text("Feeding in progress")
@@ -39,7 +41,7 @@ struct BabyStatusCard: View {
             Image(systemName: "drop.fill")
                 .font(.title2)
                 .foregroundStyle(MCColor.feeding)
-                .symbolEffect(.pulse)
+                .symbolEffect(reduceMotion ? nil : .pulse)
         }
     }
 
