@@ -5,7 +5,7 @@ import FirebaseCore
 @main
 struct MomCareApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema(versionedSchema: SchemaV3.self)
+        let schema = Schema(versionedSchema: SchemaV4.self)
         let modelConfiguration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
@@ -52,32 +52,31 @@ struct MomCareApp: App {
     }
 
     @State private var babyViewModel: BabyViewModel?
-    @State private var feedingViewModel: FeedingViewModel?
     @State private var selfCareViewModel: SelfCareViewModel?
     @State private var dashboardViewModel: DashboardViewModel?
-    @State private var diaperViewModel: DiaperViewModel?
+    @State private var babyActivityEngine: BabyActivityEngine?
+    @State private var journalViewModel: JournalViewModel?
+    @State private var sleepViewModel: SleepViewModel?
+    @State private var appNavigation = AppNavigation()
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
             ContentView(
                 babyViewModel: babyViewModel,
-                feedingViewModel: feedingViewModel,
                 selfCareViewModel: selfCareViewModel,
                 dashboardViewModel: dashboardViewModel,
-                diaperViewModel: diaperViewModel
+                babyActivityEngine: babyActivityEngine,
+                journalViewModel: journalViewModel,
+                sleepViewModel: sleepViewModel
             )
+            .environment(appNavigation)
             .task {
                 if babyViewModel == nil {
                     let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)
                     let babyVM = BabyViewModel(repository: deps.makeBabyRepository())
                     await babyVM.loadBabies()
                     babyViewModel = babyVM
-                    feedingViewModel = FeedingViewModel(repository: deps.makeFeedingRepository())
-                    dashboardViewModel = DashboardViewModel(
-                        feedingRepository: deps.makeFeedingRepository(),
-                        selfCareRepository: deps.makeSelfCareRepository()
-                    )
                     let contentLibrary = (try? ContentLibrary.loadFromBundle()) ?? ContentLibrary(
                         affirmations: [],
                         pepTalks: [],
@@ -88,25 +87,50 @@ struct MomCareApp: App {
                         repository: deps.makeSelfCareRepository(),
                         contentLibrary: contentLibrary
                     )
-                    diaperViewModel = DiaperViewModel(repository: deps.makeDiaperRepository())
-                    if let scVM = selfCareViewModel {
-                        feedingViewModel?.onFeedingEnded = { @MainActor [weak scVM] babyId, duration in
-                            Task {
-                                await scVM?.handleEvent(.feedingEnded(babyId: babyId, duration: duration))
-                            }
-                        }
+
+                    // Dashboard
+                    let dashboardVM = DashboardViewModel(
+                        feedingRepository: deps.makeFeedingRepository(),
+                        selfCareRepository: deps.makeSelfCareRepository()
+                    )
+                    dashboardViewModel = dashboardVM
+
+                    // BabyActivityEngine
+                    let engine = BabyActivityEngine(
+                        sleepRepository: deps.makeSleepRepository(),
+                        feedingRepository: deps.makeFeedingRepository(),
+                        diaperRepository: deps.makeDiaperRepository()
+                    )
+                    if let babyId = babyVM.selectedBaby?.id {
+                        await engine.loadInProgress(babyId: babyId)
                     }
+                    babyActivityEngine = engine
+
+                    // Sleep
+                    sleepViewModel = SleepViewModel(
+                        repository: deps.makeSleepRepository()
+                    )
+
+                    // Journal
+                    journalViewModel = JournalViewModel(
+                        sleepRepository: deps.makeSleepRepository(),
+                        feedingRepository: deps.makeFeedingRepository(),
+                        diaperRepository: deps.makeDiaperRepository()
+                    )
                 }
             }
             .onChange(of: scenePhase) { _, newPhase in
                 switch newPhase {
-                case .active:
-                    feedingViewModel?.resumeTimerIfNeeded()
                 case .background:
-                    feedingViewModel?.pauseTimer()
+                    babyActivityEngine?.pauseTimers()
+                case .active:
+                    babyActivityEngine?.resumeTimersIfNeeded()
                 default:
                     break
                 }
+            }
+            .onOpenURL { url in
+                appNavigation.handleURL(url)
             }
         }
         .modelContainer(sharedModelContainer)

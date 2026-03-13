@@ -40,6 +40,17 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.feelingmindful.momcare</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>momcare</string>
+			</array>
+		</dict>
+	</array>
 	<key>NSHealthShareUsageDescription</key>
 	<string>MomCare reads your sleep and activity data to help track your self-care progress.</string>
 	<key>NSHealthUpdateUsageDescription</key>

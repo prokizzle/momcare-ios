@@ -8,8 +8,7 @@ struct DiaperRepositoryTests {
 
     @MainActor
     private func makeSUT() throws -> DiaperRepository {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: DiaperModel.self, configurations: config)
+        let container = try TestModelContainerFactory.makeContainer()
         return DiaperRepository(modelContext: ModelContext(container))
     }
 

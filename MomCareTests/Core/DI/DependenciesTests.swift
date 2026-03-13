@@ -16,14 +16,7 @@ struct DependenciesTests {
     @Test("AppDependencies creates real BabyRepository")
     @MainActor
     func appDependenciesCreatesBabyRepo() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let modelContainer = try ModelContainer(
-            for: BabyModel.self, FeedingModel.self,
-            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self,
-            configurations: config
-        )
-        let deps = AppDependencies(modelContext: modelContainer.mainContext)
+        let deps = try TestModelContainerFactory.makeDependencies()
         let repo = deps.makeBabyRepository()
         #expect(repo is BabyRepository)
     }
@@ -31,14 +24,7 @@ struct DependenciesTests {
     @Test("AppDependencies creates real FeedingRepository")
     @MainActor
     func appDependenciesCreatesFeedingRepo() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let modelContainer = try ModelContainer(
-            for: BabyModel.self, FeedingModel.self,
-            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self,
-            configurations: config
-        )
-        let deps = AppDependencies(modelContext: modelContainer.mainContext)
+        let deps = try TestModelContainerFactory.makeDependencies()
         let repo = deps.makeFeedingRepository()
         #expect(repo is FeedingRepository)
     }
@@ -46,14 +32,7 @@ struct DependenciesTests {
     @Test("AppDependencies creates real SelfCareRepository")
     @MainActor
     func appDependenciesCreatesSelfCareRepo() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let modelContainer = try ModelContainer(
-            for: BabyModel.self, FeedingModel.self,
-            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self,
-            configurations: config
-        )
-        let deps = AppDependencies(modelContext: modelContainer.mainContext)
+        let deps = try TestModelContainerFactory.makeDependencies()
         let repo = deps.makeSelfCareRepository()
         #expect(repo is SelfCareRepository)
     }
@@ -61,16 +40,17 @@ struct DependenciesTests {
     @Test("AppDependencies creates real DiaperRepository")
     @MainActor
     func appDependenciesCreatesDiaperRepo() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let modelContainer = try ModelContainer(
-            for: BabyModel.self, FeedingModel.self,
-            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self,
-            configurations: config
-        )
-        let deps = AppDependencies(modelContext: modelContainer.mainContext)
+        let deps = try TestModelContainerFactory.makeDependencies()
         let repo = deps.makeDiaperRepository()
         #expect(repo is DiaperRepository)
+    }
+
+    @Test("AppDependencies creates real SleepRepository")
+    @MainActor
+    func appDependenciesCreatesSleepRepo() throws {
+        let deps = try TestModelContainerFactory.makeDependencies()
+        let repo = deps.makeSleepRepository()
+        #expect(repo is SleepRepository)
     }
 
     @Test("Environment key has default value")
@@ -132,6 +112,18 @@ private final class MockDiaperRepository: DiaperRepositoryProtocol {
 }
 
 @MainActor
+private final class MockSleepRepository: SleepRepositoryProtocol {
+    func getAll() async throws -> [BabySleep] { [] }
+    func getById(_ id: UUID) async throws -> BabySleep? { nil }
+    func create(_ entity: BabySleep) async throws -> BabySleep { entity }
+    func update(_ entity: BabySleep) async throws -> BabySleep { entity }
+    func delete(_ id: UUID) async throws {}
+    func getSleepsForBaby(_ babyId: UUID, limit: Int?) async throws -> [BabySleep] { [] }
+    func getSleepsForDateRange(babyId: UUID, start: Date, end: Date) async throws -> [BabySleep] { [] }
+    func getInProgressSleep(babyId: UUID) async throws -> BabySleep? { nil }
+}
+
+@MainActor
 private final class TestDependencies: DependencyContainer {
     func makeBabyRepository() -> any BabyRepositoryProtocol {
         MockBabyRepository()
@@ -147,5 +139,9 @@ private final class TestDependencies: DependencyContainer {
 
     func makeDiaperRepository() -> any DiaperRepositoryProtocol {
         MockDiaperRepository()
+    }
+
+    func makeSleepRepository() -> any SleepRepositoryProtocol {
+        MockSleepRepository()
     }
 }

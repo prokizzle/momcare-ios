@@ -20,6 +20,11 @@ build/
 .swiftpm/
 Package.resolved
 
+# Tuist
+Derived/
+.tuist-derived/
+Tuist/.build/
+
 # CocoaPods (not used, but just in case)
 Pods/
 

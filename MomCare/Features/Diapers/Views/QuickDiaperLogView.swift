@@ -13,6 +13,7 @@ struct QuickDiaperLogView: View {
     @State private var notes = ""
     @State private var showDetails = false
     @State private var isLogging = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         NavigationStack {
@@ -45,7 +46,7 @@ struct QuickDiaperLogView: View {
                     isSelected: selectedType == type
                 ) {
                     MCHaptic.tap()
-                    withAnimation(.spring(response: 0.2, dampingFraction: 0.7)) {
+                    withAnimation(reduceMotion ? nil : .spring(response: 0.2, dampingFraction: 0.7)) {
                         selectedType = type
                         if !type.hasStoolContext {
                             stoolConsistency = nil
@@ -64,7 +65,7 @@ struct QuickDiaperLogView: View {
         VStack(spacing: 0) {
             Button {
                 MCHaptic.tap()
-                withAnimation(.spring(response: 0.3, dampingFraction: 0.8)) {
+                withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8)) {
                     showDetails.toggle()
                 }
             } label: {
@@ -197,20 +198,16 @@ struct QuickDiaperLogView: View {
         Button {
             guard !isLogging else { return }
             isLogging = true
-            Task { @MainActor in
-                let diaper = Diaper(
-                    id: UUID(),
+            Task {
+                let params = DiaperViewModel.QuickLogParams(
                     babyId: babyId,
-                    timestamp: .now,
                     type: selectedType,
                     stoolConsistency: stoolConsistency,
                     stoolColor: stoolColor,
                     hasRash: hasRash,
-                    notes: notes.isEmpty ? nil : notes,
-                    createdAt: .now,
-                    updatedAt: .now
+                    notes: notes
                 )
-                if await viewModel.logDiaper(diaper) {
+                if await viewModel.logQuickDiaper(params) {
                     MCHaptic.success()
                     onDismiss()
                 } else {

@@ -8,12 +8,7 @@ struct SelfCareRepositoryTests {
 
     @MainActor
     private func makeSUT() throws -> SelfCareRepository {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(
-            for: SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            BabyModel.self, FeedingModel.self,
-            configurations: config
-        )
+        let container = try TestModelContainerFactory.makeContainer()
         let context = ModelContext(container)
         return SelfCareRepository(modelContext: context)
     }

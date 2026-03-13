@@ -1,24 +1,59 @@
 import SwiftUI
 
+enum BabyRoute: Hashable {
+    case sleepHistory
+    case sleepTimer
+}
+
+enum FeedingRoute: Hashable {
+    case detail(feedingId: UUID)
+    case timer
+}
+
 enum AppTab: String, CaseIterable, Sendable {
-    case dashboard
-    case feeding
-    case diapers
+    case now
+    case baby
     case selfCare
-    case insights
+    case journal
+    case plan
 }
 
 @MainActor
 @Observable
 final class AppNavigation {
-    var selectedTab: AppTab = .dashboard
-    var dashboardPath = NavigationPath()
-    var feedingPath = NavigationPath()
-    var diapersPath = NavigationPath()
+    var selectedTab: AppTab = .now
+    var nowPath = NavigationPath()
+    var babyPath = NavigationPath()
     var selfCarePath = NavigationPath()
-    var insightsPath = NavigationPath()
+    var journalPath = NavigationPath()
+    var planPath = NavigationPath()
 
     func handleURL(_ url: URL) {
-        assertionFailure("Deep link received but routing not yet implemented: \(url)")
+        guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return
+        }
+
+        let pathComponents = components.path
+            .split(separator: "/")
+            .map(String.init)
+
+        guard let first = pathComponents.first,
+              let tab = AppTab(rawValue: first) else {
+            return
+        }
+
+        selectedTab = tab
+        let remainder = Array(pathComponents.dropFirst())
+
+        switch tab {
+        case .baby:
+            if remainder.first == "sleep-history" {
+                babyPath.append(BabyRoute.sleepHistory)
+            } else if remainder.first == "sleep-timer" {
+                babyPath.append(BabyRoute.sleepTimer)
+            }
+        default:
+            break
+        }
     }
 }

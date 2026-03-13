@@ -8,8 +8,7 @@ struct BabyRepositoryTests {
 
     @MainActor
     private func makeSUT() throws -> (BabyRepository, ModelContext) {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: BabyModel.self, configurations: config)
+        let container = try TestModelContainerFactory.makeContainer()
         let context = ModelContext(container)
         let repo = BabyRepository(modelContext: context)
         return (repo, context)

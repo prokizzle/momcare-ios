@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct FeedingListItem: View {
     let feeding: Feeding
 

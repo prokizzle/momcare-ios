@@ -1,5 +1,6 @@
 import SwiftUI
 
+@MainActor
 struct FeedingPatternCard: View {
     let pattern: FeedingPattern
     let lastFeedTime: Date?

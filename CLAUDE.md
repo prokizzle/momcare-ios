@@ -44,7 +44,7 @@ Never use emojis in code, comments, commit messages, documentation, or UI string
 - **Architecture**: Clean Architecture with vertical feature modules
 - **Concurrency**: Swift 6 strict concurrency (async/await + actors)
 - **Testing**: Swift Testing framework (`#expect`, `@Suite`, `@Test`)
-- **Project Generation**: XcodeGen (`project.yml` → .xcodeproj)
+- **Project Generation**: Tuist (`Project.swift` → .xcodeproj, managed via mise)
 - **Design**: Dark mode PRIMARY, premium & warm, one-handed 3am use
 
 ## Project Structure
@@ -105,18 +105,23 @@ final class FeedingViewModel {
 ## Build & Run
 
 ```bash
-# Generate Xcode project (required after project.yml changes)
-xcodegen generate
+# Install/update external dependencies (run after changing Tuist/Package.swift)
+tuist install
+
+# Generate Xcode project (run after changing Project.swift or Tuist/Package.swift)
+tuist generate
 
 # Build
-xcodebuild -scheme MomCare -destination 'platform=iOS Simulator,name=iPhone 16'
+tuist build
 
 # Test
-xcodebuild test -scheme MomCare -destination 'platform=iOS Simulator,name=iPhone 16'
+tuist test
 
 # Lint (run after every task / before every commit)
 swiftlint --strict
 ```
+
+Tuist is installed via mise (see `mise.toml`). Run `mise install` if `tuist` is not found.
 
 ## Linting
 
@@ -124,11 +129,34 @@ swiftlint --strict
 - All warnings are treated as errors in strict mode
 - Fix all violations before committing -- no exceptions
 
+## UI Libraries
+
+- **ComponentsKit** — pre-built UI components (buttons, cards, modals, inputs, badges, etc.). Use as the primary component library before building custom components.
+- **Lottie** — After Effects animations for onboarding, empty states, and celebrations. Use for rich animations that SF Symbols cannot cover.
+- **Pow** — SwiftUI transitions and change effects (shake, shine, spray, haptic feedback). Use for micro-interactions and delightful feedback on user actions.
+- **SkeletonUI** — loading placeholder skeletons. Use for all loading states instead of plain spinners.
+
+### When to use what
+- Loading states → SkeletonUI
+- Buttons, cards, inputs, modals → ComponentsKit first, custom second
+- Transitions, tap feedback, value changes → Pow
+- Rich animations (onboarding, milestones) → Lottie
+- Icons → SF Symbols (never third-party icon libs)
+- Custom illustrations → Nova MCP
+
+## Dependency Injection
+
+Microapps-style DI using SwiftUI Environment + factory protocols (no third-party DI libraries):
+- `DependencyContainer` protocol defines factory methods
+- `AppDependencies` provides real implementations backed by SwiftData
+- Injected via `@Environment(\.dependencies)` in views
+- Tests use stub implementations conforming to repository protocols
+
 ## Conventions
 
 - **No XCTest** — use Swift Testing (`import Testing`, `#expect`, `@Test`)
 - **No Combine** — use `@Observable` and async/await
-- **No third-party DI** — use SwiftUI `Environment` + factory protocols
+- **No third-party DI** — use SwiftUI `Environment` + factory protocols (microapps pattern)
 - **SF Symbols** for all icons
 - **Haptics** on every interactive element
 - **44pt minimum** tap targets
