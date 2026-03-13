@@ -25,10 +25,11 @@ struct BabyActionCard: View {
     let cardType: BabyCardType
     let babyId: UUID
     var sleepViewModel: SleepViewModel?
+    var onSleepTimerRequested: (() -> Void)?
     @Environment(BabyActivityEngine.self) private var engine
     @State private var isAnimating = false
     @State private var showFeedingSelector = false
-    @State private var showSleepTimer = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Button {
@@ -48,15 +49,6 @@ struct BabyActionCard: View {
         .sheet(isPresented: $showFeedingSelector) {
             FeedingSelectorSheet { method in
                 Task { await engine.startFeeding(babyId: babyId, method: method) }
-            }
-        }
-        .navigationDestination(isPresented: $showSleepTimer) {
-            SleepTimerView(babyId: babyId) { quality, location in
-                guard let sleepViewModel else { return }
-                sleepViewModel.selectedQuality = quality
-                sleepViewModel.selectedLocation = location
-                await sleepViewModel.endSleep(babyId: babyId)
-                await engine.endNap(babyId: babyId)
             }
         }
         .accessibilityLabel(accessibilityLabel)
@@ -174,7 +166,7 @@ struct BabyActionCard: View {
 
     private func handleTap() {
         MCHaptic.tap()
-        withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+        withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6)) {
             isAnimating = true
         }
         Task {
@@ -185,7 +177,7 @@ struct BabyActionCard: View {
         switch cardType {
         case .nap:
             if engine.isNapActive {
-                showSleepTimer = true
+                onSleepTimerRequested?()
             } else {
                 Task { await engine.startNap(babyId: babyId) }
             }

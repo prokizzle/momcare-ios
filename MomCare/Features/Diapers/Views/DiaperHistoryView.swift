@@ -6,14 +6,14 @@ struct DiaperHistoryView: View {
     let babyId: UUID
     @State private var diaperToDelete: Diaper?
 
-    private let dayFormatter: DateFormatter = {
+    private static let dayFormatter: DateFormatter = {
         let fmt = DateFormatter()
         fmt.dateStyle = .medium
         fmt.timeStyle = .none
         return fmt
     }()
 
-    private let timeFormatter: DateFormatter = {
+    private static let timeFormatter: DateFormatter = {
         let fmt = DateFormatter()
         fmt.dateStyle = .none
         fmt.timeStyle = .short
@@ -55,7 +55,7 @@ struct DiaperHistoryView: View {
             ForEach(viewModel.diapersGroupedByDay, id: \.day) { group in
                 Section {
                     ForEach(group.entries) { diaper in
-                        DiaperRow(diaper: diaper, timeFormatter: timeFormatter)
+                        DiaperRow(diaper: diaper, timeFormatter: Self.timeFormatter)
                             .swipeActions(edge: .trailing) {
                                 Button("Delete", role: .destructive) {
                                     diaperToDelete = diaper
@@ -63,7 +63,7 @@ struct DiaperHistoryView: View {
                             }
                     }
                 } header: {
-                    DayHeader(day: group.day, count: group.entries.count, formatter: dayFormatter)
+                    DayHeader(day: group.day, count: group.entries.count, formatter: Self.dayFormatter)
                 }
             }
         }

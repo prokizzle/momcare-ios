@@ -17,8 +17,6 @@ final class FeedingViewModel {
 
     var isTimerRunning = false
     var elapsedTime: TimeInterval = 0
-    var onFeedingEnded: (@MainActor (UUID, TimeInterval) -> Void)?
-
     var elapsedTimeFormatted: String {
         let totalSeconds = Int(elapsedTime)
         let hours = totalSeconds / 3600
@@ -36,6 +34,8 @@ final class FeedingViewModel {
     init(repository: any FeedingRepositoryProtocol) {
         self.repository = repository
     }
+
+    deinit { timerTask?.cancel() }
 
     func loadFeedings(babyId: UUID) async {
         error = nil
@@ -94,7 +94,6 @@ final class FeedingViewModel {
         do {
             let updated = try await repository.update(feeding)
             feedings.insert(updated, at: 0)
-            onFeedingEnded?(updated.babyId, updated.duration)
             inProgressFeeding = nil
             isTimerRunning = false
             elapsedTime = 0

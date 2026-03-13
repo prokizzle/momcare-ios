@@ -1,5 +1,4 @@
 import Foundation
-import SwiftUI
 
 @Observable
 @MainActor
@@ -11,14 +10,6 @@ final class DashboardViewModel {
         case safe       // < 2 hours since last feeding
         case warning    // 2–3 hours
         case urgent     // > 3 hours or no feeding recorded
-
-        var color: Color {
-            switch self {
-            case .safe: MCColor.Urgency.safe
-            case .warning: MCColor.Urgency.warning
-            case .urgent: MCColor.Urgency.urgent
-            }
-        }
 
         var label: String {
             switch self {
@@ -71,6 +62,16 @@ final class DashboardViewModel {
     var timeSinceLastFeeding: TimeInterval? {
         guard let last = lastFeeding, let endTime = last.endTime else { return nil }
         return Date.now.timeIntervalSince(endTime)
+    }
+
+    var timeSinceLastFeedingFormatted: String {
+        guard let interval = timeSinceLastFeeding else { return "--" }
+        let totalMinutes = Int(interval) / 60
+        if totalMinutes < 60 { return "\(totalMinutes) min ago" }
+        let hours = totalMinutes / 60
+        let mins = totalMinutes % 60
+        if mins == 0 { return "\(hours)h ago" }
+        return "\(hours)h \(mins)m ago"
     }
 
     // MARK: - Dependencies

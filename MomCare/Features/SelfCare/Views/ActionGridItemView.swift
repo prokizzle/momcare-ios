@@ -9,11 +9,12 @@ struct ActionGridItemView: View {
     let onLongPress: () -> Void
 
     @State private var isAnimating = false
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Button {
             MCHaptic.tap()
-            withAnimation(.spring(response: 0.3, dampingFraction: 0.6)) {
+            withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6)) {
                 isAnimating = true
             }
             onTap()

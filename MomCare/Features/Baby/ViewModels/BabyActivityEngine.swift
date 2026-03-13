@@ -43,10 +43,9 @@ final class BabyActivityEngine {
     private let feedingRepository: any FeedingRepositoryProtocol
     private let diaperRepository: any DiaperRepositoryProtocol
 
-    var onFeedingEnded: (@MainActor (UUID, TimeInterval) -> Void)?
-
     private var napTimerTask: Task<Void, Never>?
     private var feedingTimerTask: Task<Void, Never>?
+    private var diaperAutoHideTask: Task<Void, Never>?
 
     // MARK: - Init
 
@@ -58,6 +57,12 @@ final class BabyActivityEngine {
         self.sleepRepository = sleepRepository
         self.feedingRepository = feedingRepository
         self.diaperRepository = diaperRepository
+    }
+
+    deinit {
+        napTimerTask?.cancel()
+        feedingTimerTask?.cancel()
+        diaperAutoHideTask?.cancel()
     }
 
     // MARK: - Load In-Progress (on app launch)
@@ -169,7 +174,6 @@ final class BabyActivityEngine {
         } catch {
             // Non-fatal: duration callback still fires
         }
-        onFeedingEnded?(babyId, duration)
         feedingStartTime = nil
         feedMethod = nil
         feedingElapsed = 0
@@ -179,7 +183,8 @@ final class BabyActivityEngine {
 
     func logDiaper(babyId: UUID) {
         showDiaperOptions = true
-        Task { [weak self] in
+        diaperAutoHideTask?.cancel()
+        diaperAutoHideTask = Task { [weak self] in
             try? await Task.sleep(for: .seconds(3))
             guard let self else { return }
             if self.showDiaperOptions {

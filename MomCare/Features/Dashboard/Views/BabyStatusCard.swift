@@ -52,7 +52,7 @@ struct BabyStatusCard: View {
                 Group {
                     if viewModel.timeSinceLastFeeding != nil {
                         TimelineView(.periodic(from: .now, by: 60)) { _ in
-                            Text(timeSinceText)
+                            Text(viewModel.timeSinceLastFeedingFormatted)
                                 .font(.headline)
                                 .foregroundStyle(viewModel.urgency.color)
                         }
@@ -79,17 +79,4 @@ struct BabyStatusCard: View {
         }
     }
 
-    private var timeSinceText: String {
-        guard let interval = viewModel.timeSinceLastFeeding else { return "--" }
-        let totalMinutes = Int(interval) / 60
-        if totalMinutes < 60 {
-            return "\(totalMinutes) min ago"
-        }
-        let hours = totalMinutes / 60
-        let mins = totalMinutes % 60
-        if mins == 0 {
-            return "\(hours)h ago"
-        }
-        return "\(hours)h \(mins)m ago"
-    }
 }
