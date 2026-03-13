@@ -1,4 +1,5 @@
 import Testing
+import Foundation
 import SwiftData
 @testable import MomCare
 
@@ -8,37 +9,26 @@ struct SleepRepositoryTests {
     @Test("getInProgressSleep returns the first sleep with nil endTime")
     @MainActor
     func getInProgressSleep_nilEndTime() async throws {
-        let container = try ModelContainer(for: SchemaV4.self, configurations: [])
+        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let container = try ModelContainer(for: BabySleepModel.self, configurations: config)
         let context = container.mainContext
 
         let babyId = UUID()
-        let completed = BabySleepModel(
-            id: UUID(),
+        let completedEntity = BabySleep.fixture(
             babyId: babyId,
             startTime: .now.addingTimeInterval(-7200),
             endTime: .now.addingTimeInterval(-3600),
-            sleepType: .nap,
-            location: nil,
-            quality: nil,
-            notes: nil,
-            isSoftDeleted: false,
-            createdAt: .now.addingTimeInterval(-7200),
-            updatedAt: .now.addingTimeInterval(-3600)
+            sleepType: .nap
         )
+        let completed = BabySleepModel(from: completedEntity)
 
-        let inProgress = BabySleepModel(
-            id: UUID(),
+        let inProgressEntity = BabySleep.fixture(
             babyId: babyId,
             startTime: .now.addingTimeInterval(-1800),
             endTime: nil,
-            sleepType: .nap,
-            location: nil,
-            quality: nil,
-            notes: nil,
-            isSoftDeleted: false,
-            createdAt: .now.addingTimeInterval(-1800),
-            updatedAt: .now.addingTimeInterval(-1800)
+            sleepType: .nap
         )
+        let inProgress = BabySleepModel(from: inProgressEntity)
 
         context.insert(completed)
         context.insert(inProgress)
@@ -47,7 +37,7 @@ struct SleepRepositoryTests {
         let repository = SleepRepository(modelContext: context)
         let result = try await repository.getInProgressSleep(babyId: babyId)
 
-        let unwrapped = #require(result)
-        #expect(unwrapped.id == inProgress.id)
+        let unwrapped = try #require(result)
+        #expect(unwrapped.id == inProgressEntity.id)
     }
 }
