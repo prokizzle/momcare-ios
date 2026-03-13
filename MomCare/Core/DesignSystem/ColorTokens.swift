@@ -8,6 +8,8 @@ enum MCColor {
     static let diaper = Color("DiaperColor")
     static let baby = Color("BabyColor")
 
+    static let error = Color.red
+
     enum Urgency {
         static let safe = Color.green
         static let warning = Color.yellow

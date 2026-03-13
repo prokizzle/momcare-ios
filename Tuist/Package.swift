@@ -22,5 +22,6 @@ let package = Package(
         .package(url: "https://github.com/airbnb/lottie-ios", from: "4.6.0"),
         .package(url: "https://github.com/EmergeTools/Pow", from: "1.0.0"),
         .package(url: "https://github.com/space-code/skeleton-ui", from: "1.1.0"),
+        .package(url: "https://github.com/imodeveloper/dskit-swiftui", from: "1.1.2"),
     ]
 )
