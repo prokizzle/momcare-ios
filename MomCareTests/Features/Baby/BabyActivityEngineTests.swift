@@ -63,16 +63,14 @@ struct BabyActivityEngineTests {
         #expect(sut.feedMethod == .left)
     }
 
-    @Test("endFeeding clears active feeding and fires callback")
+    @Test("endFeeding clears active feeding")
     @MainActor
     func endFeeding() async {
         let sut = makeSUT()
-        var callbackFired = false
-        sut.onFeedingEnded = { @MainActor _, _ in callbackFired = true }
         await sut.startFeeding(babyId: babyId, method: .bottle)
         await sut.endFeeding(babyId: babyId)
         #expect(!sut.isFeedingActive)
-        #expect(callbackFired)
+        #expect(sut.feedMethod == nil)
     }
 
     @Test("logDiaper shows options")

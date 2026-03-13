@@ -16,14 +16,7 @@ struct DependenciesTests {
     @Test("AppDependencies creates real BabyRepository")
     @MainActor
     func appDependenciesCreatesBabyRepo() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let modelContainer = try ModelContainer(
-            for: BabyModel.self, FeedingModel.self,
-            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self, BabySleepModel.self,
-            configurations: config
-        )
-        let deps = AppDependencies(modelContext: modelContainer.mainContext)
+        let deps = try TestModelContainerFactory.makeDependencies()
         let repo = deps.makeBabyRepository()
         #expect(repo is BabyRepository)
     }
@@ -31,14 +24,7 @@ struct DependenciesTests {
     @Test("AppDependencies creates real FeedingRepository")
     @MainActor
     func appDependenciesCreatesFeedingRepo() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let modelContainer = try ModelContainer(
-            for: BabyModel.self, FeedingModel.self,
-            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self, BabySleepModel.self,
-            configurations: config
-        )
-        let deps = AppDependencies(modelContext: modelContainer.mainContext)
+        let deps = try TestModelContainerFactory.makeDependencies()
         let repo = deps.makeFeedingRepository()
         #expect(repo is FeedingRepository)
     }
@@ -46,14 +32,7 @@ struct DependenciesTests {
     @Test("AppDependencies creates real SelfCareRepository")
     @MainActor
     func appDependenciesCreatesSelfCareRepo() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let modelContainer = try ModelContainer(
-            for: BabyModel.self, FeedingModel.self,
-            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self, BabySleepModel.self,
-            configurations: config
-        )
-        let deps = AppDependencies(modelContext: modelContainer.mainContext)
+        let deps = try TestModelContainerFactory.makeDependencies()
         let repo = deps.makeSelfCareRepository()
         #expect(repo is SelfCareRepository)
     }
@@ -61,14 +40,7 @@ struct DependenciesTests {
     @Test("AppDependencies creates real DiaperRepository")
     @MainActor
     func appDependenciesCreatesDiaperRepo() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let modelContainer = try ModelContainer(
-            for: BabyModel.self, FeedingModel.self,
-            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self, BabySleepModel.self,
-            configurations: config
-        )
-        let deps = AppDependencies(modelContext: modelContainer.mainContext)
+        let deps = try TestModelContainerFactory.makeDependencies()
         let repo = deps.makeDiaperRepository()
         #expect(repo is DiaperRepository)
     }
@@ -76,14 +48,7 @@ struct DependenciesTests {
     @Test("AppDependencies creates real SleepRepository")
     @MainActor
     func appDependenciesCreatesSleepRepo() throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let modelContainer = try ModelContainer(
-            for: BabyModel.self, FeedingModel.self,
-            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self, BabySleepModel.self,
-            configurations: config
-        )
-        let deps = AppDependencies(modelContext: modelContainer.mainContext)
+        let deps = try TestModelContainerFactory.makeDependencies()
         let repo = deps.makeSleepRepository()
         #expect(repo is SleepRepository)
     }

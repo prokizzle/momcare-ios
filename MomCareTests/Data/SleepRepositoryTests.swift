@@ -9,8 +9,7 @@ struct SleepRepositoryTests {
     @Test("getInProgressSleep returns the first sleep with nil endTime")
     @MainActor
     func getInProgressSleep_nilEndTime() async throws {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
-        let container = try ModelContainer(for: BabySleepModel.self, configurations: config)
+        let container = try TestModelContainerFactory.makeContainer()
         let context = container.mainContext
 
         let babyId = UUID()

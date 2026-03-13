@@ -15,7 +15,7 @@ struct BabyAvatarView: View {
                     .scaledToFill()
             } else {
                 Text(baby.name.prefix(1).uppercased())
-                    .font(.system(size: size * 0.45, weight: .semibold, design: .rounded).relativeTo(.body))
+                    .font(.system(size: size * 0.45, weight: .semibold, design: .rounded))
                     .minimumScaleFactor(0.5)
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity, maxHeight: .infinity)

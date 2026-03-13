@@ -1,5 +1,15 @@
 import SwiftUI
 
+enum BabyRoute: Hashable {
+    case sleepHistory
+    case sleepTimer
+}
+
+enum FeedingRoute: Hashable {
+    case detail(feedingId: UUID)
+    case timer
+}
+
 enum AppTab: String, CaseIterable, Sendable {
     case now
     case baby
@@ -27,9 +37,23 @@ final class AppNavigation {
             .split(separator: "/")
             .map(String.init)
 
-        if let first = pathComponents.first,
-           let tab = AppTab(rawValue: first) {
-            selectedTab = tab
+        guard let first = pathComponents.first,
+              let tab = AppTab(rawValue: first) else {
+            return
+        }
+
+        selectedTab = tab
+        let remainder = Array(pathComponents.dropFirst())
+
+        switch tab {
+        case .baby:
+            if remainder.first == "sleep-history" {
+                babyPath.append(BabyRoute.sleepHistory)
+            } else if remainder.first == "sleep-timer" {
+                babyPath.append(BabyRoute.sleepTimer)
+            }
+        default:
+            break
         }
     }
 }

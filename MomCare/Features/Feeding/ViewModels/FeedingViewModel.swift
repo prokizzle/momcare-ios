@@ -29,7 +29,7 @@ final class FeedingViewModel {
     }
 
     private let repository: any FeedingRepositoryProtocol
-    private var timerTask: Task<Void, Never>?
+    nonisolated(unsafe) private var timerTask: Task<Void, Never>?
 
     init(repository: any FeedingRepositoryProtocol) {
         self.repository = repository

@@ -39,17 +39,16 @@ final class AppDependencies: DependencyContainer {
     }
 }
 
+// @preconcurrency needed because SwiftUI's EnvironmentKey.defaultValue is not
+// guaranteed to be accessed on MainActor, but AppDependencies is @MainActor
+// and only created/accessed from MainActor contexts in practice.
 struct DependenciesKey: @preconcurrency EnvironmentKey {
     @MainActor
     static let defaultValue: any DependencyContainer = {
-        let config = ModelConfiguration(isStoredInMemoryOnly: true)
+        let schema = Schema(versionedSchema: SchemaV4.self)
+        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         // swiftlint:disable:next force_try
-        let container = try! ModelContainer(
-            for: BabyModel.self, FeedingModel.self,
-            SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self, BabySleepModel.self,
-            configurations: config
-        )
+        let container = try! ModelContainer(for: schema, configurations: [config])
         return AppDependencies(modelContext: container.mainContext)
     }()
 }
