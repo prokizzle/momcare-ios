@@ -41,7 +41,7 @@ struct BabyStatusCard: View {
             Image(systemName: "drop.fill")
                 .font(.title2)
                 .foregroundStyle(MCColor.feeding)
-                .symbolEffect(reduceMotion ? nil : .pulse)
+                .symbolEffect(.pulse, isActive: !reduceMotion)
         }
     }
 

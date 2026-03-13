@@ -16,7 +16,7 @@ final class JournalViewModel {
     private let feedingRepository: any FeedingRepositoryProtocol
     private let diaperRepository: any DiaperRepositoryProtocol
 
-    private lazy var dateFormatter: DateFormatter = {
+    private let dateFormatter: DateFormatter = {
         let fmt = DateFormatter()
         fmt.dateFormat = "EEE MMM d"
         return fmt
