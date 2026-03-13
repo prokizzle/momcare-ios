@@ -38,9 +38,15 @@ struct TourPageView: View {
         VStack(spacing: MCSpacing.xl) {
             Spacer()
 
-            Image(systemName: "rectangle.grid.2x2.fill")
-                .font(.system(size: 56))
-                .foregroundStyle(MCColor.accent)
+            // Lottie placeholder - will be replaced with arrow annotation animation for dashboard tour
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.05))
+                .frame(height: 200)
+                .overlay {
+                    Image(systemName: "rectangle.grid.2x2.fill")
+                        .font(.system(size: 48))
+                        .foregroundStyle(MCColor.accent)
+                }
 
             Text("Your mission control")
                 .font(.title.bold())
@@ -82,9 +88,15 @@ struct TourPageView: View {
         VStack(spacing: MCSpacing.xl) {
             Spacer()
 
-            Image(systemName: "leaf.fill")
-                .font(.system(size: 56))
-                .foregroundStyle(MCColor.selfCare)
+            // Lottie placeholder - will be replaced with arrow annotation animation for self-care tour
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.05))
+                .frame(height: 200)
+                .overlay {
+                    Image(systemName: "leaf.fill")
+                        .font(.system(size: 48))
+                        .foregroundStyle(MCColor.selfCare)
+                }
 
             Text("Your wellbeing matters too")
                 .font(.title.bold())

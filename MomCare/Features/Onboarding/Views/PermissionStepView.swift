@@ -32,14 +32,14 @@ enum PermissionKind {
         switch self {
         case .notifications:
             [
-                "Feeding and nap reminders",
-                "Self-care check-in nudges",
-                "Milestone celebrations"
+                "Feeding reminders",
+                "Sleep alerts",
+                "Self-care nudges"
             ]
         case .healthKit:
             [
-                "Import sleep data automatically",
-                "Track your postpartum recovery"
+                "Growth tracking with WHO curves",
+                "Mom's sleep and steps sync"
             ]
         }
     }
@@ -47,7 +47,7 @@ enum PermissionKind {
     var buttonTitle: String {
         switch self {
         case .notifications: "Enable Notifications"
-        case .healthKit: "Enable HealthKit"
+        case .healthKit: "Connect HealthKit"
         }
     }
 }
@@ -62,10 +62,16 @@ struct PermissionStepView: View {
         VStack(spacing: MCSpacing.xl) {
             Spacer()
 
-            Image(systemName: kind.icon)
-                .font(.system(size: 64))
-                .foregroundStyle(MCColor.accent)
-                .conditionalEffect(.repeat(.pulse(shape: Circle()), every: 2), condition: appeared)
+            // Lottie placeholder - will be replaced with notification bell or health/heart animation
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.05))
+                .frame(height: 200)
+                .overlay {
+                    Image(systemName: kind.icon)
+                        .font(.system(size: 48))
+                        .foregroundStyle(MCColor.accent)
+                        .conditionalEffect(.repeat(.pulse(shape: Circle()), every: 2), condition: appeared)
+                }
 
             Text(kind.title)
                 .font(.title.bold())

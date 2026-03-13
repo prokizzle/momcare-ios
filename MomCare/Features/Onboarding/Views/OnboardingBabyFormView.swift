@@ -1,3 +1,4 @@
+import DSKit
 import PhotosUI
 import Pow
 import SkeletonUI
@@ -12,7 +13,7 @@ struct OnboardingBabyFormView: View {
 
     var body: some View {
         ScrollView {
-            VStack(spacing: MCSpacing.xl) {
+            DSVStack(spacing: .custom(MCSpacing.xl)) {
                 header
                 previewCard
                 requiredFields
@@ -38,11 +39,11 @@ struct OnboardingBabyFormView: View {
                 .font(.system(size: 56))
                 .foregroundStyle(MCColor.accent)
 
-            Text("Add your baby")
+            DSText("Add your baby")
                 .font(.title.bold())
                 .foregroundStyle(.white)
 
-            Text("Tell us about your little one")
+            DSText("Tell us about your little one")
                 .font(.body)
                 .foregroundStyle(.white.opacity(0.7))
         }
@@ -80,6 +81,11 @@ struct OnboardingBabyFormView: View {
         }
         .padding(MCSpacing.lg)
         .background(Color.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 16))
+        .skeleton(isEnabled: viewModel.babyName.isEmpty) { _ in
+                RoundedRectangle(cornerRadius: 12)
+                    .fill(Color.white.opacity(0.08))
+                    .frame(height: 16)
+            }
         .changeEffect(
             .spray(origin: UnitPoint(x: 0.5, y: 0.5)) {
                 Image(systemName: "star.fill")
@@ -92,7 +98,7 @@ struct OnboardingBabyFormView: View {
     // MARK: - Required Fields
 
     private var requiredFields: some View {
-        VStack(spacing: MCSpacing.lg) {
+        DSVStack(spacing: .custom(MCSpacing.lg)) {
             formField(title: "Name") {
                 TextField("Baby's name", text: $viewModel.babyName)
                     .textContentType(.name)
@@ -172,7 +178,7 @@ struct OnboardingBabyFormView: View {
             }
             .padding(.top, MCSpacing.lg)
         } label: {
-            Text("Additional Details")
+            DSText("Additional Details")
                 .font(.headline)
                 .foregroundStyle(.white.opacity(0.7))
         }
@@ -224,7 +230,7 @@ struct OnboardingBabyFormView: View {
         @ViewBuilder content: () -> Content
     ) -> some View {
         VStack(alignment: .leading, spacing: MCSpacing.sm) {
-            Text(title)
+            DSText(title)
                 .font(.caption)
                 .foregroundStyle(.white.opacity(0.5))
 

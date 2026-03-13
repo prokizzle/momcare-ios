@@ -17,7 +17,7 @@ struct AuthStepView: View {
                 .font(.title.bold())
                 .foregroundStyle(.white)
 
-            Text("Sync your data and share with your partner")
+            Text("Sign in to sync across devices and share with your partner")
                 .font(.body)
                 .foregroundStyle(.white.opacity(0.7))
                 .multilineTextAlignment(.center)

@@ -1,3 +1,5 @@
+import ComponentsKit
+import DSKit
 import Pow
 import SwiftUI
 
@@ -39,21 +41,28 @@ struct WelcomePageView: View {
         VStack(spacing: MCSpacing.xl) {
             Spacer()
 
-            Image(systemName: "heart.fill")
-                .font(.system(size: 80))
-                .foregroundStyle(MCColor.accent)
+            // Lottie placeholder - will be replaced with mother & baby illustration animation
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.05))
+                .frame(height: 200)
+                .overlay {
+                    Image(systemName: "heart.fill")
+                        .font(.system(size: 48))
+                        .foregroundStyle(MCColor.accent)
+                }
 
             Text("MomCare")
                 .font(.system(size: 40, weight: .bold, design: .rounded))
                 .foregroundStyle(.white)
                 .conditionalEffect(.repeat(.shine, every: 3), condition: appeared)
 
-            Text("Your baby care companion")
+            Text("Track everything. Stress nothing.")
                 .font(.title3)
                 .foregroundStyle(.white.opacity(0.7))
 
             Spacer()
 
+            // TODO: Replace with ComponentsKit DSButton when API is confirmed
             onboardingButton(title: "Get Started") {
                 MCHaptic.tap()
                 viewModel.currentStep = .features
@@ -77,24 +86,46 @@ struct WelcomePageView: View {
                 .font(.body)
                 .foregroundStyle(.white.opacity(0.7))
 
-            LazyVGrid(
-                columns: [
-                    GridItem(.flexible(), spacing: MCSpacing.lg),
-                    GridItem(.flexible(), spacing: MCSpacing.lg)
-                ],
-                spacing: MCSpacing.lg
-            ) {
-                featureCard(icon: "cup.and.saucer.fill", title: "Feeding", color: MCColor.feeding)
-                featureCard(icon: "moon.zzz.fill", title: "Sleep", color: MCColor.babyStatus)
-                featureCard(icon: "heart.text.clipboard.fill", title: "Self-Care", color: MCColor.selfCare)
-                featureCard(icon: "chart.line.uptrend.xyaxis", title: "Insights", color: MCColor.accent)
+            DSVStack(spacing: .custom(MCSpacing.lg)) {
+                LazyVGrid(
+                    columns: [
+                        GridItem(.flexible(), spacing: MCSpacing.lg),
+                        GridItem(.flexible(), spacing: MCSpacing.lg)
+                    ],
+                    spacing: MCSpacing.lg
+                ) {
+                    featureCard(
+                        icon: "cup.and.saucer.fill",
+                        title: "Feeding Tracker",
+                        description: "Log feeds with one tap",
+                        color: MCColor.feeding
+                    )
+                    featureCard(
+                        icon: "moon.zzz.fill",
+                        title: "Sleep Logging",
+                        description: "Track naps and nighttime",
+                        color: MCColor.babyStatus
+                    )
+                    featureCard(
+                        icon: "heart.text.clipboard.fill",
+                        title: "Self-Care",
+                        description: "Your wellbeing matters too",
+                        color: MCColor.selfCare
+                    )
+                    featureCard(
+                        icon: "chart.line.uptrend.xyaxis",
+                        title: "Smart Insights",
+                        description: "Patterns and milestones",
+                        color: MCColor.accent
+                    )
+                }
+                .transition(.movingParts.pop)
             }
-            .transition(.movingParts.pop)
             .padding(.horizontal, MCSpacing.sm)
 
             Spacer()
 
-            onboardingButton(title: "Continue") {
+            onboardingButton(title: "Next") {
                 MCHaptic.tap()
                 viewModel.currentStep = .philosophy
             }
@@ -109,11 +140,17 @@ struct WelcomePageView: View {
         VStack(spacing: MCSpacing.xl) {
             Spacer()
 
-            Image(systemName: "sparkles")
-                .font(.system(size: 56))
-                .foregroundStyle(MCColor.accent)
+            // Lottie placeholder - will be replaced with peaceful nighttime scene animation
+            RoundedRectangle(cornerRadius: 20)
+                .fill(Color.white.opacity(0.05))
+                .frame(height: 200)
+                .overlay {
+                    Image(systemName: "sparkles")
+                        .font(.system(size: 48))
+                        .foregroundStyle(MCColor.accent)
+                }
 
-            Text("Built for 3am")
+            Text("Designed for 3am, one-handed use")
                 .font(.title.bold())
                 .foregroundStyle(.white)
 
@@ -123,15 +160,19 @@ struct WelcomePageView: View {
 
             VStack(alignment: .leading, spacing: MCSpacing.lg) {
                 bulletPoint("One-handed, dark-mode first design")
+                    .transition(.asymmetric(insertion: .movingParts.pop, removal: .identity))
                 bulletPoint("Local-first -- your data stays on device")
+                    .transition(.asymmetric(insertion: .movingParts.pop, removal: .identity))
                 bulletPoint("Optional sync to share with your partner")
+                    .transition(.asymmetric(insertion: .movingParts.pop, removal: .identity))
                 bulletPoint("No ads, no tracking, no compromise")
+                    .transition(.asymmetric(insertion: .movingParts.pop, removal: .identity))
             }
             .padding(.horizontal, MCSpacing.lg)
 
             Spacer()
 
-            onboardingButton(title: "Let's go") {
+            onboardingButton(title: "Let's set up") {
                 MCHaptic.tap()
                 viewModel.advance()
             }
@@ -142,7 +183,7 @@ struct WelcomePageView: View {
 
     // MARK: - Components
 
-    private func featureCard(icon: String, title: String, color: Color) -> some View {
+    private func featureCard(icon: String, title: String, description: String, color: Color) -> some View {
         VStack(spacing: MCSpacing.md) {
             Image(systemName: icon)
                 .font(.title)
@@ -151,9 +192,15 @@ struct WelcomePageView: View {
             Text(title)
                 .font(.subheadline.weight(.medium))
                 .foregroundStyle(.white)
+
+            Text(description)
+                .font(.caption)
+                .foregroundStyle(.white.opacity(0.6))
+                .multilineTextAlignment(.center)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, MCSpacing.xl)
+        .padding(.horizontal, MCSpacing.sm)
         .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 16))
     }
 
