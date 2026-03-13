@@ -132,6 +132,7 @@ Tuist is installed via mise (see `mise.toml`). Run `mise install` if `tuist` is 
 ## UI Libraries
 
 - **ComponentsKit** — pre-built UI components (buttons, cards, modals, inputs, badges, etc.). Use as the primary component library before building custom components.
+- **DSKit** — design system with reusable screen-level components (`DSVStack`, `DSText`, `DSButton`) and appearance theming. Use for rapid screen assembly with consistent styling, especially for e-commerce-style layouts, forms, and list screens. Apply `.dsAppearance()` for theming.
 - **Lottie** — After Effects animations for onboarding, empty states, and celebrations. Use for rich animations that SF Symbols cannot cover.
 - **Pow** — SwiftUI transitions and change effects (shake, shine, spray, haptic feedback). Use for micro-interactions and delightful feedback on user actions.
 - **SkeletonUI** — loading placeholder skeletons. Use for all loading states instead of plain spinners.
@@ -139,6 +140,7 @@ Tuist is installed via mise (see `mise.toml`). Run `mise install` if `tuist` is 
 ### When to use what
 - Loading states → SkeletonUI
 - Buttons, cards, inputs, modals → ComponentsKit first, custom second
+- Full screen layouts, forms, styled lists → DSKit
 - Transitions, tap feedback, value changes → Pow
 - Rich animations (onboarding, milestones) → Lottie
 - Icons → SF Symbols (never third-party icon libs)
@@ -146,17 +148,29 @@ Tuist is installed via mise (see `mise.toml`). Run `mise install` if `tuist` is 
 
 ## Dependency Injection
 
-Microapps-style DI using SwiftUI Environment + factory protocols (no third-party DI libraries):
-- `DependencyContainer` protocol defines factory methods
+**Current pattern: Microapps-style** — SwiftUI Environment + factory protocols, no third-party DI libraries.
+
+### How it works now
+- `DependencyContainer` protocol defines factory methods (`makeBabyRepository()`, etc.)
 - `AppDependencies` provides real implementations backed by SwiftData
 - Injected via `@Environment(\.dependencies)` in views
 - Tests use stub implementations conforming to repository protocols
+
+### Alternative DI patterns (for reference when evolving the architecture)
+
+| Pattern | Library | Key Idea | Trade-off |
+|---------|---------|----------|-----------|
+| **Microapps** (current) | None | `ViewModel.Dependencies` struct with function types, injected via init. App container maps services to feature deps. | Zero dependencies, explicit, but verbose wiring at app root. |
+| **Point-Free Dependencies** | `swift-dependencies` | `@Dependency(\.key)` property wrapper. `DependencyKey` with `liveValue`/`testValue`. `withDependencies { } operation: { }` for test overrides. | Clean testing ergonomics, but adds a dependency and hides the graph behind property wrappers. |
+| **Factory** | `Factory` | Container-based with `@Injected(\.key)`. Scopes: `.singleton`, `.session`, `.cached`, `.shared`. Contexts: `.onDebug`, `.onTest`, `.onPreview`. | Rich lifecycle management, but global mutable container. |
+| **Swift Service** | `swift-service` | `@Service`/`@MainService` wrappers. Task-local environments for isolation. | iOS 18+ only -- not viable until we drop iOS 17. |
+
+**When to consider switching:** If the app root wiring in `MomCareApp.swift` becomes unwieldy (>15 ViewModels), evaluate Point-Free Dependencies or Factory. Until then, microapps keeps the dependency graph explicit and the project dependency-free.
 
 ## Conventions
 
 - **No XCTest** — use Swift Testing (`import Testing`, `#expect`, `@Test`)
 - **No Combine** — use `@Observable` and async/await
-- **No third-party DI** — use SwiftUI `Environment` + factory protocols (microapps pattern)
 - **SF Symbols** for all icons
 - **Haptics** on every interactive element
 - **44pt minimum** tap targets

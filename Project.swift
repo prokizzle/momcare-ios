@@ -44,6 +44,7 @@ let project = Project(
                 .external(name: "Lottie"),
                 .external(name: "Pow"),
                 .external(name: "SkeletonUI"),
+                .external(name: "DSKit"),
             ],
             settings: .settings(
                 base: [
