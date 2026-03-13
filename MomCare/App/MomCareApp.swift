@@ -91,7 +91,7 @@ struct MomCareApp: App {
             .task(id: hasCompletedOnboarding) {
                 if !hasCompletedOnboarding && onboardingViewModel == nil {
                     let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)
-                    nonisolated(unsafe) let babyRepo = deps.makeBabyRepository()
+                    let babyRepo = deps.makeBabyRepository()
                     onboardingViewModel = OnboardingViewModel(dependencies: .init(
                         requestNotifications: {
                             let center = UNUserNotificationCenter.current()

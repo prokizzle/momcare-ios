@@ -3,12 +3,14 @@ import Foundation
 import Testing
 @testable import MomCare
 
-private actor CallTracker {
+@MainActor
+private final class CallTracker {
     private(set) var wasCalled = false
     func record() { wasCalled = true }
 }
 
-private actor FormCapture {
+@MainActor
+private final class FormCapture {
     private(set) var captured: BabyFormData?
     func store(_ form: BabyFormData) { captured = form }
 }
@@ -22,12 +24,12 @@ struct OnboardingViewModelTests {
     }
 
     private func makeSUT(
-        requestNotifications: @escaping @Sendable () async -> Bool = { true },
-        requestHealthKit: @escaping @Sendable () async -> Bool = { true },
-        signInWithApple: @escaping @Sendable (ASAuthorization) async throws -> Void = { _ in },
-        signInWithGoogle: @escaping @Sendable () async throws -> Void = {},
-        signInAnonymously: @escaping @Sendable () async throws -> Void = {},
-        createBaby: @escaping @Sendable (BabyFormData) async throws -> Baby = { _ in .fixture() }
+        requestNotifications: @escaping () async -> Bool = { true },
+        requestHealthKit: @escaping () async -> Bool = { true },
+        signInWithApple: @escaping (ASAuthorization) async throws -> Void = { _ in },
+        signInWithGoogle: @escaping () async throws -> Void = {},
+        signInAnonymously: @escaping () async throws -> Void = {},
+        createBaby: @escaping (BabyFormData) async throws -> Baby = { _ in .fixture() }
     ) -> OnboardingViewModel {
         OnboardingViewModel(
             dependencies: .init(
@@ -75,13 +77,20 @@ struct OnboardingViewModelTests {
     @Test("skipAuth calls signInAnonymously and advances")
     func skipAuth() async {
         let tracker = CallTracker()
-        let sut = makeSUT(signInAnonymously: { await tracker.record() })
+        let sut = makeSUT(signInAnonymously: { tracker.record() })
         sut.currentStep = .auth
         await sut.skipAuth()
-        let wasCalled = await tracker.wasCalled
-        #expect(wasCalled)
+        #expect(tracker.wasCalled)
         #expect(sut.currentStep == .notifications)
         #expect(sut.authError == nil)
+    }
+
+    @Test("skipAuth advances even when anonymous sign-in fails")
+    func skipAuthAdvancesOnFailure() async {
+        let sut = makeSUT(signInAnonymously: { throw TestError.simulated })
+        sut.currentStep = .auth
+        await sut.skipAuth()
+        #expect(sut.currentStep == .notifications)
     }
 
     @Test("signInWithApple sets error when result is failure")
@@ -137,20 +146,20 @@ struct OnboardingViewModelTests {
 
     // MARK: - Baby
 
-    @Test("submitBaby creates baby and advances")
+    @Test("submitBaby creates baby and sets babySubmitSucceeded")
     func submitBabySuccess() async {
         let formCapture = FormCapture()
         let sut = makeSUT(createBaby: { form in
-            await formCapture.store(form)
+            formCapture.store(form)
             return .fixture(name: form.name)
         })
         sut.currentStep = .addBaby
         sut.babyName = "Olivia"
         await sut.submitBaby()
-        #expect(sut.currentStep == .tourDashboard)
+        #expect(sut.babySubmitSucceeded)
+        #expect(sut.currentStep == .addBaby)
         #expect(sut.babyError == nil)
-        let captured = await formCapture.captured
-        #expect(captured?.name == "Olivia")
+        #expect(formCapture.captured?.name == "Olivia")
     }
 
     @Test("submitBaby sets error on failure")

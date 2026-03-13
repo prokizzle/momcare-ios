@@ -31,14 +31,21 @@ struct OnboardingBabyFormView: View {
             }
         }
         .onChange(of: selectedPhoto) { _, newItem in
-            Task { @MainActor in
+            guard let newItem else {
+                viewModel.photoLoadError = nil
+                return
+            }
+            Task.detached {
                 do {
-                    if let data = try await newItem?.loadTransferable(type: Data.self) {
+                    let data = try await newItem.loadTransferable(type: Data.self)
+                    await MainActor.run {
                         viewModel.babyPhotoData = data
                         viewModel.photoLoadError = nil
                     }
                 } catch {
-                    viewModel.photoLoadError = "Failed to load photo. Please try again."
+                    await MainActor.run {
+                        viewModel.photoLoadError = "Failed to load photo. Please try again."
+                    }
                 }
             }
         }
@@ -227,9 +234,11 @@ struct OnboardingBabyFormView: View {
             MCHaptic.tap()
             Task {
                 await viewModel.submitBaby()
-                if viewModel.babyError == nil {
+                if viewModel.babySubmitSucceeded {
                     showSuccess = true
                     MCHaptic.success()
+                    try? await Task.sleep(for: .seconds(1.2))
+                    viewModel.advance()
                 }
             }
         } label: {

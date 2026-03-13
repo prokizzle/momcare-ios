@@ -16,13 +16,13 @@ enum OnboardingStep: Int, CaseIterable, Sendable {
 @Observable
 @MainActor
 final class OnboardingViewModel {
-    struct Dependencies: Sendable {
-        var requestNotifications: @Sendable () async -> Bool
-        var requestHealthKit: @Sendable () async -> Bool
-        var signInWithApple: @Sendable (ASAuthorization) async throws -> Void
-        var signInWithGoogle: @Sendable () async throws -> Void
-        var signInAnonymously: @Sendable () async throws -> Void
-        var createBaby: @Sendable (BabyFormData) async throws -> Baby
+    struct Dependencies {
+        var requestNotifications: () async -> Bool
+        var requestHealthKit: () async -> Bool
+        var signInWithApple: (ASAuthorization) async throws -> Void
+        var signInWithGoogle: () async throws -> Void
+        var signInAnonymously: () async throws -> Void
+        var createBaby: (BabyFormData) async throws -> Baby
     }
 
     private let dependencies: Dependencies
@@ -43,6 +43,7 @@ final class OnboardingViewModel {
     var babyBirthLength = ""
     var babyBirthHeadCircumference = ""
     var babyPhotoData: Data?
+    var babySubmitSucceeded = false
 
     var babyFormIsValid: Bool {
         !babyName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -70,10 +71,13 @@ final class OnboardingViewModel {
         authError = nil
         do {
             try await dependencies.signInAnonymously()
-            advance()
         } catch {
-            authError = error.localizedDescription
+            // Log but don't block -- user chose to skip auth
+            #if DEBUG
+            print("Anonymous sign-in failed: \(error.localizedDescription)")
+            #endif
         }
+        advance()
     }
 
     func performSignInWithApple(result: Result<ASAuthorization, any Error>) async {
@@ -133,7 +137,7 @@ final class OnboardingViewModel {
         )
         do {
             _ = try await dependencies.createBaby(formData)
-            advance()
+            babySubmitSucceeded = true
         } catch {
             babyError = error.localizedDescription
         }
