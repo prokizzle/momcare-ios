@@ -23,36 +23,36 @@ struct SleepViewModelTests {
                 endTime: Date.now.addingTimeInterval(-82800),
                 sleepType: .nighttime,
                 quality: .fair
-            ),
+            )
         ])
     }
 
     @Test("loadSleeps populates sleeps and groupedSleeps")
     func loadSleeps() async {
-        let vm = SleepViewModel(repository: stubRepo)
-        await vm.loadSleeps(babyId: babyId)
-        #expect(vm.sleeps.count == 2)
-        #expect(!vm.groupedSleeps.isEmpty)
-        #expect(!vm.isLoading)
+        let viewModel = SleepViewModel(repository: stubRepo)
+        await viewModel.loadSleeps(babyId: babyId)
+        #expect(viewModel.sleeps.count == 2)
+        #expect(!viewModel.groupedSleeps.isEmpty)
+        #expect(!viewModel.isLoading)
     }
 
     @Test("deleteSleep removes entry")
     func deleteSleep() async {
-        let vm = SleepViewModel(repository: stubRepo)
-        await vm.loadSleeps(babyId: babyId)
-        let idToDelete = vm.sleeps[0].id
-        await vm.deleteSleep(id: idToDelete)
-        #expect(vm.sleeps.count == 1)
+        let viewModel = SleepViewModel(repository: stubRepo)
+        await viewModel.loadSleeps(babyId: babyId)
+        let idToDelete = viewModel.sleeps[0].id
+        await viewModel.deleteSleep(id: idToDelete)
+        #expect(viewModel.sleeps.count == 1)
     }
 
     @Test("endSleep updates in-progress sleep with quality and location")
     func endSleep() async {
         let inProgress = BabySleep.fixture(babyId: babyId, endTime: nil, sleepType: .nap)
         let repo = StubSleepRepository(sleeps: [], inProgress: inProgress)
-        let vm = SleepViewModel(repository: repo)
-        vm.selectedQuality = .good
-        vm.selectedLocation = .crib
-        await vm.endSleep(babyId: babyId)
+        let viewModel = SleepViewModel(repository: repo)
+        viewModel.selectedQuality = .good
+        viewModel.selectedLocation = .crib
+        await viewModel.endSleep(babyId: babyId)
         #expect(repo.updated.count == 1)
         #expect(repo.updated.first?.quality == .good)
         #expect(repo.updated.first?.location == .crib)
@@ -61,10 +61,10 @@ struct SleepViewModelTests {
 
     @Test("dailyTotal computes total duration for a day")
     func dailyTotal() async {
-        let vm = SleepViewModel(repository: stubRepo)
-        await vm.loadSleeps(babyId: babyId)
-        let todaySleeps = vm.groupedSleeps.first?.1 ?? []
-        let total = vm.dailyTotal(for: todaySleeps)
+        let viewModel = SleepViewModel(repository: stubRepo)
+        await viewModel.loadSleeps(babyId: babyId)
+        let todaySleeps = viewModel.groupedSleeps.first?.1 ?? []
+        let total = viewModel.dailyTotal(for: todaySleeps)
         // First fixture is 1 hour (3600s), grouped under "Today"
         #expect(total == 3600)
     }
@@ -73,9 +73,9 @@ struct SleepViewModelTests {
     func endSleepInsertsIntoList() async {
         let inProgress = BabySleep.fixture(babyId: babyId, endTime: nil, sleepType: .nap)
         let repo = StubSleepRepository(sleeps: [], inProgress: inProgress)
-        let vm = SleepViewModel(repository: repo)
-        #expect(vm.sleeps.isEmpty)
-        await vm.endSleep(babyId: babyId)
-        #expect(vm.sleeps.count == 1)
+        let viewModel = SleepViewModel(repository: repo)
+        #expect(viewModel.sleeps.isEmpty)
+        await viewModel.endSleep(babyId: babyId)
+        #expect(viewModel.sleeps.count == 1)
     }
 }
