@@ -56,6 +56,7 @@ struct MomCareApp: App {
     @State private var dashboardViewModel: DashboardViewModel?
     @State private var babyActivityEngine: BabyActivityEngine?
     @State private var journalViewModel: JournalViewModel?
+    @State private var sleepViewModel: SleepViewModel?
     @State private var appNavigation = AppNavigation()
     @Environment(\.scenePhase) private var scenePhase
 
@@ -66,7 +67,8 @@ struct MomCareApp: App {
                 selfCareViewModel: selfCareViewModel,
                 dashboardViewModel: dashboardViewModel,
                 babyActivityEngine: babyActivityEngine,
-                journalViewModel: journalViewModel
+                journalViewModel: journalViewModel,
+                sleepViewModel: sleepViewModel
             )
             .environment(appNavigation)
             .task {
@@ -103,6 +105,11 @@ struct MomCareApp: App {
                         await engine.loadInProgress(babyId: babyId)
                     }
                     babyActivityEngine = engine
+
+                    // Sleep
+                    sleepViewModel = SleepViewModel(
+                        repository: deps.makeSleepRepository()
+                    )
 
                     // Journal
                     journalViewModel = JournalViewModel(

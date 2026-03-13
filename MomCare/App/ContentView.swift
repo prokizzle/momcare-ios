@@ -9,6 +9,7 @@ struct ContentView: View {
     var dashboardViewModel: DashboardViewModel?
     var babyActivityEngine: BabyActivityEngine?
     var journalViewModel: JournalViewModel?
+    var sleepViewModel: SleepViewModel?
 
     @State private var showAddBaby = false
 
@@ -67,8 +68,11 @@ struct ContentView: View {
     private func babyTab(babyViewModel: BabyViewModel) -> some View {
         @Bindable var navigation = navigation
         NavigationStack(path: $navigation.babyPath) {
-            BabyScreen(babyId: babyViewModel.selectedBaby?.id)
-                .toolbar {
+            BabyScreen(
+                babyId: babyViewModel.selectedBaby?.id,
+                sleepViewModel: sleepViewModel
+            )
+            .toolbar {
                     ToolbarItem(placement: .topBarLeading) {
                         BabySelectorView(viewModel: babyViewModel)
                     }
