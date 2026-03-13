@@ -63,7 +63,19 @@ struct SleepViewModelTests {
     func dailyTotal() async {
         let vm = SleepViewModel(repository: stubRepo)
         await vm.loadSleeps(babyId: babyId)
-        let total = vm.dailyTotal(for: vm.groupedSleeps.first?.1 ?? [])
-        #expect(total > 0)
+        let todaySleeps = vm.groupedSleeps.first?.1 ?? []
+        let total = vm.dailyTotal(for: todaySleeps)
+        // First fixture is 1 hour (3600s), grouped under "Today"
+        #expect(total == 3600)
+    }
+
+    @Test("endSleep inserts completed sleep into list")
+    func endSleepInsertsIntoList() async {
+        let inProgress = BabySleep.fixture(babyId: babyId, endTime: nil, sleepType: .nap)
+        let repo = StubSleepRepository(sleeps: [], inProgress: inProgress)
+        let vm = SleepViewModel(repository: repo)
+        #expect(vm.sleeps.isEmpty)
+        await vm.endSleep(babyId: babyId)
+        #expect(vm.sleeps.count == 1)
     }
 }

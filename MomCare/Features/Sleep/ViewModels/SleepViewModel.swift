@@ -11,6 +11,7 @@ final class SleepViewModel {
     var selectedQuality: BabySleep.SleepQuality?
     var showQualitySheet = false
     var isLoading = false
+    var error: Error?
 
     private let repository: any SleepRepositoryProtocol
 
@@ -25,16 +26,18 @@ final class SleepViewModel {
     }
 
     func loadSleeps(babyId: UUID) async {
+        error = nil
         isLoading = true
         defer { isLoading = false }
         do {
             sleeps = try await repository.getSleepsForBaby(babyId, limit: nil)
         } catch {
-            // Non-fatal: list stays empty
+            self.error = error
         }
     }
 
     func endSleep(babyId: UUID) async {
+        error = nil
         let end = Date.now
         do {
             if var existing = try await repository.getInProgressSleep(babyId: babyId) {
@@ -42,22 +45,24 @@ final class SleepViewModel {
                 existing.updatedAt = end
                 existing.quality = selectedQuality
                 existing.location = selectedLocation
-                _ = try await repository.update(existing)
+                let updated = try await repository.update(existing)
+                sleeps.insert(updated, at: 0)
             }
+            selectedQuality = nil
+            selectedLocation = nil
+            showQualitySheet = false
         } catch {
-            // Non-fatal
+            self.error = error
         }
-        selectedQuality = nil
-        selectedLocation = nil
-        showQualitySheet = false
     }
 
     func deleteSleep(id: UUID) async {
+        error = nil
         do {
             try await repository.delete(id)
             sleeps.removeAll { $0.id == id }
         } catch {
-            // Non-fatal
+            self.error = error
         }
     }
 
