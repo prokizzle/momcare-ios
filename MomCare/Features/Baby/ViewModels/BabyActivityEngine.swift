@@ -43,9 +43,9 @@ final class BabyActivityEngine {
     private let feedingRepository: any FeedingRepositoryProtocol
     private let diaperRepository: any DiaperRepositoryProtocol
 
-    private var napTimerTask: Task<Void, Never>?
-    private var feedingTimerTask: Task<Void, Never>?
-    private var diaperAutoHideTask: Task<Void, Never>?
+    nonisolated(unsafe) private var napTimerTask: Task<Void, Never>?
+    nonisolated(unsafe) private var feedingTimerTask: Task<Void, Never>?
+    nonisolated(unsafe) private var diaperAutoHideTask: Task<Void, Never>?
 
     // MARK: - Init
 
