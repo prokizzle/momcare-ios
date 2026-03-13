@@ -35,6 +35,7 @@ struct ContentView: View {
 
     @ViewBuilder
     private func mainTabView(babyViewModel: BabyViewModel) -> some View {
+        @Bindable var navigation = navigation
         TabView(selection: $navigation.selectedTab) {
             nowTab(babyViewModel: babyViewModel)
             babyTab(babyViewModel: babyViewModel)
@@ -46,6 +47,7 @@ struct ContentView: View {
 
     @ViewBuilder
     private func nowTab(babyViewModel: BabyViewModel) -> some View {
+        @Bindable var navigation = navigation
         NavigationStack(path: $navigation.nowPath) {
             NowScreen(
                 dashboardViewModel: dashboardViewModel,
@@ -63,6 +65,7 @@ struct ContentView: View {
 
     @ViewBuilder
     private func babyTab(babyViewModel: BabyViewModel) -> some View {
+        @Bindable var navigation = navigation
         NavigationStack(path: $navigation.babyPath) {
             BabyScreen(babyId: babyViewModel.selectedBaby?.id)
                 .toolbar {
@@ -77,6 +80,7 @@ struct ContentView: View {
 
     @ViewBuilder
     private func selfCareTab(babyViewModel: BabyViewModel) -> some View {
+        @Bindable var navigation = navigation
         NavigationStack(path: $navigation.selfCarePath) {
             SelfCareScreen(viewModel: selfCareViewModel)
                 .toolbar {
@@ -91,6 +95,7 @@ struct ContentView: View {
 
     @ViewBuilder
     private func journalTab(babyViewModel: BabyViewModel) -> some View {
+        @Bindable var navigation = navigation
         NavigationStack(path: $navigation.journalPath) {
             JournalScreen(
                 viewModel: journalViewModel,
@@ -108,6 +113,7 @@ struct ContentView: View {
 
     @ViewBuilder
     private func planTab() -> some View {
+        @Bindable var navigation = navigation
         NavigationStack(path: $navigation.planPath) {
             PlanScreen()
         }
@@ -118,4 +124,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environment(AppNavigation())
 }

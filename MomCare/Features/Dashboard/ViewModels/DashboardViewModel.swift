@@ -94,14 +94,8 @@ final class DashboardViewModel {
         isLoading = true
         defer { isLoading = false }
 
-        await withTaskGroup(of: Void.self) { group in
-            group.addTask { @MainActor in
-                await self.loadFeedingData(babyId: babyId)
-            }
-            group.addTask { @MainActor in
-                await self.loadSelfCareData()
-            }
-        }
+        await loadFeedingData(babyId: babyId)
+        await loadSelfCareData()
 
         suggestions = generateSuggestions()
     }
