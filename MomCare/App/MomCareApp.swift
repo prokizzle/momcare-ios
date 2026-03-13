@@ -1,6 +1,8 @@
-import SwiftUI
-import SwiftData
+import AuthenticationServices
 import FirebaseCore
+import SwiftData
+import SwiftUI
+import UserNotifications
 
 @main
 struct MomCareApp: App {
@@ -51,6 +53,8 @@ struct MomCareApp: App {
         }
     }
 
+    @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
+    @State private var onboardingViewModel: OnboardingViewModel?
     @State private var babyViewModel: BabyViewModel?
     @State private var selfCareViewModel: SelfCareViewModel?
     @State private var dashboardViewModel: DashboardViewModel?
@@ -62,17 +66,70 @@ struct MomCareApp: App {
 
     var body: some Scene {
         WindowGroup {
-            ContentView(
-                babyViewModel: babyViewModel,
-                selfCareViewModel: selfCareViewModel,
-                dashboardViewModel: dashboardViewModel,
-                babyActivityEngine: babyActivityEngine,
-                journalViewModel: journalViewModel,
-                sleepViewModel: sleepViewModel
-            )
-            .environment(appNavigation)
-            .task {
-                if babyViewModel == nil {
+            Group {
+                if hasCompletedOnboarding {
+                    ContentView(
+                        babyViewModel: babyViewModel,
+                        selfCareViewModel: selfCareViewModel,
+                        dashboardViewModel: dashboardViewModel,
+                        babyActivityEngine: babyActivityEngine,
+                        journalViewModel: journalViewModel,
+                        sleepViewModel: sleepViewModel
+                    )
+                    .environment(appNavigation)
+                } else if let onboardingViewModel {
+                    OnboardingView(viewModel: onboardingViewModel)
+                        .onChange(of: onboardingViewModel.isCompleted) { _, completed in
+                            if completed {
+                                hasCompletedOnboarding = true
+                            }
+                        }
+                } else {
+                    ProgressView()
+                }
+            }
+            .task(id: hasCompletedOnboarding) {
+                if !hasCompletedOnboarding && onboardingViewModel == nil {
+                    let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)
+                    nonisolated(unsafe) let babyRepo = deps.makeBabyRepository()
+                    onboardingViewModel = OnboardingViewModel(dependencies: .init(
+                        requestNotifications: {
+                            let center = UNUserNotificationCenter.current()
+                            return (try? await center.requestAuthorization(options: [.alert, .badge, .sound])) ?? false
+                        },
+                        requestHealthKit: {
+                            // Placeholder until MOM-13 (HealthKit)
+                            return false
+                        },
+                        signInWithApple: { _ in
+                            // Placeholder until MOM-12 (Firebase Auth)
+                        },
+                        signInWithGoogle: {
+                            // Placeholder until MOM-12 (Firebase Auth)
+                        },
+                        signInAnonymously: {
+                            // Placeholder until MOM-12 (Firebase Auth)
+                        },
+                        createBaby: { formData in
+                            let baby = Baby(
+                                id: UUID(),
+                                name: formData.name,
+                                dateOfBirth: formData.dateOfBirth,
+                                biologicalSex: formData.biologicalSex,
+                                birthWeight: formData.birthWeight,
+                                birthLength: formData.birthLength,
+                                birthHeadCircumference: formData.birthHeadCircumference,
+                                feedingMethod: formData.feedingMethod,
+                                photoData: formData.photoData,
+                                isDeleted: false,
+                                createdAt: .now,
+                                updatedAt: .now
+                            )
+                            return try await babyRepo.create(baby)
+                        }
+                    ))
+                }
+                if hasCompletedOnboarding && babyViewModel == nil {
                     let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)
                     let babyVM = BabyViewModel(repository: deps.makeBabyRepository())
                     await babyVM.loadBabies()
@@ -127,6 +184,11 @@ struct MomCareApp: App {
                     babyActivityEngine?.resumeTimersIfNeeded()
                 default:
                     break
+                }
+            }
+            .onChange(of: hasCompletedOnboarding) { _, completed in
+                if completed {
+                    onboardingViewModel = nil
                 }
             }
             .onOpenURL { url in

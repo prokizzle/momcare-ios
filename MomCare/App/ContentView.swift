@@ -11,8 +11,6 @@ struct ContentView: View {
     var journalViewModel: JournalViewModel?
     var sleepViewModel: SleepViewModel?
 
-    @State private var showAddBaby = false
-
     var body: some View {
         Group {
             if let babyViewModel {
@@ -25,12 +23,6 @@ struct ContentView: View {
             } else {
                 ProgressView()
             }
-        }
-        .onChange(of: babyViewModel?.babies.isEmpty) { _, isEmpty in
-            if isEmpty == true { showAddBaby = true }
-        }
-        .sheet(isPresented: $showAddBaby) {
-            if let babyViewModel { AddBabyView(viewModel: babyViewModel) }
         }
     }
 
