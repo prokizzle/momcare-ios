@@ -27,10 +27,10 @@ struct AuthStepView: View {
             VStack(spacing: MCSpacing.lg) {
                 SignInWithAppleButton(.signIn) { request in
                     request.requestedScopes = [.fullName, .email]
-                } onCompletion: { _ in
+                } onCompletion: { result in
                     MCHaptic.tap()
                     Task {
-                        await viewModel.performSignInWithApple()
+                        await viewModel.performSignInWithApple(result: result)
                     }
                 }
                 .signInWithAppleButtonStyle(.white)
@@ -57,11 +57,12 @@ struct AuthStepView: View {
                         in: RoundedRectangle(cornerRadius: 16)
                     )
                 }
+                .accessibilityLabel("Sign in with Google")
 
                 if let error = viewModel.authError {
                     Text(error)
                         .font(.footnote)
-                        .foregroundStyle(.red)
+                        .foregroundStyle(MCColor.error)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, MCSpacing.lg)
                 }
@@ -77,6 +78,7 @@ struct AuthStepView: View {
                     .font(.subheadline)
                     .foregroundStyle(.white.opacity(0.5))
             }
+            .accessibilityLabel("Continue without creating an account")
             .padding(.top, MCSpacing.sm)
         }
         .padding(.horizontal, MCSpacing.xl)

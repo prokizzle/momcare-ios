@@ -10,6 +10,7 @@ struct OnboardingBabyFormView: View {
     @State private var selectedPhoto: PhotosPickerItem?
     @State private var showOptionalDetails = false
     @State private var showSuccess = false
+    @State private var showSkeleton = true
 
     var body: some View {
         ScrollView {
@@ -24,9 +25,21 @@ struct OnboardingBabyFormView: View {
             .padding(.horizontal, MCSpacing.xl)
             .padding(.vertical, MCSpacing.section)
         }
+        .onAppear {
+            withAnimation(.easeOut(duration: 0.8).delay(0.3)) {
+                showSkeleton = false
+            }
+        }
         .onChange(of: selectedPhoto) { _, newItem in
             Task { @MainActor in
-                viewModel.babyPhotoData = try? await newItem?.loadTransferable(type: Data.self)
+                do {
+                    if let data = try await newItem?.loadTransferable(type: Data.self) {
+                        viewModel.babyPhotoData = data
+                        viewModel.photoLoadError = nil
+                    }
+                } catch {
+                    viewModel.photoLoadError = "Failed to load photo. Please try again."
+                }
             }
         }
     }
@@ -81,11 +94,13 @@ struct OnboardingBabyFormView: View {
         }
         .padding(MCSpacing.lg)
         .background(Color.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 16))
-        .skeleton(isEnabled: viewModel.babyName.isEmpty) { _ in
+        .skeleton(isEnabled: showSkeleton) { _ in
                 RoundedRectangle(cornerRadius: 12)
                     .fill(Color.white.opacity(0.08))
                     .frame(height: 16)
             }
+        .accessibilityElement(children: .combine)
+        .accessibilityLabel("Baby preview: \(viewModel.babyName.isEmpty ? "No name entered" : viewModel.babyName)")
         .changeEffect(
             .spray(origin: UnitPoint(x: 0.5, y: 0.5)) {
                 Image(systemName: "star.fill")
@@ -175,6 +190,14 @@ struct OnboardingBabyFormView: View {
                     .padding(MCSpacing.lg)
                     .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
                 }
+                .accessibilityLabel("Choose baby photo")
+
+                if let photoError = viewModel.photoLoadError {
+                    Text(photoError)
+                        .font(.footnote)
+                        .foregroundStyle(MCColor.error)
+                        .multilineTextAlignment(.center)
+                }
             }
             .padding(.top, MCSpacing.lg)
         } label: {
@@ -192,7 +215,7 @@ struct OnboardingBabyFormView: View {
         if let error = viewModel.babyError {
             Text(error)
                 .font(.footnote)
-                .foregroundStyle(.red)
+                .foregroundStyle(MCColor.error)
                 .multilineTextAlignment(.center)
         }
     }

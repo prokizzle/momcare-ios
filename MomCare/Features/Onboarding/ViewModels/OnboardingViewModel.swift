@@ -1,3 +1,4 @@
+import AuthenticationServices
 import Foundation
 
 enum OnboardingStep: Int, CaseIterable, Sendable {
@@ -18,7 +19,7 @@ final class OnboardingViewModel {
     struct Dependencies: Sendable {
         var requestNotifications: @Sendable () async -> Bool
         var requestHealthKit: @Sendable () async -> Bool
-        var signInWithApple: @Sendable () async throws -> Void
+        var signInWithApple: @Sendable (ASAuthorization) async throws -> Void
         var signInWithGoogle: @Sendable () async throws -> Void
         var signInAnonymously: @Sendable () async throws -> Void
         var createBaby: @Sendable (BabyFormData) async throws -> Baby
@@ -30,6 +31,7 @@ final class OnboardingViewModel {
     var isCompleted = false
     var authError: String?
     var babyError: String?
+    var photoLoadError: String?
 
     // MARK: - Baby form fields
 
@@ -74,10 +76,11 @@ final class OnboardingViewModel {
         }
     }
 
-    func performSignInWithApple() async {
+    func performSignInWithApple(result: Result<ASAuthorization, any Error>) async {
         authError = nil
         do {
-            try await dependencies.signInWithApple()
+            let authorization = try result.get()
+            try await dependencies.signInWithApple(authorization)
             advance()
         } catch {
             authError = error.localizedDescription

@@ -50,6 +50,7 @@ struct WelcomePageView: View {
                         .font(.system(size: 48))
                         .foregroundStyle(MCColor.accent)
                 }
+                .accessibilityHidden(true)
 
             Text("MomCare")
                 .font(.system(size: 40, weight: .bold, design: .rounded))
@@ -62,9 +63,7 @@ struct WelcomePageView: View {
 
             Spacer()
 
-            // TODO: Replace with ComponentsKit DSButton when API is confirmed
-            onboardingButton(title: "Get Started") {
-                MCHaptic.tap()
+            OnboardingButton(title: "Get Started") {
                 viewModel.currentStep = .features
             }
         }
@@ -125,8 +124,7 @@ struct WelcomePageView: View {
 
             Spacer()
 
-            onboardingButton(title: "Next") {
-                MCHaptic.tap()
+            OnboardingButton(title: "Next") {
                 viewModel.currentStep = .philosophy
             }
         }
@@ -149,6 +147,7 @@ struct WelcomePageView: View {
                         .font(.system(size: 48))
                         .foregroundStyle(MCColor.accent)
                 }
+                .accessibilityHidden(true)
 
             Text("Designed for 3am, one-handed use")
                 .font(.title.bold())
@@ -172,8 +171,7 @@ struct WelcomePageView: View {
 
             Spacer()
 
-            onboardingButton(title: "Let's set up") {
-                MCHaptic.tap()
+            OnboardingButton(title: "Let's set up") {
                 viewModel.advance()
             }
         }
@@ -202,6 +200,7 @@ struct WelcomePageView: View {
         .padding(.vertical, MCSpacing.xl)
         .padding(.horizontal, MCSpacing.sm)
         .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 16))
+        .accessibilityElement(children: .combine)
     }
 
     private func bulletPoint(_ text: String) -> some View {
@@ -214,17 +213,7 @@ struct WelcomePageView: View {
                 .font(.body)
                 .foregroundStyle(.white.opacity(0.9))
         }
-    }
-
-    private func onboardingButton(title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title)
-                .font(.headline)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 56)
-                .background(MCColor.accent, in: RoundedRectangle(cornerRadius: 16))
-        }
+        .accessibilityElement(children: .combine)
     }
 }
 

@@ -47,6 +47,7 @@ struct TourPageView: View {
                         .font(.system(size: 48))
                         .foregroundStyle(MCColor.accent)
                 }
+                .accessibilityHidden(true)
 
             Text("Your mission control")
                 .font(.title.bold())
@@ -73,8 +74,7 @@ struct TourPageView: View {
 
             Spacer()
 
-            onboardingButton(title: "Next") {
-                MCHaptic.tap()
+            OnboardingButton(title: "Next") {
                 viewModel.currentStep = .tourSelfCare
             }
         }
@@ -97,6 +97,7 @@ struct TourPageView: View {
                         .font(.system(size: 48))
                         .foregroundStyle(MCColor.selfCare)
                 }
+                .accessibilityHidden(true)
 
             Text("Your wellbeing matters too")
                 .font(.title.bold())
@@ -163,16 +164,6 @@ struct TourPageView: View {
         }
         .padding(MCSpacing.lg)
         .background(Color.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 16))
-    }
-
-    private func onboardingButton(title: String, action: @escaping () -> Void) -> some View {
-        Button(action: action) {
-            Text(title)
-                .font(.headline)
-                .foregroundStyle(.white)
-                .frame(maxWidth: .infinity)
-                .frame(height: 56)
-                .background(MCColor.accent, in: RoundedRectangle(cornerRadius: 16))
-        }
+        .accessibilityElement(children: .combine)
     }
 }

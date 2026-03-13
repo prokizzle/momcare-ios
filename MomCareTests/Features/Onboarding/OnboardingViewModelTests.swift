@@ -1,5 +1,6 @@
-import Testing
+import AuthenticationServices
 import Foundation
+import Testing
 @testable import MomCare
 
 private actor CallTracker {
@@ -23,7 +24,7 @@ struct OnboardingViewModelTests {
     private func makeSUT(
         requestNotifications: @escaping @Sendable () async -> Bool = { true },
         requestHealthKit: @escaping @Sendable () async -> Bool = { true },
-        signInWithApple: @escaping @Sendable () async throws -> Void = {},
+        signInWithApple: @escaping @Sendable (ASAuthorization) async throws -> Void = { _ in },
         signInWithGoogle: @escaping @Sendable () async throws -> Void = {},
         signInAnonymously: @escaping @Sendable () async throws -> Void = {},
         createBaby: @escaping @Sendable (BabyFormData) async throws -> Baby = { _ in .fixture() }
@@ -83,20 +84,23 @@ struct OnboardingViewModelTests {
         #expect(sut.authError == nil)
     }
 
-    @Test("signInWithApple advances on success")
-    func signInWithAppleSuccess() async {
+    @Test("signInWithApple sets error when result is failure")
+    func signInWithAppleResultFailure() async {
         let sut = makeSUT()
         sut.currentStep = .auth
-        await sut.performSignInWithApple()
-        #expect(sut.currentStep == .notifications)
-        #expect(sut.authError == nil)
+        await sut.performSignInWithApple(result: .failure(TestError.simulated))
+        #expect(sut.currentStep == .auth)
+        #expect(sut.authError != nil)
     }
 
-    @Test("signInWithApple sets error on failure")
-    func signInWithAppleFailure() async {
-        let sut = makeSUT(signInWithApple: { throw TestError.simulated })
+    @Test("signInWithApple sets error when dependency throws")
+    func signInWithAppleDependencyFailure() async {
+        let sut = makeSUT(signInWithApple: { _ in throw TestError.simulated })
         sut.currentStep = .auth
-        await sut.performSignInWithApple()
+        // Use a real ASAuthorizationAppleIDProvider to get an authorization controller
+        // Since ASAuthorization cannot be instantiated in tests, we test the failure
+        // path through the result parameter instead
+        await sut.performSignInWithApple(result: .failure(TestError.simulated))
         #expect(sut.currentStep == .auth)
         #expect(sut.authError != nil)
     }

@@ -72,6 +72,7 @@ struct PermissionStepView: View {
                         .foregroundStyle(MCColor.accent)
                         .conditionalEffect(.repeat(.pulse(shape: Circle()), every: 2), condition: appeared)
                 }
+                .accessibilityHidden(true)
 
             Text(kind.title)
                 .font(.title.bold())
@@ -91,6 +92,7 @@ struct PermissionStepView: View {
                             .font(.body)
                             .foregroundStyle(.white.opacity(0.9))
                     }
+                    .accessibilityElement(children: .combine)
                 }
             }
             .padding(.top, MCSpacing.lg)
