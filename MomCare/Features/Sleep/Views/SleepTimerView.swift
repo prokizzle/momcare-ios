@@ -3,7 +3,7 @@ import SwiftUI
 @MainActor
 struct SleepTimerView: View {
     let babyId: UUID
-    var onEnd: ((BabySleep.SleepQuality?, BabySleep.SleepLocation?) -> Void)?
+    var onEnd: ((BabySleep.SleepQuality?, BabySleep.SleepLocation?) async -> Void)?
 
     @Environment(BabyActivityEngine.self) private var engine
     @Environment(\.dismiss) private var dismiss
@@ -213,7 +213,9 @@ struct SleepTimerView: View {
         selectedQuality = quality
         MCHaptic.success()
         showQualitySheet = false
-        onEnd?(selectedQuality, selectedLocation)
-        dismiss()
+        Task {
+            await onEnd?(selectedQuality, selectedLocation)
+            dismiss()
+        }
     }
 }

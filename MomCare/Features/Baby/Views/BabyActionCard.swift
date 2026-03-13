@@ -55,10 +55,8 @@ struct BabyActionCard: View {
                 guard let sleepViewModel else { return }
                 sleepViewModel.selectedQuality = quality
                 sleepViewModel.selectedLocation = location
-                Task {
-                    await sleepViewModel.endSleep(babyId: babyId)
-                    await engine.endNap(babyId: babyId)
-                }
+                await sleepViewModel.endSleep(babyId: babyId)
+                await engine.endNap(babyId: babyId)
             }
         }
         .accessibilityLabel(accessibilityLabel)
@@ -84,7 +82,7 @@ struct BabyActionCard: View {
             Image(systemName: "moon.stars.fill")
                 .font(.title2)
                 .foregroundStyle(MCColor.baby)
-            Text("End Nap")
+            Text("Napping")
                 .font(.caption2.bold())
             Text(engine.napElapsedFormatted)
                 .font(.caption2)
