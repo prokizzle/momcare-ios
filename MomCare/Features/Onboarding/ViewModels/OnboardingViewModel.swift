@@ -37,9 +37,9 @@ final class OnboardingViewModel {
     var babyDateOfBirth = Date.now
     var babyBiologicalSex: Baby.BiologicalSex?
     var babyFeedingMethod: Baby.FeedingMethod = .breast
-    var babyBirthWeight: Double?
-    var babyBirthLength: Double?
-    var babyBirthHeadCircumference: Double?
+    var babyBirthWeight = ""
+    var babyBirthLength = ""
+    var babyBirthHeadCircumference = ""
     var babyPhotoData: Data?
 
     var babyFormIsValid: Bool {
@@ -123,9 +123,9 @@ final class OnboardingViewModel {
             dateOfBirth: babyDateOfBirth,
             biologicalSex: babyBiologicalSex,
             feedingMethod: babyFeedingMethod,
-            birthWeight: babyBirthWeight,
-            birthLength: babyBirthLength,
-            birthHeadCircumference: babyBirthHeadCircumference,
+            birthWeight: Double(babyBirthWeight),
+            birthLength: Double(babyBirthLength),
+            birthHeadCircumference: Double(babyBirthHeadCircumference),
             photoData: babyPhotoData
         )
         do {

@@ -159,6 +159,26 @@ struct OnboardingViewModelTests {
         #expect(sut.babyError != nil)
     }
 
+    // MARK: - Google Auth
+
+    @Test("signInWithGoogle advances on success")
+    func signInWithGoogleSuccess() async {
+        let sut = makeSUT()
+        sut.currentStep = .auth
+        await sut.performSignInWithGoogle()
+        #expect(sut.currentStep == .notifications)
+        #expect(sut.authError == nil)
+    }
+
+    @Test("signInWithGoogle sets error on failure")
+    func signInWithGoogleFailure() async {
+        let sut = makeSUT(signInWithGoogle: { throw NSError(domain: "test", code: 1) })
+        sut.currentStep = .auth
+        await sut.performSignInWithGoogle()
+        #expect(sut.currentStep == .auth)
+        #expect(sut.authError != nil)
+    }
+
     // MARK: - Validation
 
     @Test("babyFormIsValid requires non-empty name")
