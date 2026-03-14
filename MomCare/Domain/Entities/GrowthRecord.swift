@@ -17,8 +17,8 @@ struct GrowthRecord: Identifiable, Codable, Sendable, Equatable {
     var weightFormatted: String {
         guard let grams = weightGrams else { return "--" }
         if Locale.current.measurementSystem == .metric {
-            let kg = grams / 1000.0
-            return String(format: "%.1f kg", kg)
+            let kilograms = grams / 1000.0
+            return String(format: "%.1f kg", kilograms)
         } else {
             let lbs = grams / 453.592
             return String(format: "%.1f lbs", lbs)
@@ -26,21 +26,21 @@ struct GrowthRecord: Identifiable, Codable, Sendable, Equatable {
     }
 
     var lengthFormatted: String {
-        guard let cm = lengthCm else { return "--" }
+        guard let centimeters = lengthCm else { return "--" }
         if Locale.current.measurementSystem == .metric {
-            return String(format: "%.1f cm", cm)
+            return String(format: "%.1f cm", centimeters)
         } else {
-            let inches = cm / 2.54
+            let inches = centimeters / 2.54
             return String(format: "%.1f in", inches)
         }
     }
 
     var headCircumferenceFormatted: String {
-        guard let cm = headCircumferenceCm else { return "--" }
+        guard let centimeters = headCircumferenceCm else { return "--" }
         if Locale.current.measurementSystem == .metric {
-            return String(format: "%.1f cm", cm)
+            return String(format: "%.1f cm", centimeters)
         } else {
-            let inches = cm / 2.54
+            let inches = centimeters / 2.54
             return String(format: "%.1f in", inches)
         }
     }

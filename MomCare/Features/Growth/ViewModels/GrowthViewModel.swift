@@ -32,6 +32,7 @@ final class GrowthViewModel {
         }
     }
 
+    // swiftlint:disable:next function_parameter_count
     func addMeasurement(
         babyId: UUID,
         date: Date,

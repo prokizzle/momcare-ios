@@ -24,7 +24,7 @@ struct GrowthChartService: Sendable {
 
     struct WHODataPoint: Codable, Sendable {
         let month: Int
-        let p3: Double
+        let p3: Double // swiftlint:disable:this identifier_name
         let p15: Double
         let p50: Double
         let p85: Double
@@ -80,7 +80,7 @@ struct GrowthChartService: Sendable {
             (15, point.p15),
             (50, point.p50),
             (85, point.p85),
-            (97, point.p97),
+            (97, point.p97)
         ]
 
         // Below p3
