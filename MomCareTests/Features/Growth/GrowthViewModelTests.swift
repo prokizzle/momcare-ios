@@ -28,7 +28,7 @@ struct GrowthViewModelTests {
     func loadRecords() async {
         let records = [
             GrowthRecord.fixture(babyId: babyId, weightGrams: 5200),
-            GrowthRecord.fixture(babyId: babyId, weightGrams: 4500),
+            GrowthRecord.fixture(babyId: babyId, weightGrams: 4500)
         ]
         let sut = makeSUT(records: records)
         await sut.loadRecords(babyId: babyId)
@@ -74,7 +74,7 @@ struct GrowthViewModelTests {
     @MainActor
     func updateChartData() async {
         let records = [
-            GrowthRecord.fixture(babyId: babyId, date: .now, weightGrams: 5200),
+            GrowthRecord.fixture(babyId: babyId, date: .now, weightGrams: 5200)
         ]
         let sut = makeSUT(records: records)
         await sut.loadRecords(babyId: babyId)
@@ -87,7 +87,7 @@ struct GrowthViewModelTests {
     @MainActor
     func latestPercentile() async {
         let records = [
-            GrowthRecord.fixture(babyId: babyId, date: .now, weightGrams: 5200),
+            GrowthRecord.fixture(babyId: babyId, date: .now, weightGrams: 5200)
         ]
         let sut = makeSUT(records: records)
         await sut.loadRecords(babyId: babyId)

@@ -23,6 +23,7 @@ final class GrowthViewModel {
     }
 
     func loadRecords(babyId: UUID) async {
+        error = nil
         isLoading = true
         defer { isLoading = false }
         do {
@@ -32,6 +33,7 @@ final class GrowthViewModel {
         }
     }
 
+    @discardableResult
     // swiftlint:disable:next function_parameter_count
     func addMeasurement(
         babyId: UUID,
@@ -40,7 +42,8 @@ final class GrowthViewModel {
         lengthCm: Double?,
         headCircumferenceCm: Double?,
         notes: String?
-    ) async {
+    ) async -> Bool {
+        error = nil
         let record = GrowthRecord(
             id: UUID(),
             babyId: babyId,
@@ -57,12 +60,15 @@ final class GrowthViewModel {
             let created = try await repository.create(record)
             records.insert(created, at: 0)
             records.sort { $0.date > $1.date }
+            return true
         } catch {
             self.error = error
+            return false
         }
     }
 
     func deleteRecord(id: UUID, babyId: UUID) async {
+        error = nil
         do {
             try await repository.delete(id)
             records.removeAll { $0.id == id }
@@ -72,6 +78,7 @@ final class GrowthViewModel {
     }
 
     func updateChartData(sex: Baby.BiologicalSex?, dateOfBirth: Date) {
+        error = nil
         do {
             let data = try chartService.chartData(
                 records: records,

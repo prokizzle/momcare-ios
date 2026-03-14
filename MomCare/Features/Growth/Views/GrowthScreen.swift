@@ -32,7 +32,7 @@ struct GrowthScreen: View {
             viewModel.updateChartData(sex: biologicalSex, dateOfBirth: dateOfBirth)
         }
         .sheet(isPresented: $viewModel.showAddSheet) {
-            AddMeasurementView(babyId: babyId, viewModel: viewModel)
+            AddMeasurementView(babyId: babyId, dateOfBirth: dateOfBirth, viewModel: viewModel)
         }
     }
 
@@ -84,7 +84,7 @@ struct GrowthScreen: View {
                 }
 
                 // Baby's data points
-                ForEach(chartData.babyPoints, id: \.ageMonths) { point in
+                ForEach(chartData.babyPoints) { point in
                     PointMark(
                         x: .value("Month", point.ageMonths),
                         y: .value("Value", displayValue(point.value))
@@ -94,7 +94,7 @@ struct GrowthScreen: View {
                 }
 
                 // Baby's line connecting points
-                ForEach(chartData.babyPoints, id: \.ageMonths) { point in
+                ForEach(chartData.babyPoints) { point in
                     LineMark(
                         x: .value("Month", point.ageMonths),
                         y: .value("Value", displayValue(point.value))

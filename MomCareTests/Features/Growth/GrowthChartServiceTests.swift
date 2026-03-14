@@ -68,7 +68,7 @@ struct GrowthChartServiceTests {
             GrowthRecord.fixture(
                 date: Calendar.current.date(byAdding: .month, value: -1, to: .now)!,
                 weightGrams: 4500
-            ),
+            )
         ]
         let dob = Calendar.current.date(byAdding: .month, value: -3, to: .now)!
         let result = try service.chartData(

@@ -12,8 +12,7 @@ enum SchemaV4: VersionedSchema {
             SelfCareGridItemModel.self,
             ContentHistoryModel.self,
             DiaperModel.self,
-            BabySleepModel.self,
-            GrowthRecordModel.self
+            BabySleepModel.self
         ]
     }
 }

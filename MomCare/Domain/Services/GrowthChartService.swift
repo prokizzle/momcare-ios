@@ -42,7 +42,8 @@ struct GrowthChartService: Sendable {
         let babyPoints: [BabyDataPoint]
     }
 
-    struct BabyDataPoint: Sendable {
+    struct BabyDataPoint: Identifiable, Sendable {
+        let id: UUID
         let ageMonths: Double
         let value: Double
         let percentile: Double?
@@ -143,7 +144,7 @@ struct GrowthChartService: Sendable {
             let days = Calendar.current.dateComponents([.day], from: dateOfBirth, to: record.date).day ?? 0
             let fractionalMonths = Double(days) / 30.44
 
-            return BabyDataPoint(ageMonths: fractionalMonths, value: value, percentile: pct)
+            return BabyDataPoint(id: record.id, ageMonths: fractionalMonths, value: value, percentile: pct)
         }.sorted { $0.ageMonths < $1.ageMonths }
 
         return GrowthChartData(percentileBands: standard, babyPoints: babyPoints)
