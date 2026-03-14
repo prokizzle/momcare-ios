@@ -8,21 +8,18 @@ struct FeedingTimerView: View {
     @State private var showEndConfirmation = false
 
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-
-            VStack(spacing: MCSpacing.xxl) {
-                feedingTypeIndicator
-                timerDisplay
-                if viewModel.inProgressFeeding?.feedingType == .breast {
-                    breastSideToggle
-                }
-                Spacer()
-                endButton
+        VStack(spacing: MCSpacing.xxl) {
+            feedingTypeIndicator
+            timerDisplay
+            if viewModel.inProgressFeeding?.feedingType == .breast {
+                breastSideToggle
             }
-            .padding(.horizontal, MCSpacing.xl)
-            .padding(.top, MCSpacing.section)
+            Spacer()
+            endButton
         }
+        .padding(.horizontal, MCSpacing.xl)
+        .padding(.top, MCSpacing.section)
+        .nightlightBackground()
         .confirmationDialog("End Feeding?", isPresented: $showEndConfirmation) {
             Button("End Feeding") {
                 Task {
@@ -42,7 +39,7 @@ struct FeedingTimerView: View {
                 Image(systemName: feedingType.systemImage)
                     .font(.title2)
                 Text(feedingType.label)
-                    .font(MCTypography.cardTitle)
+                    .font(MCTypography.title3)
             }
         }
         .foregroundStyle(.secondary)
@@ -50,7 +47,7 @@ struct FeedingTimerView: View {
 
     private var timerDisplay: some View {
         Text(viewModel.elapsedTimeFormatted)
-            .font(MCTypography.largeTimer)
+            .font(MCTypography.timer)
             .monospacedDigit()
             .foregroundStyle(.white)
             .contentTransition(.numericText())
@@ -73,16 +70,16 @@ struct FeedingTimerView: View {
             }
         } label: {
             Text(side.label)
-                .font(.title2.weight(.semibold))
+                .font(MCTypography.headline)
                 .frame(minWidth: 80, minHeight: 80)
                 .background(
                     viewModel.selectedSide == side
-                        ? MCColor.feeding.opacity(0.3)
-                        : Color.white.opacity(0.1)
+                        ? MCColor.feeding.opacity(MCOpacity.medium)
+                        : Color.white.opacity(MCOpacity.whisper)
                 )
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .clipShape(RoundedRectangle(cornerRadius: MCRadius.lg))
                 .overlay(
-                    RoundedRectangle(cornerRadius: 16)
+                    RoundedRectangle(cornerRadius: MCRadius.lg)
                         .stroke(
                             viewModel.selectedSide == side
                                 ? MCColor.feeding
@@ -102,12 +99,12 @@ struct FeedingTimerView: View {
             MCHaptic.tap()
         } label: {
             Text("End Feeding")
-                .font(.title3.weight(.semibold))
+                .font(MCTypography.button)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
                 .background(MCColor.feeding)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .clipShape(RoundedRectangle(cornerRadius: MCRadius.lg))
         }
         .padding(.bottom, MCSpacing.xxl)
     }
