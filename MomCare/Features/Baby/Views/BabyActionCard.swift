@@ -1,6 +1,6 @@
 import SwiftUI
 
-enum BabyCardType: String, CaseIterable {
+enum BabyCardType: String, CaseIterable, Sendable {
     case nap, feeding, diaper
 
     var idleIcon: String {

@@ -11,6 +11,7 @@ final class JournalViewModel {
         }
     }
     var isLoading = false
+    var error: Error?
 
     private let sleepRepository: any SleepRepositoryProtocol
     private let feedingRepository: any FeedingRepositoryProtocol
@@ -34,10 +35,12 @@ final class JournalViewModel {
 
     func load(babyId: UUID) async {
         isLoading = true
+        error = nil
         defer { isLoading = false }
         var allEntries: [JournalEntry] = []
 
-        if let sleeps = try? await sleepRepository.getSleepsForBaby(babyId, limit: 200) {
+        do {
+            let sleeps = try await sleepRepository.getSleepsForBaby(babyId, limit: 200)
             allEntries += sleeps.compactMap { sleep in
                 guard let end = sleep.endTime else { return nil }
                 let mins = Int(end.timeIntervalSince(sleep.startTime) / 60)
@@ -48,9 +51,12 @@ final class JournalViewModel {
                     detail: "\(mins) min"
                 )
             }
+        } catch {
+            self.error = error
         }
 
-        if let feedings = try? await feedingRepository.getFeedingsForBaby(babyId, limit: 200) {
+        do {
+            let feedings = try await feedingRepository.getFeedingsForBaby(babyId, limit: 200)
             allEntries += feedings.compactMap { feeding in
                 guard let end = feeding.endTime else { return nil }
                 let mins = Int(end.timeIntervalSince(feeding.startTime) / 60)
@@ -62,9 +68,12 @@ final class JournalViewModel {
                     detail: "\(side) \(mins) min"
                 )
             }
+        } catch {
+            self.error = error
         }
 
-        if let diapers = try? await diaperRepository.getDiapersForBaby(babyId, limit: 200) {
+        do {
+            let diapers = try await diaperRepository.getDiapersForBaby(babyId, limit: 200)
             allEntries += diapers.map { diaper in
                 JournalEntry(
                     id: diaper.id,
@@ -73,6 +82,8 @@ final class JournalViewModel {
                     detail: diaper.type.label
                 )
             }
+        } catch {
+            self.error = error
         }
 
         entries = allEntries.sorted { $0.timestamp > $1.timestamp }

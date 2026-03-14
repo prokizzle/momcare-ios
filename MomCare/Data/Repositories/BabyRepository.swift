@@ -54,6 +54,42 @@ final class BabyRepository: BabyRepositoryProtocol {
         }
         model.isSoftDeleted = true
         model.updatedAt = .now
+
+        let now = Date.now
+        let babyId = id
+
+        let feedingDescriptor = FetchDescriptor<FeedingModel>(
+            predicate: #Predicate<FeedingModel> { $0.babyId == babyId && $0.isSoftDeleted == false }
+        )
+        for feeding in try modelContext.fetch(feedingDescriptor) {
+            feeding.isSoftDeleted = true
+            feeding.updatedAt = now
+        }
+
+        let diaperDescriptor = FetchDescriptor<DiaperModel>(
+            predicate: #Predicate<DiaperModel> { $0.babyId == babyId && $0.isSoftDeleted == false }
+        )
+        for diaper in try modelContext.fetch(diaperDescriptor) {
+            diaper.isSoftDeleted = true
+            diaper.updatedAt = now
+        }
+
+        let sleepDescriptor = FetchDescriptor<BabySleepModel>(
+            predicate: #Predicate<BabySleepModel> { $0.babyId == babyId && $0.isSoftDeleted == false }
+        )
+        for sleep in try modelContext.fetch(sleepDescriptor) {
+            sleep.isSoftDeleted = true
+            sleep.updatedAt = now
+        }
+
+        let growthDescriptor = FetchDescriptor<GrowthRecordModel>(
+            predicate: #Predicate<GrowthRecordModel> { $0.babyId == babyId && $0.isSoftDeleted == false }
+        )
+        for growth in try modelContext.fetch(growthDescriptor) {
+            growth.isSoftDeleted = true
+            growth.updatedAt = now
+        }
+
         try modelContext.save()
     }
 

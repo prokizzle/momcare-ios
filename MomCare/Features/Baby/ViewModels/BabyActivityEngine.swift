@@ -43,9 +43,9 @@ final class BabyActivityEngine {
     private let feedingRepository: any FeedingRepositoryProtocol
     private let diaperRepository: any DiaperRepositoryProtocol
 
-    nonisolated(unsafe) private var napTimerTask: Task<Void, Never>?
-    nonisolated(unsafe) private var feedingTimerTask: Task<Void, Never>?
-    nonisolated(unsafe) private var diaperAutoHideTask: Task<Void, Never>?
+    private var napTimerTask: Task<Void, Never>?
+    private var feedingTimerTask: Task<Void, Never>?
+    private var diaperAutoHideTask: Task<Void, Never>?
 
     // MARK: - Init
 
@@ -57,12 +57,6 @@ final class BabyActivityEngine {
         self.sleepRepository = sleepRepository
         self.feedingRepository = feedingRepository
         self.diaperRepository = diaperRepository
-    }
-
-    deinit {
-        napTimerTask?.cancel()
-        feedingTimerTask?.cancel()
-        diaperAutoHideTask?.cancel()
     }
 
     // MARK: - Load In-Progress (on app launch)

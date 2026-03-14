@@ -19,9 +19,6 @@ final class FeedingModel {
     var createdAt: Date
     var updatedAt: Date
 
-    @Relationship(deleteRule: .nullify)
-    var baby: BabyModel?
-
     init(from feeding: Feeding) {
         self.id = feeding.id
         self.babyId = feeding.babyId
