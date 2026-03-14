@@ -14,6 +14,7 @@ struct SleepTimerView: View {
     @State private var selectedQuality: BabySleep.SleepQuality?
     @State private var showLocationPicker = false
     @State private var showQualitySheet = false
+    @State private var isFinishing = false
 
     var body: some View {
         ZStack {
@@ -210,6 +211,8 @@ struct SleepTimerView: View {
     // MARK: - Finish
 
     private func finishSleep(quality: BabySleep.SleepQuality?) {
+        guard !isFinishing else { return }
+        isFinishing = true
         selectedQuality = quality
         MCHaptic.success()
         showQualitySheet = false

@@ -29,13 +29,11 @@ final class FeedingViewModel {
     }
 
     private let repository: any FeedingRepositoryProtocol
-    nonisolated(unsafe) private var timerTask: Task<Void, Never>?
+    private var timerTask: Task<Void, Never>?
 
     init(repository: any FeedingRepositoryProtocol) {
         self.repository = repository
     }
-
-    deinit { timerTask?.cancel() }
 
     func loadFeedings(babyId: UUID) async {
         error = nil
