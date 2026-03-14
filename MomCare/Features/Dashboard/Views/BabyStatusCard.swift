@@ -7,7 +7,7 @@ struct BabyStatusCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: MCSpacing.md) {
             Label("Baby", systemImage: "heart.fill")
-                .font(.caption.bold())
+                .font(MCTypography.badge)
                 .foregroundStyle(MCColor.feeding)
 
             if viewModel.inProgressFeeding != nil {
@@ -19,8 +19,8 @@ struct BabyStatusCard: View {
         .padding(MCSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.ultraThinMaterial)
+            RoundedRectangle(cornerRadius: MCRadius.lg)
+                .fill(MCElevation.elevated)
         }
     }
 
@@ -31,10 +31,10 @@ struct BabyStatusCard: View {
         HStack {
             VStack(alignment: .leading, spacing: MCSpacing.xs) {
                 Text("Feeding in progress")
-                    .font(.headline)
+                    .font(MCTypography.headline)
                     .foregroundStyle(.primary)
                 Text("Timer running")
-                    .font(.subheadline)
+                    .font(MCTypography.subheadline)
                     .foregroundStyle(.secondary)
             }
             Spacer()
@@ -53,23 +53,23 @@ struct BabyStatusCard: View {
                     if viewModel.timeSinceLastFeeding != nil {
                         TimelineView(.periodic(from: .now, by: 60)) { _ in
                             Text(viewModel.timeSinceLastFeedingFormatted)
-                                .font(.headline)
+                                .font(MCTypography.stat)
                                 .foregroundStyle(viewModel.urgency.color)
                         }
                     } else {
                         Text("No feeding recorded")
-                            .font(.headline)
+                            .font(MCTypography.headline)
                             .foregroundStyle(.secondary)
                     }
                 }
 
                 Text(viewModel.urgency.label)
-                    .font(.subheadline)
+                    .font(MCTypography.subheadline)
                     .foregroundStyle(.secondary)
             }
             Spacer()
             Circle()
-                .fill(viewModel.urgency.color.opacity(0.2))
+                .fill(viewModel.urgency.color.opacity(MCOpacity.medium))
                 .frame(width: 44, height: 44)
                 .overlay {
                     Image(systemName: "clock.fill")

@@ -17,7 +17,7 @@ struct SmartSuggestionBanner: View {
                 .frame(width: 20)
 
             Text(suggestion.message)
-                .font(.subheadline)
+                .font(MCTypography.subheadline)
                 .foregroundStyle(.primary)
                 .multilineTextAlignment(.leading)
 
@@ -31,8 +31,8 @@ struct SmartSuggestionBanner: View {
         }
         .padding(MCSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 14)
-                .fill(.ultraThinMaterial)
+            RoundedRectangle(cornerRadius: MCRadius.md)
+                .fill(MCElevation.surface)
         }
         .offset(x: dragOffset)
         .gesture(
@@ -42,12 +42,12 @@ struct SmartSuggestionBanner: View {
                 }
                 .onEnded { value in
                     if value.translation.width < -80 {
-                        withAnimation(reduceMotion ? nil : .easeOut(duration: 0.2)) {
+                        withAnimation(reduceMotion ? nil : MCAnimation.quick) {
                             dragOffset = -400
                         }
                         onDismiss()
                     } else {
-                        withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.7)) {
+                        withAnimation(reduceMotion ? nil : MCAnimation.quick) {
                             dragOffset = 0
                         }
                     }
