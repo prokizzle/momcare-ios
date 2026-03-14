@@ -53,6 +53,14 @@ struct DependenciesTests {
         #expect(repo is SleepRepository)
     }
 
+    @Test("AppDependencies creates real GrowthRepository")
+    @MainActor
+    func appDependenciesCreatesGrowthRepo() throws {
+        let deps = try TestModelContainerFactory.makeDependencies()
+        let repo = deps.makeGrowthRepository()
+        #expect(repo is GrowthRepository)
+    }
+
     @Test("Environment key has default value")
     @MainActor
     func environmentKey() {
@@ -124,6 +132,17 @@ private final class MockSleepRepository: SleepRepositoryProtocol {
 }
 
 @MainActor
+private final class MockGrowthRepository: GrowthRepositoryProtocol {
+    func getAll() async throws -> [GrowthRecord] { [] }
+    func getById(_ id: UUID) async throws -> GrowthRecord? { nil }
+    func create(_ entity: GrowthRecord) async throws -> GrowthRecord { entity }
+    func update(_ entity: GrowthRecord) async throws -> GrowthRecord { entity }
+    func delete(_ id: UUID) async throws {}
+    func getRecordsForBaby(_ babyId: UUID, limit: Int?) async throws -> [GrowthRecord] { [] }
+    func getRecordsForDateRange(babyId: UUID, start: Date, end: Date) async throws -> [GrowthRecord] { [] }
+}
+
+@MainActor
 private final class TestDependencies: DependencyContainer {
     func makeBabyRepository() -> any BabyRepositoryProtocol {
         MockBabyRepository()
@@ -143,5 +162,9 @@ private final class TestDependencies: DependencyContainer {
 
     func makeSleepRepository() -> any SleepRepositoryProtocol {
         MockSleepRepository()
+    }
+
+    func makeGrowthRepository() -> any GrowthRepositoryProtocol {
+        MockGrowthRepository()
     }
 }

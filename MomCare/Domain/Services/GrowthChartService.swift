@@ -2,6 +2,12 @@ import Foundation
 
 struct GrowthChartService: Sendable {
 
+    nonisolated(unsafe) let bundle: Bundle
+
+    init(bundle: Bundle = .main) {
+        self.bundle = bundle
+    }
+
     enum MeasurementType: String, CaseIterable, Sendable {
         case weight, length, headCircumference
 
@@ -61,7 +67,7 @@ struct GrowthChartService: Sendable {
 
         let fileName = "\(measurementKey)_\(sexKey)"
 
-        guard let url = Bundle.main.url(forResource: fileName, withExtension: "json", subdirectory: "WHO") else {
+        guard let url = bundle.url(forResource: fileName, withExtension: "json") else {
             throw GrowthChartError.dataNotFound(fileName)
         }
         let data = try Data(contentsOf: url)
