@@ -32,6 +32,7 @@ let project = Project(
                 "MomCare/App/GoogleService-Info.plist",
                 "MomCare/App/PrivacyInfo.xcprivacy",
                 "MomCare/Core/Content/**",
+                "MomCare/App/Resources/Fonts/**",
             ],
             entitlements: .file(path: "MomCare/App/MomCare.entitlements"),
             dependencies: [
