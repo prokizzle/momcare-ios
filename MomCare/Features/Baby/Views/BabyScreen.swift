@@ -3,7 +3,10 @@ import SwiftUI
 @MainActor
 struct BabyScreen: View {
     let babyId: UUID?
+    var dateOfBirth: Date?
+    var biologicalSex: Baby.BiologicalSex?
     var sleepViewModel: SleepViewModel?
+    var growthViewModel: GrowthViewModel?
     @Environment(BabyActivityEngine.self) private var engine
     @State private var showSleepTimer = false
 
@@ -21,6 +24,24 @@ struct BabyScreen: View {
                                 Image(systemName: "moon.stars.fill")
                                     .foregroundStyle(MCColor.baby)
                                 Text("Sleep History")
+                                    .font(MCTypography.cardTitle)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(MCSpacing.md)
+                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                        }
+                        .buttonStyle(.plain)
+                    }
+
+                    if growthViewModel != nil {
+                        NavigationLink(value: BabyRoute.growth) {
+                            HStack {
+                                Image(systemName: "chart.line.uptrend.xyaxis")
+                                    .foregroundStyle(MCColor.baby)
+                                Text("Growth Charts")
                                     .font(MCTypography.cardTitle)
                                 Spacer()
                                 Image(systemName: "chevron.right")
@@ -51,6 +72,15 @@ struct BabyScreen: View {
             case .sleepTimer:
                 if let babyId {
                     SleepTimerView(babyId: babyId)
+                }
+            case .growth:
+                if let growthViewModel, let babyId, let dateOfBirth {
+                    GrowthScreen(
+                        babyId: babyId,
+                        dateOfBirth: dateOfBirth,
+                        biologicalSex: biologicalSex,
+                        viewModel: growthViewModel
+                    )
                 }
             }
         }

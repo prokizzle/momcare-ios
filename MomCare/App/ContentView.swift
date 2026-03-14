@@ -10,6 +10,7 @@ struct ContentView: View {
     var babyActivityEngine: BabyActivityEngine?
     var journalViewModel: JournalViewModel?
     var sleepViewModel: SleepViewModel?
+    var growthViewModel: GrowthViewModel?
 
     var body: some View {
         Group {
@@ -62,7 +63,10 @@ struct ContentView: View {
         NavigationStack(path: $navigation.babyPath) {
             BabyScreen(
                 babyId: babyViewModel.selectedBaby?.id,
-                sleepViewModel: sleepViewModel
+                dateOfBirth: babyViewModel.selectedBaby?.dateOfBirth,
+                biologicalSex: babyViewModel.selectedBaby?.biologicalSex,
+                sleepViewModel: sleepViewModel,
+                growthViewModel: growthViewModel
             )
             .toolbar {
                     ToolbarItem(placement: .topBarLeading) {

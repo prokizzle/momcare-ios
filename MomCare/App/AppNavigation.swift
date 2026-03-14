@@ -3,6 +3,7 @@ import SwiftUI
 enum BabyRoute: Hashable {
     case sleepHistory
     case sleepTimer
+    case growth
 }
 
 enum FeedingRoute: Hashable {
@@ -51,6 +52,8 @@ final class AppNavigation {
                 babyPath.append(BabyRoute.sleepHistory)
             } else if remainder.first == "sleep-timer" {
                 babyPath.append(BabyRoute.sleepTimer)
+            } else if remainder.first == "growth" {
+                babyPath.append(BabyRoute.growth)
             }
         default:
             break
