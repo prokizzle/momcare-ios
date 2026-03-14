@@ -8,7 +8,7 @@ struct FeedingSelectorSheet: View {
     var body: some View {
         VStack(spacing: MCSpacing.xl) {
             Text("How are you feeding?")
-                .font(.title3.bold())
+                .font(MCTypography.title3)
                 .padding(.top, MCSpacing.xl)
 
             VStack(spacing: MCSpacing.md) {
@@ -35,13 +35,13 @@ struct FeedingSelectorSheet: View {
                 Image(systemName: method.systemImage)
                     .font(.title2)
                 Text(label)
-                    .font(.headline)
+                    .font(MCTypography.headline)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 64)
             .background {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
+                RoundedRectangle(cornerRadius: MCRadius.lg)
+                    .fill(MCElevation.elevated)
             }
         }
         .buttonStyle(.plain)

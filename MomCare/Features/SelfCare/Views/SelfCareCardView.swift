@@ -18,11 +18,11 @@ struct SelfCareCardView: View {
             VStack(alignment: .leading, spacing: MCSpacing.xs) {
                 if card.type == .streak {
                     Text("Streak")
-                        .font(.caption.bold())
+                        .font(MCTypography.badge)
                         .foregroundStyle(MCColor.selfCare)
                 }
                 Text(card.message)
-                    .font(MCTypography.cardBody)
+                    .font(MCTypography.callout)
                     .foregroundStyle(.primary)
             }
 
@@ -30,8 +30,8 @@ struct SelfCareCardView: View {
         }
         .padding(MCSpacing.lg)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.ultraThinMaterial)
+            RoundedRectangle(cornerRadius: MCRadius.lg)
+                .fill(MCElevation.surface)
         }
         .offset(x: dragOffset)
         .gesture(
@@ -41,12 +41,12 @@ struct SelfCareCardView: View {
                 }
                 .onEnded { value in
                     if value.translation.width < -80 {
-                        withAnimation(reduceMotion ? nil : .easeOut(duration: 0.2)) {
+                        withAnimation(reduceMotion ? nil : MCAnimation.quick) {
                             dragOffset = -400
                         }
                         onDismiss()
                     } else {
-                        withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.7)) {
+                        withAnimation(reduceMotion ? nil : MCAnimation.quick) {
                             dragOffset = 0
                         }
                     }

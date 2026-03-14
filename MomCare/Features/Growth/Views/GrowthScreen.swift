@@ -60,7 +60,7 @@ struct GrowthScreen: View {
                         yStart: .value("P3", displayValue(point.p3)),
                         yEnd: .value("P97", displayValue(point.p97))
                     )
-                    .foregroundStyle(MCColor.accent.opacity(0.08))
+                    .foregroundStyle(MCColor.accent.opacity(MCOpacity.whisper))
                 }
 
                 // 15th-85th percentile band (medium)
@@ -70,7 +70,7 @@ struct GrowthScreen: View {
                         yStart: .value("P15", displayValue(point.p15)),
                         yEnd: .value("P85", displayValue(point.p85))
                     )
-                    .foregroundStyle(MCColor.accent.opacity(0.15))
+                    .foregroundStyle(MCColor.accent.opacity(MCOpacity.medium))
                 }
 
                 // 50th percentile line (dashed)
@@ -79,7 +79,7 @@ struct GrowthScreen: View {
                         x: .value("Month", point.month),
                         y: .value("P50", displayValue(point.p50))
                     )
-                    .foregroundStyle(MCColor.accent.opacity(0.4))
+                    .foregroundStyle(MCColor.accent.opacity(MCOpacity.strong))
                     .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 4]))
                 }
 
@@ -118,10 +118,10 @@ struct GrowthScreen: View {
                 .font(.system(size: 48))
                 .foregroundStyle(.secondary)
             Text("No measurements yet")
-                .font(MCTypography.cardTitle)
+                .font(MCTypography.title3)
                 .foregroundStyle(.secondary)
             Text("Add your first measurement to see growth charts")
-                .font(MCTypography.cardBody)
+                .font(MCTypography.callout)
                 .foregroundStyle(.tertiary)
                 .multilineTextAlignment(.center)
         }
@@ -137,11 +137,11 @@ struct GrowthScreen: View {
                 Image(systemName: "chart.bar.fill")
                     .foregroundStyle(MCColor.accent)
                 Text("Latest: \(Int(pct))th percentile")
-                    .font(MCTypography.cardTitle)
+                    .font(MCTypography.title3)
             }
             .padding(MCSpacing.md)
             .frame(maxWidth: .infinity)
-            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+            .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.md))
         }
     }
 
@@ -156,11 +156,11 @@ struct GrowthScreen: View {
                 Image(systemName: "plus.circle.fill")
                 Text("Add Measurement")
             }
-            .font(.headline)
+            .font(MCTypography.headline)
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .frame(height: 50)
-            .background(MCColor.accent, in: RoundedRectangle(cornerRadius: 14))
+            .background(MCColor.accent, in: RoundedRectangle(cornerRadius: MCRadius.lg))
         }
     }
 
@@ -171,13 +171,13 @@ struct GrowthScreen: View {
         if !viewModel.records.isEmpty {
             VStack(alignment: .leading, spacing: MCSpacing.md) {
                 Text("History")
-                    .font(MCTypography.cardTitle)
+                    .font(MCTypography.title3)
 
                 ForEach(viewModel.records) { record in
                     HStack {
                         VStack(alignment: .leading, spacing: MCSpacing.xs) {
                             Text(record.date.formatted(date: .abbreviated, time: .omitted))
-                                .font(.subheadline.bold())
+                                .font(MCTypography.subheadline).fontWeight(.bold)
                             HStack(spacing: MCSpacing.md) {
                                 if record.weightGrams != nil {
                                     Label(record.weightFormatted, systemImage: "scalemass.fill")
@@ -189,13 +189,13 @@ struct GrowthScreen: View {
                                     Label(record.headCircumferenceFormatted, systemImage: "circle.dashed")
                                 }
                             }
-                            .font(.caption)
+                            .font(MCTypography.caption)
                             .foregroundStyle(.secondary)
                         }
                         Spacer()
                     }
                     .padding(MCSpacing.md)
-                    .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 10))
+                    .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.md))
                 }
             }
         }

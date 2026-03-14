@@ -12,13 +12,13 @@ struct QuickFeedButton: View {
                 Image(systemName: "drop.fill")
                     .font(.title2)
                 Text("Start Feeding")
-                    .font(.title3.weight(.semibold))
+                    .font(MCTypography.title3)
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
             .frame(height: 56)
             .background(MCColor.feeding)
-            .clipShape(RoundedRectangle(cornerRadius: 16))
+            .clipShape(RoundedRectangle(cornerRadius: MCRadius.lg))
         }
     }
 }

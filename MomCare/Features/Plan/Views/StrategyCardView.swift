@@ -11,9 +11,9 @@ struct StrategyCardView: View {
             HStack {
                 VStack(alignment: .leading, spacing: MCSpacing.xs) {
                     Text(strategy.name)
-                        .font(.headline)
+                        .font(MCTypography.headline)
                     Text(strategy.philosophy)
-                        .font(.caption)
+                        .font(MCTypography.caption)
                         .foregroundStyle(.secondary)
                         .lineLimit(3)
                 }
@@ -31,7 +31,7 @@ struct StrategyCardView: View {
                         Text("\u{2022}")
                             .foregroundStyle(MCColor.baby)
                         Text(principle)
-                            .font(.caption)
+                            .font(MCTypography.caption)
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -43,12 +43,12 @@ struct StrategyCardView: View {
                     onSelect()
                 } label: {
                     Text("Select")
-                        .font(.caption.bold())
+                        .font(MCTypography.badge)
                         .frame(maxWidth: .infinity)
                         .frame(height: 36)
                         .background {
-                            RoundedRectangle(cornerRadius: 8)
-                                .fill(MCColor.baby.opacity(0.2))
+                            RoundedRectangle(cornerRadius: MCRadius.sm)
+                                .fill(MCColor.baby.opacity(MCOpacity.medium))
                         }
                 }
                 .buttonStyle(.plain)
@@ -56,11 +56,11 @@ struct StrategyCardView: View {
         }
         .padding(MCSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.ultraThinMaterial)
+            RoundedRectangle(cornerRadius: MCRadius.lg)
+                .fill(MCElevation.surface)
                 .overlay {
                     if isSelected {
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: MCRadius.lg)
                             .strokeBorder(MCColor.baby, lineWidth: 1.5)
                     }
                 }

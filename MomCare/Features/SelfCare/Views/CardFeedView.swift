@@ -20,13 +20,13 @@ struct CardFeedView: View {
                 }
             }
             .padding(.horizontal, MCSpacing.lg)
-            .animation(reduceMotion ? nil : .easeInOut(duration: 0.3), value: cards.map(\.id))
+            .animation(reduceMotion ? nil : MCAnimation.quick, value: cards.map(\.id))
         }
     }
 
     private var emptyState: some View {
         Text("Everything's good. You know what you need.")
-            .font(MCTypography.cardBody)
+            .font(MCTypography.callout)
             .foregroundStyle(.secondary)
             .multilineTextAlignment(.center)
             .frame(maxWidth: .infinity)

@@ -14,7 +14,7 @@ struct ActionGridItemView: View {
     var body: some View {
         Button {
             MCHaptic.tap()
-            withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6)) {
+            withAnimation(reduceMotion ? nil : MCAnimation.quick) {
                 isAnimating = true
             }
             onTap()
@@ -44,12 +44,12 @@ struct ActionGridItemView: View {
             .frame(maxWidth: .infinity)
             .frame(height: 80)
             .background {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(.ultraThinMaterial)
+                RoundedRectangle(cornerRadius: MCRadius.lg)
+                    .fill(MCElevation.elevated)
                     .overlay {
                         if isRecentlyTapped {
-                            RoundedRectangle(cornerRadius: 16)
-                                .fill(MCColor.selfCare.opacity(0.15))
+                            RoundedRectangle(cornerRadius: MCRadius.lg)
+                                .fill(MCColor.selfCare.opacity(MCOpacity.medium))
                         }
                     }
             }

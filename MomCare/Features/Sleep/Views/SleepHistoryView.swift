@@ -75,7 +75,7 @@ struct SleepHistoryView: View {
 
             VStack(alignment: .leading, spacing: MCSpacing.xs) {
                 Text(sleep.sleepType.label)
-                    .font(MCTypography.cardTitle)
+                    .font(MCTypography.title3)
                 HStack(spacing: MCSpacing.xs) {
                     Text(viewModel.formattedDuration(sleep.duration))
                     if let location = sleep.location {
@@ -84,7 +84,7 @@ struct SleepHistoryView: View {
                         Text(location.label)
                     }
                 }
-                .font(MCTypography.cardBody)
+                .font(MCTypography.callout)
                 .foregroundStyle(.secondary)
             }
 
@@ -95,7 +95,7 @@ struct SleepHistoryView: View {
                     .font(MCTypography.timestamp)
                 if let quality = sleep.quality {
                     Image(systemName: quality.systemImage)
-                        .font(.caption)
+                        .font(MCTypography.caption)
                         .foregroundStyle(MCColor.baby)
                 }
             }

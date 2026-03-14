@@ -35,11 +35,11 @@ struct BabySelectorView: View {
                 if let baby = viewModel.selectedBaby {
                     BabyAvatarView(baby: baby, size: 28)
                     Text(baby.name)
-                        .font(MCTypography.cardTitle)
+                        .font(MCTypography.title3)
                 } else {
                     Image(systemName: "person.crop.circle.badge.plus")
                     Text("Add Baby")
-                        .font(MCTypography.cardTitle)
+                        .font(MCTypography.title3)
                 }
             }
         }

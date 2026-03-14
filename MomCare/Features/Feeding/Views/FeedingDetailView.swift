@@ -88,7 +88,7 @@ struct FeedingDetailView: View {
                     }
                     if let notes = feeding.notes {
                         Text(notes)
-                            .font(MCTypography.cardBody)
+                            .font(MCTypography.callout)
                     }
                 }
             }
