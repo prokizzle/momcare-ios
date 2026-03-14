@@ -8,6 +8,7 @@ protocol DependencyContainer {
     func makeSelfCareRepository() -> any SelfCareRepositoryProtocol
     func makeDiaperRepository() -> any DiaperRepositoryProtocol
     func makeSleepRepository() -> any SleepRepositoryProtocol
+    func makeGrowthRepository() -> any GrowthRepositoryProtocol
 }
 
 @MainActor
@@ -36,6 +37,10 @@ final class AppDependencies: DependencyContainer {
 
     func makeSleepRepository() -> any SleepRepositoryProtocol {
         SleepRepository(modelContext: modelContext)
+    }
+
+    func makeGrowthRepository() -> any GrowthRepositoryProtocol {
+        GrowthRepository(modelContext: modelContext)
     }
 }
 
