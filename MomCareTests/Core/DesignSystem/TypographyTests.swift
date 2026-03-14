@@ -39,10 +39,4 @@ struct TypographyTests {
         _ = MCTypography.headline
     }
 
-    @Test("Legacy aliases still work")
-    func legacyAliases() {
-        _ = MCTypography.largeTimer
-        _ = MCTypography.cardTitle
-        _ = MCTypography.cardBody
-    }
 }

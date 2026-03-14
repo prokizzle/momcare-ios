@@ -16,14 +16,14 @@ struct CompletionRingView: View {
     var body: some View {
         ZStack {
             Circle()
-                .stroke(color.opacity(0.2), lineWidth: lineWidth)
+                .stroke(color.opacity(MCOpacity.medium), lineWidth: lineWidth)
 
             Circle()
                 .trim(from: 0, to: clampedPercentage)
                 .stroke(color, style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
                 .rotationEffect(.degrees(-90))
                 .animation(
-                    reduceMotion ? nil : .easeInOut(duration: 0.5),
+                    reduceMotion ? nil : MCAnimation.standard,
                     value: clampedPercentage
                 )
         }

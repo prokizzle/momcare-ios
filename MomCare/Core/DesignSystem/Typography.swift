@@ -35,9 +35,4 @@ enum MCTypography {
     static let affirmation: Font = .system(.title3, design: .serif).italic()
     static let milestone: Font = .system(.title2, design: .serif, weight: .medium)
 
-    // MARK: - Legacy Aliases (keep until all screens migrated)
-
-    static let largeTimer: Font = timer
-    static let cardTitle: Font = title3
-    static let cardBody: Font = callout
 }
