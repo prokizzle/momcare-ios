@@ -26,12 +26,15 @@ final class HealthEventsViewModel {
         return events.filter { $0.eventType == filter }
     }
 
-    var groupedEvents: [(String, [HealthEvent])] {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "MMMM yyyy"
+    private let monthFormatter: DateFormatter = {
+        let fmt = DateFormatter()
+        fmt.dateFormat = "MMMM yyyy"
+        return fmt
+    }()
 
+    var groupedEvents: [(String, [HealthEvent])] {
         let grouped = Dictionary(grouping: filteredEvents) { event -> String in
-            formatter.string(from: event.date)
+            monthFormatter.string(from: event.date)
         }
 
         return grouped.map { key, items in
@@ -60,7 +63,8 @@ final class HealthEventsViewModel {
         endDate: Date?,
         eventType: HealthEvent.EventType,
         title: String,
-        notes: String?
+        notes: String?,
+        photos: [Data] = []
     ) async -> Bool {
         error = nil
         let event = HealthEvent(
@@ -76,13 +80,25 @@ final class HealthEventsViewModel {
             updatedAt: .now
         )
         do {
-            let created = try await repository.create(event)
+            let created = if photos.isEmpty {
+                try await repository.create(event)
+            } else {
+                try await repository.createWithPhotos(event, photos: photos)
+            }
             events.insert(created, at: 0)
             events.sort { $0.date > $1.date }
             return true
         } catch {
             self.error = error
             return false
+        }
+    }
+
+    func loadPhotos(for eventId: UUID) async -> [Data] {
+        do {
+            return try await repository.getPhotos(for: eventId)
+        } catch {
+            return []
         }
     }
 

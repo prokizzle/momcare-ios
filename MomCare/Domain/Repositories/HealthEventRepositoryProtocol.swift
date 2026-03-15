@@ -6,4 +6,7 @@ protocol HealthEventRepositoryProtocol: Repository where Entity == HealthEvent {
         _ babyId: UUID,
         type: HealthEvent.EventType
     ) async throws -> [HealthEvent]
+    func createWithPhotos(_ entity: HealthEvent, photos: [Data]) async throws -> HealthEvent
+    func getPhotos(for eventId: UUID) async throws -> [Data]
+    func updatePhotos(for eventId: UUID, photos: [Data]) async throws
 }

@@ -116,4 +116,13 @@ private final class StubHealthEventRepository: HealthEventRepositoryProtocol {
     ) async throws -> [HealthEvent] {
         store.filter { $0.babyId == babyId && !$0.isDeleted && $0.eventType == type }
     }
+
+    func createWithPhotos(_ entity: HealthEvent, photos: [Data]) async throws -> HealthEvent {
+        store.append(entity)
+        return entity
+    }
+
+    func getPhotos(for eventId: UUID) async throws -> [Data] { [] }
+
+    func updatePhotos(for eventId: UUID, photos: [Data]) async throws {}
 }

@@ -5,6 +5,7 @@ struct HealthEventsScreen: View {
     let babyId: UUID
     let dateOfBirth: Date
     @Bindable var viewModel: HealthEventsViewModel
+    @State private var selectedVaccineName: String?
 
     var body: some View {
         ScrollView {
@@ -33,8 +34,12 @@ struct HealthEventsScreen: View {
             AddHealthEventView(
                 babyId: babyId,
                 dateOfBirth: dateOfBirth,
-                viewModel: viewModel
+                viewModel: viewModel,
+                prefillVaccineName: selectedVaccineName
             )
+        }
+        .onChange(of: viewModel.showAddSheet) { _, isShowing in
+            if !isShowing { selectedVaccineName = nil }
         }
     }
 
@@ -110,6 +115,7 @@ struct HealthEventsScreen: View {
                     Spacer()
                     Button {
                         MCHaptic.tap()
+                        selectedVaccineName = vaccine.name
                         viewModel.showAddSheet = true
                     } label: {
                         Text("Log")

@@ -162,6 +162,9 @@ private final class MockHealthEventRepository: HealthEventRepositoryProtocol {
         _ babyId: UUID,
         type: HealthEvent.EventType
     ) async throws -> [HealthEvent] { [] }
+    func createWithPhotos(_ entity: HealthEvent, photos: [Data]) async throws -> HealthEvent { entity }
+    func getPhotos(for eventId: UUID) async throws -> [Data] { [] }
+    func updatePhotos(for eventId: UUID, photos: [Data]) async throws {}
 }
 
 @MainActor

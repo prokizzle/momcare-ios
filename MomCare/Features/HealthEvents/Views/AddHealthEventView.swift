@@ -220,13 +220,16 @@ struct AddHealthEventView: View {
         let finalEndDate = (eventType == .illness && showEndDate) ? endDate : nil
         let finalNotes = notes.trimmingCharacters(in: .whitespacesAndNewlines)
 
+        let jpegPhotos = photoImages.compactMap { $0.jpegData(compressionQuality: 0.8) }
+
         let success = await viewModel.addEvent(
             babyId: babyId,
             date: date,
             endDate: finalEndDate,
             eventType: eventType,
             title: title.trimmingCharacters(in: .whitespaces),
-            notes: finalNotes.isEmpty ? nil : finalNotes
+            notes: finalNotes.isEmpty ? nil : finalNotes,
+            photos: jpegPhotos
         )
 
         if success {

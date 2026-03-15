@@ -7,6 +7,7 @@ struct HealthEventDetailView: View {
 
     @Environment(\.dismiss) private var dismiss
     @State private var showDeleteConfirmation = false
+    @State private var photos: [Data] = []
 
     var body: some View {
         ScrollView {
@@ -17,6 +18,9 @@ struct HealthEventDetailView: View {
                 if let notes = event.notes, !notes.isEmpty {
                     notesSection(notes)
                 }
+                if !photos.isEmpty {
+                    photoGallery
+                }
                 deleteButton
             }
             .padding(.horizontal, MCSpacing.lg)
@@ -25,6 +29,7 @@ struct HealthEventDetailView: View {
         .nightlightBackground()
         .navigationTitle("Event Details")
         .navigationBarTitleDisplayMode(.inline)
+        .task { photos = await viewModel.loadPhotos(for: event.id) }
         .confirmationDialog(
             "Delete Event",
             isPresented: $showDeleteConfirmation,
@@ -103,6 +108,32 @@ struct HealthEventDetailView: View {
             Text(notes)
                 .font(MCTypography.body)
                 .foregroundStyle(.secondary)
+        }
+        .padding(MCSpacing.md)
+        .frame(maxWidth: .infinity, alignment: .leading)
+        .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.md))
+    }
+
+    // MARK: - Photos
+
+    private var photoGallery: some View {
+        VStack(alignment: .leading, spacing: MCSpacing.sm) {
+            Text("Photos")
+                .font(MCTypography.headline)
+                .foregroundStyle(.white)
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: MCSpacing.sm) {
+                    ForEach(photos.indices, id: \.self) { index in
+                        if let uiImage = UIImage(data: photos[index]) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFill()
+                                .frame(width: 120, height: 120)
+                                .clipShape(RoundedRectangle(cornerRadius: MCRadius.md))
+                        }
+                    }
+                }
+            }
         }
         .padding(MCSpacing.md)
         .frame(maxWidth: .infinity, alignment: .leading)

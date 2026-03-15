@@ -109,8 +109,12 @@ struct BabyScreen: View {
                         viewModel: healthEventsViewModel
                     )
                 }
-            case .healthEventDetail:
-                EmptyView()
+            case .healthEventDetail(let eventId):
+                if let healthEventsViewModel {
+                    if let event = healthEventsViewModel.events.first(where: { $0.id == eventId }) {
+                        HealthEventDetailView(event: event, viewModel: healthEventsViewModel)
+                    }
+                }
             }
         }
         .navigationDestination(isPresented: $showSleepTimer) {
