@@ -20,18 +20,18 @@ enum MCColor {
 }
 
 enum MCGradient {
-    static func canvas() -> RadialGradient {
+    static func canvas(height: CGFloat = 900) -> RadialGradient {
         RadialGradient(
             colors: [MCColor.canvas, .black],
             center: .center,
             startRadius: 0,
-            endRadius: UIScreen.main.bounds.height * 0.8
+            endRadius: height * 0.8
         )
     }
 
     static func glow(color: Color, radius: CGFloat = 40) -> RadialGradient {
         RadialGradient(
-            colors: [color.opacity(0.15), color.opacity(0)],
+            colors: [color.opacity(MCOpacity.medium), color.opacity(0)],
             center: .center,
             startRadius: 0,
             endRadius: radius

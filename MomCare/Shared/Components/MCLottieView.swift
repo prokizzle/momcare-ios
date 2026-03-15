@@ -25,6 +25,15 @@ enum MCCelebration: String, Sendable {
         case .breathe: "ellipsis"
         }
     }
+
+    var autoDismissDuration: TimeInterval {
+        switch self {
+        case .confetti: 2.5
+        case .sparkle: 1.5
+        case .warmglow: 2.0
+        case .breathe: 0
+        }
+    }
 }
 
 // MARK: - MCLottieSize
@@ -69,17 +78,22 @@ struct MCLottieView: View {
         }
     }
 
+    @ViewBuilder
     private var animationView: some View {
-        Group {
-            if looping {
-                LottieView(animation: .named(animation.rawValue))
-                    .looping()
-                    .accessibilityLabel(animation.accessibilityLabel)
-            } else {
-                LottieView(animation: .named(animation.rawValue))
-                    .playing()
-                    .accessibilityLabel(animation.accessibilityLabel)
+        if Bundle.main.url(forResource: animation.rawValue, withExtension: "json") != nil {
+            Group {
+                if looping {
+                    LottieView(animation: .named(animation.rawValue))
+                        .looping()
+                        .accessibilityLabel(animation.accessibilityLabel)
+                } else {
+                    LottieView(animation: .named(animation.rawValue))
+                        .playing()
+                        .accessibilityLabel(animation.accessibilityLabel)
+                }
             }
+        } else {
+            staticFallback
         }
     }
 

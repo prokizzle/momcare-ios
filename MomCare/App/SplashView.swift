@@ -31,23 +31,26 @@ struct SplashView: View {
             }
         }
         .task {
+            defer { finish() }
+
             guard !reduceMotion else {
                 try? await Task.sleep(for: .seconds(0.5))
-                finish()
                 return
             }
 
             try? await Task.sleep(for: .seconds(0.3))
+            guard !Task.isCancelled else { return }
             withAnimation(MCAnimation.gentle) { step = 1 }
 
             try? await Task.sleep(for: .seconds(0.3))
+            guard !Task.isCancelled else { return }
             withAnimation(MCAnimation.slow) { step = 2 }
 
             try? await Task.sleep(for: .seconds(0.3))
+            guard !Task.isCancelled else { return }
             withAnimation(MCAnimation.standard) { step = 3 }
 
             try? await Task.sleep(for: .seconds(0.6))
-            finish()
         }
     }
 

@@ -49,6 +49,10 @@ struct EmptyStateView: View {
             }
             for nextStep in 1...3 {
                 try? await Task.sleep(for: .seconds(0.15))
+                guard !Task.isCancelled else {
+                    step = 3
+                    return
+                }
                 withAnimation(MCAnimation.standard) {
                     step = nextStep
                 }

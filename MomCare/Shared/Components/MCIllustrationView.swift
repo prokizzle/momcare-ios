@@ -66,7 +66,11 @@ struct MCIllustrationView: View {
                 .frame(width: size, height: size)
                 .foregroundStyle(tint)
         } else {
-            // Fallback when illustration asset not yet added
+            #if DEBUG
+            _ = {
+                assertionFailure("Missing illustration asset: \(illustration.rawValue)")
+            }()
+            #endif
             Image(systemName: illustration.fallbackIcon)
                 .font(.system(size: size * 0.4))
                 .foregroundStyle(tint.opacity(MCOpacity.strong))

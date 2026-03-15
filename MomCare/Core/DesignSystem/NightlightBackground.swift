@@ -4,8 +4,10 @@ struct NightlightBackground: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background {
-                MCGradient.canvas()
-                    .ignoresSafeArea()
+                GeometryReader { proxy in
+                    MCGradient.canvas(height: proxy.size.height)
+                }
+                .ignoresSafeArea()
             }
     }
 }
