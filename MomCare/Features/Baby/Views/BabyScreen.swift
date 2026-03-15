@@ -7,6 +7,7 @@ struct BabyScreen: View {
     var biologicalSex: Baby.BiologicalSex?
     var sleepViewModel: SleepViewModel?
     var growthViewModel: GrowthViewModel?
+    var healthEventsViewModel: HealthEventsViewModel?
     @Environment(BabyActivityEngine.self) private var engine
     @State private var showSleepTimer = false
 
@@ -53,6 +54,24 @@ struct BabyScreen: View {
                         }
                         .buttonStyle(.plain)
                     }
+
+                    if healthEventsViewModel != nil {
+                        NavigationLink(value: BabyRoute.healthEvents) {
+                            HStack {
+                                Image(systemName: "cross.case.fill")
+                                    .foregroundStyle(MCColor.baby)
+                                Text("Health Events")
+                                    .font(MCTypography.title3)
+                                Spacer()
+                                Image(systemName: "chevron.right")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
+                            }
+                            .padding(MCSpacing.md)
+                            .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.md))
+                        }
+                        .buttonStyle(.plain)
+                    }
                 }
                 .padding(.horizontal, MCSpacing.xl)
                 .padding(.vertical, MCSpacing.lg)
@@ -82,6 +101,16 @@ struct BabyScreen: View {
                         viewModel: growthViewModel
                     )
                 }
+            case .healthEvents:
+                if let healthEventsViewModel, let babyId, let dateOfBirth {
+                    HealthEventsScreen(
+                        babyId: babyId,
+                        dateOfBirth: dateOfBirth,
+                        viewModel: healthEventsViewModel
+                    )
+                }
+            case .healthEventDetail:
+                EmptyView()
             }
         }
         .navigationDestination(isPresented: $showSleepTimer) {
