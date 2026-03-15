@@ -7,7 +7,7 @@ import UserNotifications
 @main
 struct MomCareApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema(versionedSchema: SchemaV5.self)
+        let schema = Schema(versionedSchema: SchemaV6.self)
         let modelConfiguration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,

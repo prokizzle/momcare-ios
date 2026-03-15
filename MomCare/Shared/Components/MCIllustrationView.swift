@@ -66,15 +66,17 @@ struct MCIllustrationView: View {
                 .frame(width: size, height: size)
                 .foregroundStyle(tint)
         } else {
-            #if DEBUG
-            _ = {
-                assertionFailure("Missing illustration asset: \(illustration.rawValue)")
-            }()
-            #endif
-            Image(systemName: illustration.fallbackIcon)
-                .font(.system(size: size * 0.4))
-                .foregroundStyle(tint.opacity(MCOpacity.strong))
-                .frame(width: size, height: size)
+            fallbackImage
         }
+    }
+
+    private var fallbackImage: some View {
+        #if DEBUG
+        assertionFailure("Missing illustration asset: \(illustration.rawValue)")
+        #endif
+        return Image(systemName: illustration.fallbackIcon)
+            .font(.system(size: size * 0.4))
+            .foregroundStyle(tint.opacity(MCOpacity.strong))
+            .frame(width: size, height: size)
     }
 }
