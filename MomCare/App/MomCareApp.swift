@@ -63,12 +63,15 @@ struct MomCareApp: App {
     @State private var sleepViewModel: SleepViewModel?
     @State private var growthViewModel: GrowthViewModel?
     @State private var appNavigation = AppNavigation()
+    @State private var splashFinished = false
     @Environment(\.scenePhase) private var scenePhase
 
     var body: some Scene {
         WindowGroup {
             Group {
-                if hasCompletedOnboarding {
+                if !splashFinished {
+                    SplashView(isFinished: $splashFinished)
+                } else if hasCompletedOnboarding {
                     ContentView(
                         babyViewModel: babyViewModel,
                         selfCareViewModel: selfCareViewModel,
