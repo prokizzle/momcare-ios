@@ -8,7 +8,8 @@ enum TestModelContainerFactory {
         return try ModelContainer(
             for: BabyModel.self, FeedingModel.self,
             SelfCareLogModel.self, SelfCareGridItemModel.self, ContentHistoryModel.self,
-            DiaperModel.self, BabySleepModel.self,
+            DiaperModel.self, BabySleepModel.self, GrowthRecordModel.self,
+            HealthEventModel.self,
             configurations: config
         )
     }

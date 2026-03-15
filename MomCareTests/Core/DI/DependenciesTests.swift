@@ -61,6 +61,14 @@ struct DependenciesTests {
         #expect(repo is GrowthRepository)
     }
 
+    @Test("AppDependencies creates real HealthEventRepository")
+    @MainActor
+    func appDependenciesCreatesHealthEventRepo() throws {
+        let deps = try TestModelContainerFactory.makeDependencies()
+        let repo = deps.makeHealthEventRepository()
+        #expect(repo is HealthEventRepository)
+    }
+
     @Test("Environment key has default value")
     @MainActor
     func environmentKey() {
@@ -143,6 +151,20 @@ private final class MockGrowthRepository: GrowthRepositoryProtocol {
 }
 
 @MainActor
+private final class MockHealthEventRepository: HealthEventRepositoryProtocol {
+    func getAll() async throws -> [HealthEvent] { [] }
+    func getById(_ id: UUID) async throws -> HealthEvent? { nil }
+    func create(_ entity: HealthEvent) async throws -> HealthEvent { entity }
+    func update(_ entity: HealthEvent) async throws -> HealthEvent { entity }
+    func delete(_ id: UUID) async throws {}
+    func getEventsForBaby(_ babyId: UUID, limit: Int?) async throws -> [HealthEvent] { [] }
+    func getEventsForBabyByType(
+        _ babyId: UUID,
+        type: HealthEvent.EventType
+    ) async throws -> [HealthEvent] { [] }
+}
+
+@MainActor
 private final class TestDependencies: DependencyContainer {
     func makeBabyRepository() -> any BabyRepositoryProtocol {
         MockBabyRepository()
@@ -166,5 +188,9 @@ private final class TestDependencies: DependencyContainer {
 
     func makeGrowthRepository() -> any GrowthRepositoryProtocol {
         MockGrowthRepository()
+    }
+
+    func makeHealthEventRepository() -> any HealthEventRepositoryProtocol {
+        MockHealthEventRepository()
     }
 }

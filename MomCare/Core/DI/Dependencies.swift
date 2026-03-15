@@ -9,6 +9,7 @@ protocol DependencyContainer {
     func makeDiaperRepository() -> any DiaperRepositoryProtocol
     func makeSleepRepository() -> any SleepRepositoryProtocol
     func makeGrowthRepository() -> any GrowthRepositoryProtocol
+    func makeHealthEventRepository() -> any HealthEventRepositoryProtocol
 }
 
 @MainActor
@@ -42,6 +43,10 @@ final class AppDependencies: DependencyContainer {
     func makeGrowthRepository() -> any GrowthRepositoryProtocol {
         GrowthRepository(modelContext: modelContext)
     }
+
+    func makeHealthEventRepository() -> any HealthEventRepositoryProtocol {
+        HealthEventRepository(modelContext: modelContext)
+    }
 }
 
 // @preconcurrency needed because SwiftUI's EnvironmentKey.defaultValue is not
@@ -50,7 +55,7 @@ final class AppDependencies: DependencyContainer {
 struct DependenciesKey: @preconcurrency EnvironmentKey {
     @MainActor
     static let defaultValue: any DependencyContainer = {
-        let schema = Schema(versionedSchema: SchemaV4.self)
+        let schema = Schema(versionedSchema: SchemaV6.self)
         let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: true)
         // swiftlint:disable:next force_try
         let container = try! ModelContainer(for: schema, configurations: [config])
