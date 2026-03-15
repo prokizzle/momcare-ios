@@ -8,15 +8,15 @@ struct FeedingPatternCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: MCSpacing.sm) {
             Label("Feeding Pattern", systemImage: "chart.line.uptrend.xyaxis")
-                .font(MCTypography.cardTitle)
+                .font(MCTypography.title3)
                 .foregroundStyle(.secondary)
 
             Text("Every ~\(pattern.intervalFormatted)")
-                .font(.title3.weight(.semibold))
+                .font(MCTypography.title3)
 
             if let lastFeedTime {
                 Text("Next: \(pattern.timeUntilNextFeedFormatted(lastFeedTime: lastFeedTime))")
-                    .font(MCTypography.cardBody)
+                    .font(MCTypography.callout)
                     .foregroundStyle(
                         pattern.isFeedingDue(lastFeedTime: lastFeedTime)
                             ? MCColor.feeding
@@ -28,8 +28,8 @@ struct FeedingPatternCard: View {
         }
         .padding(MCSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
-        .background(Color(.systemGray6))
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .background(MCElevation.surface)
+        .clipShape(RoundedRectangle(cornerRadius: MCRadius.md))
     }
 
     private var confidenceIndicator: some View {
@@ -38,7 +38,7 @@ struct FeedingPatternCard: View {
                 Circle()
                     .fill(Double(dotIndex) / 4.0 <= pattern.confidence
                           ? MCColor.feeding
-                          : Color.secondary.opacity(0.3))
+                          : Color.secondary.opacity(MCOpacity.strong))
                     .frame(width: 6, height: 6)
             }
             Text("\(Int(pattern.confidence * 100))% confidence")

@@ -28,7 +28,7 @@ struct NowScreen: View {
                     suggestionsSection(viewModel: viewModel)
                 }
             }
-            .padding(.horizontal, MCSpacing.lg)
+            .padding(.horizontal, MCSpacing.xl)
             .padding(.vertical, MCSpacing.lg)
         }
         .task {
@@ -40,7 +40,7 @@ struct NowScreen: View {
     private func suggestionsSection(viewModel: DashboardViewModel) -> some View {
         VStack(alignment: .leading, spacing: MCSpacing.sm) {
             Text("Suggestions")
-                .font(.caption.bold())
+                .font(MCTypography.badge)
                 .foregroundStyle(.secondary)
                 .padding(.horizontal, MCSpacing.xs)
 

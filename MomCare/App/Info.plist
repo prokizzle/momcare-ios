@@ -28,7 +28,10 @@
 		<false/>
 	</dict>
 	<key>UILaunchScreen</key>
-	<dict/>
+	<dict>
+		<key>UIColorName</key>
+		<string>LaunchBackground</string>
+	</dict>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
@@ -50,6 +53,10 @@
 				<string>momcare</string>
 			</array>
 		</dict>
+	</array>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Nunito-VariableFont_wght.ttf</string>
 	</array>
 	<key>NSHealthShareUsageDescription</key>
 	<string>MomCare reads your sleep and activity data to help track your self-care progress.</string>

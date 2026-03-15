@@ -17,7 +17,7 @@ struct PlanScreen: View {
 
                 VStack(alignment: .leading, spacing: MCSpacing.md) {
                     Text(selectedStrategy == nil ? "Choose a strategy" : "All Strategies")
-                        .font(.caption.bold())
+                        .font(MCTypography.badge)
                         .foregroundStyle(.secondary)
                         .padding(.horizontal, MCSpacing.xs)
 
@@ -41,15 +41,15 @@ struct PlanScreen: View {
     private func activeStrategyHeader(_ strategy: DevelopmentStrategy) -> some View {
         VStack(alignment: .leading, spacing: MCSpacing.sm) {
             Text("Active Strategy")
-                .font(.caption.bold())
+                .font(MCTypography.badge)
                 .foregroundStyle(.secondary)
 
             HStack {
                 VStack(alignment: .leading, spacing: MCSpacing.xs) {
                     Text(strategy.name)
-                        .font(.headline)
+                        .font(MCTypography.headline)
                     Text("Suggestions on Now are influenced by this strategy")
-                        .font(.caption)
+                        .font(MCTypography.caption)
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
@@ -58,8 +58,8 @@ struct PlanScreen: View {
             }
             .padding(MCSpacing.md)
             .background {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.ultraThinMaterial)
+                RoundedRectangle(cornerRadius: MCRadius.md)
+                    .fill(MCElevation.surface)
             }
         }
     }

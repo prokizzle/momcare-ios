@@ -13,16 +13,16 @@ struct JournalEntryRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(entry.kind.label)
-                    .font(.subheadline.bold())
+                    .font(MCTypography.subheadline).fontWeight(.bold)
                 Text(entry.detail)
-                    .font(.caption)
+                    .font(MCTypography.caption)
                     .foregroundStyle(.secondary)
             }
 
             Spacer()
 
             Text(entry.timestamp, style: .time)
-                .font(.caption)
+                .font(MCTypography.caption)
                 .foregroundStyle(.secondary)
         }
         .padding(.vertical, MCSpacing.xs)

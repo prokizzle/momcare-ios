@@ -23,15 +23,15 @@ struct BabyStatusStrip: View {
             }
             if !engine.isNapActive, !engine.isFeedingActive {
                 Text("All quiet")
-                    .font(.subheadline)
+                    .font(MCTypography.subheadline)
                     .foregroundStyle(.secondary)
             }
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, MCSpacing.lg)
         .padding(.vertical, MCSpacing.md)
-        .background(.ultraThinMaterial)
-        .clipShape(RoundedRectangle(cornerRadius: 12))
+        .background(MCElevation.elevated)
+        .clipShape(RoundedRectangle(cornerRadius: MCRadius.md))
     }
 
     @ViewBuilder
@@ -44,7 +44,7 @@ struct BabyStatusStrip: View {
                 .foregroundStyle(color)
                 .font(.caption)
             Text(text)
-                .font(.subheadline.monospacedDigit())
+                .font(MCTypography.timestamp)
                 .foregroundStyle(color)
         }
     }

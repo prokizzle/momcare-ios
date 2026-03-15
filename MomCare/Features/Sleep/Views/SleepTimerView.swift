@@ -17,19 +17,16 @@ struct SleepTimerView: View {
     @State private var isFinishing = false
 
     var body: some View {
-        ZStack {
-            Color.black.ignoresSafeArea()
-
-            VStack(spacing: MCSpacing.xxl) {
-                sleepTypeChip
-                timerDisplay
-                locationPicker
-                Spacer()
-                endButton
-            }
-            .padding(.horizontal, MCSpacing.xl)
-            .padding(.top, MCSpacing.section)
+        VStack(spacing: MCSpacing.xxl) {
+            sleepTypeChip
+            timerDisplay
+            locationPicker
+            Spacer()
+            endButton
         }
+        .padding(.horizontal, MCSpacing.xl)
+        .padding(.top, MCSpacing.section)
+        .nightlightBackground()
         .sheet(isPresented: $showQualitySheet) {
             qualitySheet
         }
@@ -46,12 +43,12 @@ struct SleepTimerView: View {
                 Image(systemName: sleepType.systemImage)
                     .font(.title2)
                 Text(sleepType.label)
-                    .font(MCTypography.cardTitle)
+                    .font(MCTypography.title3)
             }
             .foregroundStyle(.white)
             .padding(.horizontal, MCSpacing.lg)
             .padding(.vertical, MCSpacing.sm)
-            .background(.ultraThinMaterial, in: Capsule())
+            .background(MCElevation.elevated, in: Capsule())
         }
         .accessibilityLabel("Sleep type: \(sleepType.label). Tap to change.")
     }
@@ -60,7 +57,7 @@ struct SleepTimerView: View {
 
     private var timerDisplay: some View {
         Text(engine.napElapsedFormatted)
-            .font(MCTypography.largeTimer)
+            .font(MCTypography.timer)
             .monospacedDigit()
             .foregroundStyle(.white)
             .contentTransition(.numericText())
@@ -80,16 +77,16 @@ struct SleepTimerView: View {
             } label: {
                 HStack(spacing: MCSpacing.sm) {
                     Image(systemName: "location.fill")
-                        .font(.callout)
+                        .font(MCTypography.callout)
                     Text(selectedLocation?.label ?? "Add Location")
-                        .font(.callout)
+                        .font(MCTypography.callout)
                     Image(systemName: showLocationPicker ? "chevron.up" : "chevron.down")
                         .font(.caption)
                 }
                 .foregroundStyle(selectedLocation != nil ? .white : .secondary)
                 .padding(.horizontal, MCSpacing.lg)
                 .padding(.vertical, MCSpacing.sm)
-                .background(Color.white.opacity(0.1), in: Capsule())
+                .background(Color.white.opacity(MCOpacity.whisper), in: Capsule())
             }
             .accessibilityLabel(selectedLocation != nil
                 ? "Location: \(selectedLocation!.label). Tap to change."
@@ -115,14 +112,14 @@ struct SleepTimerView: View {
             MCHaptic.select()
         } label: {
             Text(location.label)
-                .font(.callout)
+                .font(MCTypography.callout)
                 .foregroundStyle(.white)
                 .padding(.horizontal, MCSpacing.md)
                 .padding(.vertical, MCSpacing.sm)
                 .background(
                     isSelected
-                        ? MCColor.baby.opacity(0.3)
-                        : Color.white.opacity(0.1),
+                        ? MCColor.baby.opacity(MCOpacity.medium)
+                        : Color.white.opacity(MCOpacity.whisper),
                     in: Capsule()
                 )
                 .overlay(
@@ -145,12 +142,12 @@ struct SleepTimerView: View {
             MCHaptic.tap()
         } label: {
             Text("End Sleep")
-                .font(.title3.weight(.semibold))
+                .font(MCTypography.button)
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
                 .background(MCColor.baby)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .clipShape(RoundedRectangle(cornerRadius: MCRadius.lg))
         }
         .padding(.bottom, MCSpacing.xxl)
         .accessibilityLabel("End sleep session")
@@ -161,7 +158,7 @@ struct SleepTimerView: View {
     private var qualitySheet: some View {
         VStack(spacing: MCSpacing.xl) {
             Text("How was this sleep?")
-                .font(.title3.weight(.semibold))
+                .font(MCTypography.title3)
                 .foregroundStyle(.white)
                 .padding(.top, MCSpacing.xl)
 
@@ -175,7 +172,7 @@ struct SleepTimerView: View {
                 finishSleep(quality: nil)
             } label: {
                 Text("Skip")
-                    .font(.callout)
+                    .font(MCTypography.callout)
                     .foregroundStyle(.secondary)
                     .frame(maxWidth: .infinity)
                     .padding(.vertical, MCSpacing.md)
@@ -184,7 +181,7 @@ struct SleepTimerView: View {
         }
         .padding(.horizontal, MCSpacing.xl)
         .presentationDetents([.height(260)])
-        .presentationBackground(Color.black)
+        .presentationBackground(MCColor.canvas)
     }
 
     private func qualityRow(_ quality: BabySleep.SleepQuality) -> some View {
@@ -197,13 +194,13 @@ struct SleepTimerView: View {
                     .font(.title3)
                     .foregroundStyle(MCColor.baby)
                 Text(quality.label)
-                    .font(.body.weight(.medium))
+                    .font(MCTypography.headline)
                     .foregroundStyle(.white)
                 Spacer()
             }
             .padding(.horizontal, MCSpacing.lg)
             .padding(.vertical, MCSpacing.md)
-            .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+            .background(Color.white.opacity(MCOpacity.whisper), in: RoundedRectangle(cornerRadius: MCRadius.md))
         }
         .accessibilityLabel("\(quality.label) sleep quality")
     }

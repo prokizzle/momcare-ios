@@ -46,7 +46,7 @@ struct QuickDiaperLogView: View {
                     isSelected: selectedType == type
                 ) {
                     MCHaptic.tap()
-                    withAnimation(reduceMotion ? nil : .spring(response: 0.2, dampingFraction: 0.7)) {
+                    withAnimation(reduceMotion ? nil : MCAnimation.quick) {
                         selectedType = type
                         if !type.hasStoolContext {
                             stoolConsistency = nil
@@ -65,23 +65,23 @@ struct QuickDiaperLogView: View {
         VStack(spacing: 0) {
             Button {
                 MCHaptic.tap()
-                withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.8)) {
+                withAnimation(reduceMotion ? nil : MCAnimation.quick) {
                     showDetails.toggle()
                 }
             } label: {
                 HStack {
                     Text("Details")
-                        .font(.subheadline.bold())
+                        .font(MCTypography.subheadline).fontWeight(.bold)
                         .foregroundStyle(.secondary)
                     Spacer()
                     Image(systemName: showDetails ? "chevron.up" : "chevron.down")
-                        .font(.caption.bold())
+                        .font(MCTypography.badge)
                         .foregroundStyle(.secondary)
                 }
                 .padding(MCSpacing.md)
                 .background {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.ultraThinMaterial)
+                    RoundedRectangle(cornerRadius: MCRadius.md)
+                        .fill(MCElevation.surface)
                 }
             }
 
@@ -102,20 +102,20 @@ struct QuickDiaperLogView: View {
 
             Toggle(isOn: $hasRash) {
                 Label("Diaper Rash", systemImage: "exclamationmark.circle")
-                    .font(.subheadline)
+                    .font(MCTypography.subheadline)
             }
             .padding(MCSpacing.md)
             .background {
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(.ultraThinMaterial)
+                RoundedRectangle(cornerRadius: MCRadius.md)
+                    .fill(MCElevation.surface)
             }
 
             TextField("Notes (optional)", text: $notes, axis: .vertical)
-                .font(.subheadline)
+                .font(MCTypography.subheadline)
                 .padding(MCSpacing.md)
                 .background {
-                    RoundedRectangle(cornerRadius: 12)
-                        .fill(.ultraThinMaterial)
+                    RoundedRectangle(cornerRadius: MCRadius.md)
+                        .fill(MCElevation.surface)
                 }
                 .lineLimit(2...4)
         }
@@ -125,7 +125,7 @@ struct QuickDiaperLogView: View {
     private var consistencyPicker: some View {
         VStack(alignment: .leading, spacing: MCSpacing.xs) {
             Text("Consistency")
-                .font(.caption.bold())
+                .font(MCTypography.badge)
                 .foregroundStyle(.secondary)
             HStack(spacing: MCSpacing.xs) {
                 ForEach(Diaper.StoolConsistency.allCases, id: \.self) { consistency in
@@ -134,14 +134,14 @@ struct QuickDiaperLogView: View {
                         stoolConsistency = stoolConsistency == consistency ? nil : consistency
                     } label: {
                         Text(consistency.label)
-                            .font(.caption.bold())
+                            .font(MCTypography.badge)
                             .padding(.horizontal, MCSpacing.sm)
                             .padding(.vertical, MCSpacing.xs)
                             .background {
                                 Capsule()
                                     .fill(stoolConsistency == consistency
-                                          ? MCColor.diaper.opacity(0.3)
-                                          : Color.secondary.opacity(0.1))
+                                          ? MCColor.diaper.opacity(MCOpacity.strong)
+                                          : Color.secondary.opacity(MCOpacity.soft))
                             }
                             .foregroundStyle(stoolConsistency == consistency ? MCColor.diaper : .secondary)
                     }
@@ -151,8 +151,8 @@ struct QuickDiaperLogView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(MCSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.ultraThinMaterial)
+            RoundedRectangle(cornerRadius: MCRadius.md)
+                .fill(MCElevation.surface)
         }
     }
 
@@ -160,7 +160,7 @@ struct QuickDiaperLogView: View {
     private var colorPicker: some View {
         VStack(alignment: .leading, spacing: MCSpacing.xs) {
             Text("Color")
-                .font(.caption.bold())
+                .font(MCTypography.badge)
                 .foregroundStyle(.secondary)
             HStack(spacing: MCSpacing.xs) {
                 ForEach(Diaper.StoolColor.allCases, id: \.self) { color in
@@ -169,14 +169,14 @@ struct QuickDiaperLogView: View {
                         stoolColor = stoolColor == color ? nil : color
                     } label: {
                         Text(color.label)
-                            .font(.caption.bold())
+                            .font(MCTypography.badge)
                             .padding(.horizontal, MCSpacing.sm)
                             .padding(.vertical, MCSpacing.xs)
                             .background {
                                 Capsule()
                                     .fill(stoolColor == color
-                                          ? MCColor.diaper.opacity(0.3)
-                                          : Color.secondary.opacity(0.1))
+                                          ? MCColor.diaper.opacity(MCOpacity.strong)
+                                          : Color.secondary.opacity(MCOpacity.soft))
                             }
                             .foregroundStyle(stoolColor == color ? MCColor.diaper : .secondary)
                     }
@@ -186,8 +186,8 @@ struct QuickDiaperLogView: View {
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(MCSpacing.md)
         .background {
-            RoundedRectangle(cornerRadius: 12)
-                .fill(.ultraThinMaterial)
+            RoundedRectangle(cornerRadius: MCRadius.md)
+                .fill(MCElevation.surface)
         }
     }
 
@@ -221,14 +221,14 @@ struct QuickDiaperLogView: View {
                         .tint(.white)
                 } else {
                     Text("Log Diaper")
-                        .font(.headline)
+                        .font(MCTypography.headline)
                 }
             }
             .frame(maxWidth: .infinity)
             .frame(height: 52)
             .background(MCColor.diaper)
             .foregroundStyle(.white)
-            .clipShape(RoundedRectangle(cornerRadius: 14))
+            .clipShape(RoundedRectangle(cornerRadius: MCRadius.lg))
         }
         .disabled(isLogging)
     }
@@ -247,15 +247,19 @@ private struct TypeToggleButton: View {
                 Image(systemName: type.systemImage)
                     .font(.title2)
                 Text(type.label)
-                    .font(.subheadline.bold())
+                    .font(MCTypography.subheadline).fontWeight(.bold)
             }
             .frame(maxWidth: .infinity)
             .frame(height: 80)
             .background {
-                RoundedRectangle(cornerRadius: 16)
-                    .fill(isSelected ? MCColor.diaper.opacity(0.2) : Color.secondary.opacity(0.08))
+                RoundedRectangle(cornerRadius: MCRadius.lg)
+                    .fill(
+                        isSelected
+                            ? MCColor.diaper.opacity(MCOpacity.medium)
+                            : Color.secondary.opacity(MCOpacity.whisper)
+                    )
                     .overlay {
-                        RoundedRectangle(cornerRadius: 16)
+                        RoundedRectangle(cornerRadius: MCRadius.lg)
                             .strokeBorder(
                                 isSelected ? MCColor.diaper : Color.clear,
                                 lineWidth: 2

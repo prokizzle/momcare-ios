@@ -7,7 +7,7 @@ struct MomStatusCard: View {
     var body: some View {
         VStack(alignment: .leading, spacing: MCSpacing.md) {
             Label("Your Day", systemImage: "sparkles")
-                .font(.caption.bold())
+                .font(MCTypography.badge)
                 .foregroundStyle(MCColor.selfCare)
 
             HStack(spacing: MCSpacing.xl) {
@@ -41,19 +41,19 @@ struct MomStatusCard: View {
         .padding(MCSpacing.lg)
         .frame(maxWidth: .infinity, alignment: .leading)
         .background {
-            RoundedRectangle(cornerRadius: 16)
-                .fill(.ultraThinMaterial)
+            RoundedRectangle(cornerRadius: MCRadius.lg)
+                .fill(MCElevation.elevated)
         }
     }
 
     private func statsRow(icon: String, value: String, label: String) -> some View {
         HStack(spacing: MCSpacing.xs) {
             Image(systemName: icon)
-                .font(.caption)
+                .font(MCTypography.caption)
                 .foregroundStyle(MCColor.selfCare)
                 .frame(width: 16)
             Text("\(value) \(label)")
-                .font(.caption)
+                .font(MCTypography.caption)
                 .foregroundStyle(.secondary)
         }
     }

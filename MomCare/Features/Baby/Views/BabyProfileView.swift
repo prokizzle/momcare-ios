@@ -75,12 +75,12 @@ struct BabyProfileView: View {
                 if isEditing {
                     PhotosPicker(selection: $selectedPhoto, matching: .images) {
                         Label("Change Photo", systemImage: "photo")
-                            .font(MCTypography.cardBody)
+                            .font(MCTypography.callout)
                     }
                 }
 
                 Text(baby.ageString)
-                    .font(MCTypography.cardBody)
+                    .font(MCTypography.callout)
                     .foregroundStyle(.secondary)
             }
             .frame(maxWidth: .infinity)

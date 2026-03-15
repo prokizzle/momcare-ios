@@ -39,8 +39,8 @@ struct BabyActionCard: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 80)
                 .background {
-                    RoundedRectangle(cornerRadius: 16)
-                        .fill(.ultraThinMaterial)
+                    RoundedRectangle(cornerRadius: MCRadius.lg)
+                        .fill(MCElevation.elevated)
                         .overlay { activeOverlay }
                 }
                 .scaleEffect(isAnimating ? 0.92 : 1.0)
@@ -136,8 +136,8 @@ struct BabyActionCard: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 40)
                 .background {
-                    RoundedRectangle(cornerRadius: 8)
-                        .fill(MCColor.diaper.opacity(0.2))
+                    RoundedRectangle(cornerRadius: MCRadius.sm)
+                        .fill(MCColor.diaper.opacity(MCOpacity.medium))
                 }
         }
         .buttonStyle(.plain)
@@ -147,9 +147,9 @@ struct BabyActionCard: View {
     private var activeOverlay: some View {
         switch cardType {
         case .nap where engine.isNapActive:
-            RoundedRectangle(cornerRadius: 16).fill(MCColor.baby.opacity(0.12))
+            RoundedRectangle(cornerRadius: MCRadius.lg).fill(MCColor.baby.opacity(MCOpacity.soft))
         case .feeding where engine.isFeedingActive:
-            RoundedRectangle(cornerRadius: 16).fill(MCColor.feeding.opacity(0.12))
+            RoundedRectangle(cornerRadius: MCRadius.lg).fill(MCColor.feeding.opacity(MCOpacity.soft))
         default:
             EmptyView()
         }
@@ -166,7 +166,7 @@ struct BabyActionCard: View {
 
     private func handleTap() {
         MCHaptic.tap()
-        withAnimation(reduceMotion ? nil : .spring(response: 0.3, dampingFraction: 0.6)) {
+        withAnimation(reduceMotion ? nil : MCAnimation.quick) {
             isAnimating = true
         }
         Task {

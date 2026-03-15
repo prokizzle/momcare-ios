@@ -66,12 +66,12 @@ struct JournalScreen: View {
             viewModel.selectedFilter = kind
         } label: {
             Text(label)
-                .font(.caption.bold())
+                .font(MCTypography.badge)
                 .padding(.horizontal, MCSpacing.md)
                 .padding(.vertical, MCSpacing.xs)
                 .background {
                     Capsule()
-                        .fill(isSelected ? MCColor.baby : Color.secondary.opacity(0.2))
+                        .fill(isSelected ? MCColor.baby : Color.secondary.opacity(MCOpacity.medium))
                 }
                 .foregroundStyle(isSelected ? .white : .primary)
         }

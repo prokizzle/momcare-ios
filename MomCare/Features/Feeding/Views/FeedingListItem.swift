@@ -13,28 +13,28 @@ struct FeedingListItem: View {
 
             VStack(alignment: .leading, spacing: MCSpacing.xs) {
                 Text(feeding.startTime.formatted(date: .omitted, time: .shortened))
-                    .font(MCTypography.cardTitle)
+                    .font(MCTypography.title3)
 
                 HStack(spacing: MCSpacing.sm) {
                     if !feeding.isInProgress {
                         Text(feeding.durationFormatted)
-                            .font(MCTypography.cardBody)
+                            .font(MCTypography.callout)
                             .foregroundStyle(.secondary)
                     } else {
                         Text("In progress")
-                            .font(MCTypography.cardBody)
+                            .font(MCTypography.callout)
                             .foregroundStyle(MCColor.feeding)
                     }
 
                     if let side = feeding.breastSide {
                         Text("• \(side.label)")
-                            .font(MCTypography.cardBody)
+                            .font(MCTypography.callout)
                             .foregroundStyle(.secondary)
                     }
 
                     if let amount = feeding.amountMl {
                         Text("• \(amount) ml")
-                            .font(MCTypography.cardBody)
+                            .font(MCTypography.callout)
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -47,7 +47,7 @@ struct FeedingListItem: View {
                     .font(MCTypography.timestamp)
                     .padding(.horizontal, MCSpacing.sm)
                     .padding(.vertical, MCSpacing.xs)
-                    .background(Color.secondary.opacity(0.15))
+                    .background(Color.secondary.opacity(MCOpacity.medium))
                     .clipShape(Capsule())
             }
         }

@@ -24,14 +24,14 @@ struct BabyScreen: View {
                                 Image(systemName: "moon.stars.fill")
                                     .foregroundStyle(MCColor.baby)
                                 Text("Sleep History")
-                                    .font(MCTypography.cardTitle)
+                                    .font(MCTypography.title3)
                                 Spacer()
                                 Image(systemName: "chevron.right")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
                             .padding(MCSpacing.md)
-                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                            .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.md))
                         }
                         .buttonStyle(.plain)
                     }
@@ -42,19 +42,19 @@ struct BabyScreen: View {
                                 Image(systemName: "chart.line.uptrend.xyaxis")
                                     .foregroundStyle(MCColor.baby)
                                 Text("Growth Charts")
-                                    .font(MCTypography.cardTitle)
+                                    .font(MCTypography.title3)
                                 Spacer()
                                 Image(systemName: "chevron.right")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
                             .padding(MCSpacing.md)
-                            .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 12))
+                            .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.md))
                         }
                         .buttonStyle(.plain)
                     }
                 }
-                .padding(.horizontal, MCSpacing.lg)
+                .padding(.horizontal, MCSpacing.xl)
                 .padding(.vertical, MCSpacing.lg)
             } else {
                 Text("Select a baby to get started")

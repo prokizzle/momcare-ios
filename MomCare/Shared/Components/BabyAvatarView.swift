@@ -24,7 +24,7 @@ struct BabyAvatarView: View {
         }
         .frame(width: size, height: size)
         .clipShape(Circle())
-        .overlay(Circle().stroke(MCColor.accent.opacity(0.3), lineWidth: 1))
+        .overlay(Circle().stroke(MCColor.accent.opacity(MCOpacity.strong), lineWidth: 1))
         .task(id: baby.photoData) {
             guard let data = baby.photoData else { cachedImage = nil; return }
             cachedImage = await Task.detached(priority: .userInitiated) {

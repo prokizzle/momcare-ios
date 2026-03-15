@@ -90,10 +90,10 @@ private struct DayHeader: View {
     var body: some View {
         HStack {
             Text(formatter.string(from: day))
-                .font(.subheadline.bold())
+                .font(MCTypography.subheadline).fontWeight(.bold)
             Spacer()
             Text("\(count) change\(count == 1 ? "" : "s")")
-                .font(.caption)
+                .font(MCTypography.caption)
                 .foregroundStyle(.secondary)
         }
     }
@@ -114,7 +114,7 @@ private struct DiaperRow: View {
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(diaper.type.label)
-                    .font(.subheadline.bold())
+                    .font(MCTypography.subheadline).fontWeight(.bold)
 
                 HStack(spacing: MCSpacing.xs) {
                     if let consistency = diaper.stoolConsistency {
@@ -132,7 +132,7 @@ private struct DiaperRow: View {
             Spacer()
 
             Text(timeFormatter.string(from: diaper.timestamp))
-                .font(.caption)
+                .font(MCTypography.caption)
                 .foregroundStyle(.secondary)
         }
         .padding(.vertical, MCSpacing.xs)
@@ -141,10 +141,10 @@ private struct DiaperRow: View {
     @ViewBuilder
     private func badge(_ text: String) -> some View {
         Text(text)
-            .font(.caption2.bold())
+            .font(MCTypography.badge)
             .padding(.horizontal, 6)
             .padding(.vertical, 2)
-            .background(MCColor.diaper.opacity(0.15))
+            .background(MCColor.diaper.opacity(MCOpacity.medium))
             .foregroundStyle(MCColor.diaper)
             .clipShape(Capsule())
     }
