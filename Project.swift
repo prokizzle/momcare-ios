@@ -93,7 +93,10 @@ let project = Project(
             bundleId: "com.feelingmindful.momcare.widgets",
             deploymentTargets: .iOS("17.0"),
             infoPlist: .file(path: "MomCareWidgetExtension/Info.plist"),
-            sources: ["MomCareWidgetExtension/**/*.swift"],
+            sources: [
+                "MomCareWidgetExtension/**/*.swift",
+                "MomCare/Platform/LiveActivities/**/*.swift",
+            ],
             resources: [
                 "MomCareWidgetExtension/Assets.xcassets",
             ],
