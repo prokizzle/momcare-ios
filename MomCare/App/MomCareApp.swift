@@ -141,6 +141,10 @@ struct MomCareApp: App {
                     let babyVM = BabyViewModel(repository: deps.makeBabyRepository())
                     await babyVM.loadBabies()
                     babyViewModel = babyVM
+
+                    if let baby = babyVM.selectedBaby {
+                        SharedDataManager.updateBaby(name: baby.name)
+                    }
                     let contentLibrary = (try? ContentLibrary.loadFromBundle()) ?? ContentLibrary(
                         affirmations: [],
                         pepTalks: [],
