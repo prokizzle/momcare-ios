@@ -1,5 +1,6 @@
-import WidgetKit
+import ActivityKit
 import SwiftUI
+import WidgetKit
 
 struct FeedingTimerEntry: TimelineEntry {
     let date: Date
@@ -55,6 +56,7 @@ struct FeedingTimerWidgetView: View {
 struct MomCareWidgets: WidgetBundle {
     var body: some Widget {
         FeedingTimerWidget()
+        InProgressActivityLiveActivity()
     }
 }
 
