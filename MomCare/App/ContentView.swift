@@ -11,6 +11,7 @@ struct ContentView: View {
     var journalViewModel: JournalViewModel?
     var sleepViewModel: SleepViewModel?
     var growthViewModel: GrowthViewModel?
+    var healthEventsViewModel: HealthEventsViewModel?
 
     var body: some View {
         Group {
@@ -66,7 +67,8 @@ struct ContentView: View {
                 dateOfBirth: babyViewModel.selectedBaby?.dateOfBirth,
                 biologicalSex: babyViewModel.selectedBaby?.biologicalSex,
                 sleepViewModel: sleepViewModel,
-                growthViewModel: growthViewModel
+                growthViewModel: growthViewModel,
+                healthEventsViewModel: healthEventsViewModel
             )
             .toolbar {
                     ToolbarItem(placement: .topBarLeading) {

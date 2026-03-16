@@ -90,6 +90,14 @@ final class BabyRepository: BabyRepositoryProtocol {
             growth.updatedAt = now
         }
 
+        let healthEventDescriptor = FetchDescriptor<HealthEventModel>(
+            predicate: #Predicate<HealthEventModel> { $0.babyId == babyId && $0.isSoftDeleted == false }
+        )
+        for event in try modelContext.fetch(healthEventDescriptor) {
+            event.isSoftDeleted = true
+            event.updatedAt = now
+        }
+
         try modelContext.save()
     }
 

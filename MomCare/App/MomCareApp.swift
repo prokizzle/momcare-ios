@@ -7,7 +7,7 @@ import UserNotifications
 @main
 struct MomCareApp: App {
     var sharedModelContainer: ModelContainer = {
-        let schema = Schema(versionedSchema: SchemaV5.self)
+        let schema = Schema(versionedSchema: SchemaV6.self)
         let modelConfiguration = ModelConfiguration(
             schema: schema,
             isStoredInMemoryOnly: false,
@@ -62,6 +62,7 @@ struct MomCareApp: App {
     @State private var journalViewModel: JournalViewModel?
     @State private var sleepViewModel: SleepViewModel?
     @State private var growthViewModel: GrowthViewModel?
+    @State private var healthEventsViewModel: HealthEventsViewModel?
     @State private var appNavigation = AppNavigation()
     @State private var splashFinished = false
     @Environment(\.scenePhase) private var scenePhase
@@ -79,7 +80,8 @@ struct MomCareApp: App {
                         babyActivityEngine: babyActivityEngine,
                         journalViewModel: journalViewModel,
                         sleepViewModel: sleepViewModel,
-                        growthViewModel: growthViewModel
+                        growthViewModel: growthViewModel,
+                        healthEventsViewModel: healthEventsViewModel
                     )
                     .environment(appNavigation)
                 } else if let onboardingViewModel {
@@ -176,6 +178,11 @@ struct MomCareApp: App {
                     // Growth
                     growthViewModel = GrowthViewModel(
                         repository: deps.makeGrowthRepository()
+                    )
+
+                    // Health Events
+                    healthEventsViewModel = HealthEventsViewModel(
+                        repository: deps.makeHealthEventRepository()
                     )
 
                     // Journal

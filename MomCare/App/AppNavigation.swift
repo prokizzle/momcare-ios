@@ -4,6 +4,8 @@ enum BabyRoute: Hashable {
     case sleepHistory
     case sleepTimer
     case growth
+    case healthEvents
+    case healthEventDetail(UUID)
 }
 
 enum FeedingRoute: Hashable {
@@ -54,6 +56,8 @@ final class AppNavigation {
                 babyPath.append(BabyRoute.sleepTimer)
             } else if remainder.first == "growth" {
                 babyPath.append(BabyRoute.growth)
+            } else if remainder.first == "health-events" {
+                babyPath.append(BabyRoute.healthEvents)
             }
         default:
             break

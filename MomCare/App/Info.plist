@@ -58,6 +58,8 @@
 	<array>
 		<string>Nunito-VariableFont_wght.ttf</string>
 	</array>
+	<key>NSCameraUsageDescription</key>
+	<string>MomCare uses the camera to document health events like rashes or reactions.</string>
 	<key>NSHealthShareUsageDescription</key>
 	<string>MomCare reads your sleep and activity data to help track your self-care progress.</string>
 	<key>NSHealthUpdateUsageDescription</key>
