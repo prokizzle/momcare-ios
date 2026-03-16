@@ -1,3 +1,4 @@
+import ActivityKit
 import Foundation
 
 // MARK: - Supporting Types
@@ -34,8 +35,8 @@ final class BabyActivityEngine {
     var isNapActive: Bool { napStartTime != nil }
     var isFeedingActive: Bool { feedingStartTime != nil }
 
-    var napElapsedFormatted: String { formatElapsed(napElapsed) }
-    var feedingElapsedFormatted: String { formatElapsed(feedingElapsed) }
+    var napElapsedFormatted: String { elapsedString(napElapsed) }
+    var feedingElapsedFormatted: String { elapsedString(feedingElapsed) }
 
     // MARK: - Dependencies
 
@@ -84,6 +85,8 @@ final class BabyActivityEngine {
         napStartTime = start
         napElapsed = 0
         startNapTick()
+        startLiveActivity(type: "nap", icon: "moon.stars.fill", detail: nil, startTime: start)
+        SharedDataManager.updateNap(isInProgress: true, startTime: start)
         let sleep = BabySleep(
             id: UUID(),
             babyId: babyId,
@@ -106,6 +109,8 @@ final class BabyActivityEngine {
     func endNap(babyId: UUID) async {
         guard napStartTime != nil else { return }
         stopNapTick()
+        endLiveActivity()
+        SharedDataManager.updateNap(isInProgress: false, startTime: nil)
         let end = Date.now
         do {
             if var existing = try await sleepRepository.getInProgressSleep(babyId: babyId) {
@@ -129,6 +134,16 @@ final class BabyActivityEngine {
         feedMethod = method
         feedingElapsed = 0
         startFeedingTick()
+        let detail = method == .bottle ? "Bottle" : method == .left ? "Left breast" : "Right breast"
+        startLiveActivity(type: "feeding", icon: method.systemImage, detail: detail, startTime: start)
+        SharedDataManager.updateFeeding(SharedFeedingState(
+            lastTime: nil,
+            lastType: method == .bottle ? "bottle" : "breast",
+            isInProgress: true,
+            startTime: start,
+            detail: detail,
+            todayCount: SharedDataManager.todayFeedingCount
+        ))
         let feedingType: Feeding.FeedingType = method == .bottle ? .bottle : .breast
         let side: Feeding.BreastSide? = method == .left ? .left : method == .right ? .right : nil
         let feeding = Feeding(
@@ -157,6 +172,15 @@ final class BabyActivityEngine {
     func endFeeding(babyId: UUID) async {
         guard let start = feedingStartTime else { return }
         stopFeedingTick()
+        endLiveActivity()
+        SharedDataManager.updateFeeding(SharedFeedingState(
+            lastTime: Date.now,
+            lastType: feedMethod == .bottle ? "bottle" : "breast",
+            isInProgress: false,
+            startTime: nil,
+            detail: nil,
+            todayCount: SharedDataManager.todayFeedingCount + 1
+        ))
         let end = Date.now
         let duration = end.timeIntervalSince(start)
         do {
@@ -265,12 +289,49 @@ final class BabyActivityEngine {
         feedingElapsed = Date.now.timeIntervalSince(start)
     }
 
-    private func formatElapsed(_ interval: TimeInterval) -> String {
-        let total = Int(interval)
-        let hours = total / 3600
-        let minutes = (total % 3600) / 60
-        let seconds = total % 60
-        if hours > 0 { return String(format: "%d:%02d:%02d", hours, minutes, seconds) }
-        return String(format: "%02d:%02d", minutes, seconds)
+}
+
+// MARK: - Live Activity
+
+extension BabyActivityEngine {
+
+    fileprivate func startLiveActivity(type: String, icon: String, detail: String?, startTime: Date) {
+        guard ActivityAuthorizationInfo().areActivitiesEnabled else { return }
+        let attributes = InProgressActivityAttributes(
+            babyName: SharedDataManager.babyName,
+            activityType: type,
+            activityIcon: icon
+        )
+        let state = InProgressActivityAttributes.ContentState(
+            startTime: startTime,
+            detail: detail
+        )
+        do {
+            _ = try Activity.request(
+                attributes: attributes,
+                content: .init(state: state, staleDate: nil)
+            )
+        } catch {
+            // Non-fatal: Live Activity is enhancement, not core functionality
+        }
     }
+
+    fileprivate func endLiveActivity() {
+        Task {
+            for activity in Activity<InProgressActivityAttributes>.activities {
+                await activity.end(dismissalPolicy: .default)
+            }
+        }
+    }
+}
+
+// MARK: - Formatting
+
+private func elapsedString(_ interval: TimeInterval) -> String {
+    let total = Int(interval)
+    let hours = total / 3600
+    let minutes = (total % 3600) / 60
+    let seconds = total % 60
+    if hours > 0 { return String(format: "%d:%02d:%02d", hours, minutes, seconds) }
+    return String(format: "%02d:%02d", minutes, seconds)
 }
