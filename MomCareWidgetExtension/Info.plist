@@ -27,5 +27,9 @@
 	</dict>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Nunito-VariableFont_wght.ttf</string>
+	</array>
 </dict>
 </plist>

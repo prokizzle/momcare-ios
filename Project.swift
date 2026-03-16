@@ -96,9 +96,11 @@ let project = Project(
             sources: [
                 "MomCareWidgetExtension/**/*.swift",
                 "MomCare/Platform/LiveActivities/**/*.swift",
+                "MomCare/Platform/Shared/**/*.swift",
             ],
             resources: [
                 "MomCareWidgetExtension/Assets.xcassets",
+                "MomCare/App/Resources/Fonts/**",
             ],
             entitlements: .file(path: "MomCareWidgetExtension/MomCareWidgetExtension.entitlements"),
             settings: .settings(
