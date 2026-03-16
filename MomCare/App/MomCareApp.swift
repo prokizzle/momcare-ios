@@ -214,14 +214,13 @@ struct MomCareApp: App {
             }
             .onOpenURL { url in
                 appNavigation.handleURL(url)
-                if appNavigation.pendingEndActivity {
-                    appNavigation.pendingEndActivity = false
+                if let activityType = appNavigation.pendingEndActivityType {
+                    appNavigation.pendingEndActivityType = nil
                     Task {
                         if let babyId = babyViewModel?.selectedBaby?.id {
-                            if babyActivityEngine?.isFeedingActive == true {
+                            if activityType == "feeding", babyActivityEngine?.isFeedingActive == true {
                                 await babyActivityEngine?.endFeeding(babyId: babyId)
-                            }
-                            if babyActivityEngine?.isNapActive == true {
+                            } else if activityType == "nap", babyActivityEngine?.isNapActive == true {
                                 await babyActivityEngine?.endNap(babyId: babyId)
                             }
                         }

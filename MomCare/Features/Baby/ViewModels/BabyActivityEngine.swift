@@ -109,7 +109,7 @@ final class BabyActivityEngine {
     func endNap(babyId: UUID) async {
         guard napStartTime != nil else { return }
         stopNapTick()
-        endLiveActivity()
+        endLiveActivity(type: "nap")
         SharedDataManager.updateNap(isInProgress: false, startTime: nil)
         let end = Date.now
         do {
@@ -172,7 +172,7 @@ final class BabyActivityEngine {
     func endFeeding(babyId: UUID) async {
         guard let start = feedingStartTime else { return }
         stopFeedingTick()
-        endLiveActivity()
+        endLiveActivity(type: "feeding")
         SharedDataManager.updateFeeding(SharedFeedingState(
             lastTime: Date.now,
             lastType: feedMethod == .bottle ? "bottle" : "breast",
@@ -316,9 +316,10 @@ extension BabyActivityEngine {
         }
     }
 
-    fileprivate func endLiveActivity() {
+    fileprivate func endLiveActivity(type: String) {
         Task {
-            for activity in Activity<InProgressActivityAttributes>.activities {
+            for activity in Activity<InProgressActivityAttributes>.activities
+                where activity.attributes.activityType == type {
                 await activity.end(dismissalPolicy: .default)
             }
         }

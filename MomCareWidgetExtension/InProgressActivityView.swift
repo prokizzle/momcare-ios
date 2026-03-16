@@ -30,7 +30,7 @@ struct InProgressActivityLiveActivity: Widget {
                     }
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Link(destination: URL(string: "momcare://end-activity")!) {
+                    Link(destination: URL(string: "momcare://end-activity?type=\(context.attributes.activityType)")!) {
                         Text("End \(context.attributes.activityType.capitalized)")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.white)
@@ -78,7 +78,7 @@ struct InProgressActivityLiveActivity: Widget {
 
             Spacer()
 
-            Link(destination: URL(string: "momcare://end-activity")!) {
+            Link(destination: URL(string: "momcare://end-activity?type=\(context.attributes.activityType)")!) {
                 Image(systemName: "stop.circle.fill")
                     .font(.title)
                     .foregroundStyle(.tint)

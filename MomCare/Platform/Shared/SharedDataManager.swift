@@ -5,13 +5,20 @@ struct SharedDataManager: Sendable {
     static let suiteName = "group.com.feelingmindful.momcare"
 
     private static var defaults: UserDefaults {
-        UserDefaults(suiteName: suiteName) ?? .standard
+        guard let defaults = UserDefaults(suiteName: suiteName) else {
+            #if DEBUG
+            assertionFailure("Failed to create UserDefaults for suite: \(suiteName)")
+            #endif
+            return .standard
+        }
+        return defaults
     }
 
     // MARK: - Baby
 
     static func updateBaby(name: String) {
         defaults.set(name, forKey: "mc_babyName")
+        reloadWidgets()
     }
 
     static var babyName: String {

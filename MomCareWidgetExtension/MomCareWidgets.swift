@@ -112,12 +112,12 @@ struct NextActionProvider: TimelineProvider {
         let action = determineNextAction()
         let secondary = determineSecondaryActions(excluding: action)
         let entry = NextActionEntry(date: .now, action: action, secondaryActions: secondary)
-        let refreshDate: Date = if action.isTimerActive {
-            .now.addingTimeInterval(60)
+        let policy: TimelineReloadPolicy = if action.isTimerActive {
+            .never
         } else {
-            .now.addingTimeInterval(15 * 60)
+            .after(.now.addingTimeInterval(15 * 60))
         }
-        completion(Timeline(entries: [entry], policy: .after(refreshDate)))
+        completion(Timeline(entries: [entry], policy: policy))
     }
 
     private func determineNextAction() -> NextAction {

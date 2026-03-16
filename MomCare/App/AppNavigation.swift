@@ -30,7 +30,7 @@ final class AppNavigation {
     var selfCarePath = NavigationPath()
     var journalPath = NavigationPath()
     var planPath = NavigationPath()
-    var pendingEndActivity = false
+    var pendingEndActivityType: String?
 
     func handleURL(_ url: URL) {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
@@ -38,7 +38,8 @@ final class AppNavigation {
         }
 
         if components.host == "end-activity" {
-            pendingEndActivity = true
+            let type = components.queryItems?.first(where: { $0.name == "type" })?.value
+            pendingEndActivityType = type ?? "feeding"
             return
         }
 
