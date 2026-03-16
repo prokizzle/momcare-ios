@@ -30,9 +30,15 @@ final class AppNavigation {
     var selfCarePath = NavigationPath()
     var journalPath = NavigationPath()
     var planPath = NavigationPath()
+    var pendingEndActivity = false
 
     func handleURL(_ url: URL) {
         guard let components = URLComponents(url: url, resolvingAgainstBaseURL: false) else {
+            return
+        }
+
+        if components.host == "end-activity" {
+            pendingEndActivity = true
             return
         }
 

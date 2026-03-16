@@ -210,6 +210,19 @@ struct MomCareApp: App {
             }
             .onOpenURL { url in
                 appNavigation.handleURL(url)
+                if appNavigation.pendingEndActivity {
+                    appNavigation.pendingEndActivity = false
+                    Task {
+                        if let babyId = babyViewModel?.selectedBaby?.id {
+                            if babyActivityEngine?.isFeedingActive == true {
+                                await babyActivityEngine?.endFeeding(babyId: babyId)
+                            }
+                            if babyActivityEngine?.isNapActive == true {
+                                await babyActivityEngine?.endNap(babyId: babyId)
+                            }
+                        }
+                    }
+                }
             }
         }
         .modelContainer(sharedModelContainer)
