@@ -1,3 +1,4 @@
+import ActivityKit
 import Foundation
 
 @MainActor
@@ -106,6 +107,16 @@ final class FeedingViewModel {
         if var feeding = inProgressFeeding, feeding.feedingType == .breast {
             feeding.breastSide = selectedSide
             inProgressFeeding = feeding
+            // Update Live Activity with new breast side
+            Task {
+                for activity in Activity<InProgressActivityAttributes>.activities {
+                    let state = InProgressActivityAttributes.ContentState(
+                        startTime: activity.content.state.startTime,
+                        detail: selectedSide == .left ? "Left breast" : "Right breast"
+                    )
+                    await activity.update(ActivityContent(state: state, staleDate: nil))
+                }
+            }
         }
     }
 
