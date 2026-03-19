@@ -9,7 +9,7 @@ import SwiftData
 /// same database file.
 enum IntentModelContainer {
     static func make() throws -> ModelContainer {
-        let schema = Schema(SchemaV6.models)
+        let schema = Schema(versionedSchema: SchemaV6.self)
         let config = ModelConfiguration(
             schema: schema,
             groupContainer: .identifier("group.com.feelingmindful.momcare"),

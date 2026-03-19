@@ -5,6 +5,9 @@ import Foundation
 final class BabyViewModel {
     private func syncSelectedBaby() {
         SharedDataManager.updateSelectedBabyId(selectedBaby?.id)
+        if let name = selectedBaby?.name {
+            SharedDataManager.updateBaby(name: name)
+        }
     }
 
     var babies: [Baby] = []
@@ -25,7 +28,12 @@ final class BabyViewModel {
         do {
             babies = try await repository.getActiveBabies()
             if selectedBaby == nil || !babies.contains(where: { $0.id == selectedBaby?.id }) {
-                selectedBaby = babies.first
+                if let persistedId = SharedDataManager.selectedBabyId,
+                   let persistedBaby = babies.first(where: { $0.id == persistedId }) {
+                    selectedBaby = persistedBaby
+                } else {
+                    selectedBaby = babies.first
+                }
             }
             syncSelectedBaby()
         } catch {

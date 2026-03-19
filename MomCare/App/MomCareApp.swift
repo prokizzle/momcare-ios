@@ -200,7 +200,12 @@ struct MomCareApp: App {
                        let babyId = babyVM.selectedBaby?.id,
                        !engine.isFeedingActive {
                         SharedDataManager.clearPendingStartFeeding()
-                        let method: FeedMethod = feedingTypeRaw == "bottle" ? .bottle : .left
+                        let method: FeedMethod
+                        if let option = FeedingTypeOption(rawValue: feedingTypeRaw) {
+                            method = option.feedMethod
+                        } else {
+                            method = .left
+                        }
                         await engine.startFeeding(babyId: babyId, method: method)
                     }
 

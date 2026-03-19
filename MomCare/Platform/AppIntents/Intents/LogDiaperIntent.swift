@@ -46,6 +46,6 @@ struct LogDiaperIntent: AppIntent {
         try context.save()
 
         let baby = SharedDataManager.babyName
-        return .result(dialog: "Logged a \(diaperType.rawValue) diaper for \(baby).")
+        return .result(dialog: "Logged a \(domainType.label.lowercased()) diaper for \(baby).")
     }
 }
