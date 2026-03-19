@@ -7,7 +7,7 @@ struct SharedDataManager: Sendable {
     #if DEBUG
     /// Allows tests to inject a distinct UserDefaults suite, preventing writes to the
     /// production App Group. Reset to `nil` after each test (use `.serialized` suite).
-    static var overrideSuiteName: String?
+    nonisolated(unsafe) static var overrideSuiteName: String?
     #endif
 
     private static var defaults: UserDefaults {
