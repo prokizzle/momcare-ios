@@ -181,6 +181,14 @@ final class DashboardViewModel {
             ))
         }
 
+        // Activity nudge — only when HealthKit data is available and steps are low
+        if momStepsToday > 0 && momStepsToday < 3_000 {
+            result.append(SmartSuggestion(
+                message: "Only \(momStepsToday) steps today. Even a short walk can boost your mood.",
+                actionTab: nil
+            ))
+        }
+
         // Self-care encouragement when doing well
         if dailySummary.completionPercentage >= 0.7 && result.isEmpty {
             result.append(SmartSuggestion(

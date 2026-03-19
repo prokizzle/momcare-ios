@@ -8,8 +8,8 @@ import AppIntents
 /// background without foregrounding the app — appropriate for lock-screen and
 /// Dynamic Island interaction.
 struct EndActivityIntent: AppIntent {
-    nonisolated(unsafe) static var title: LocalizedStringResource = "End Activity"
-    nonisolated(unsafe) static var isDiscoverable: Bool = false
+    static let title: LocalizedStringResource = "End Activity"
+    static let isDiscoverable: Bool = false
 
     @Parameter(title: "Activity Type")
     var activityType: String

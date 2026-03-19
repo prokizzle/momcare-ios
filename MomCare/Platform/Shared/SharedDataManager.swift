@@ -1,4 +1,5 @@
 import Foundation
+import os
 import WidgetKit
 
 struct SharedDataManager: Sendable {
@@ -7,7 +8,14 @@ struct SharedDataManager: Sendable {
     #if DEBUG
     /// Allows tests to inject a distinct UserDefaults suite, preventing writes to the
     /// production App Group. Reset to `nil` after each test (use `.serialized` suite).
-    nonisolated(unsafe) static var overrideSuiteName: String?
+    ///
+    /// Protected by an unfair lock so concurrent test teardown cannot race on this
+    /// mutable global even if the caller's `.serialized` trait is ever removed.
+    private static let _overrideSuiteNameLock = OSAllocatedUnfairLock<String?>(initialState: nil)
+    static var overrideSuiteName: String? {
+        get { _overrideSuiteNameLock.withLock { $0 } }
+        set { _overrideSuiteNameLock.withLock { $0 = newValue } }
+    }
     #endif
 
     private static var defaults: UserDefaults {
