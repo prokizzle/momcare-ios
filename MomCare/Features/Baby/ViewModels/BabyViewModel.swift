@@ -3,6 +3,10 @@ import Foundation
 @MainActor
 @Observable
 final class BabyViewModel {
+    private func syncSelectedBaby() {
+        SharedDataManager.updateSelectedBabyId(selectedBaby?.id)
+    }
+
     var babies: [Baby] = []
     var selectedBaby: Baby?
     var isLoading = false
@@ -23,6 +27,7 @@ final class BabyViewModel {
             if selectedBaby == nil || !babies.contains(where: { $0.id == selectedBaby?.id }) {
                 selectedBaby = babies.first
             }
+            syncSelectedBaby()
         } catch {
             self.error = error
         }
@@ -34,6 +39,7 @@ final class BabyViewModel {
             let created = try await repository.create(baby)
             babies.append(created)
             selectedBaby = created
+            syncSelectedBaby()
         } catch {
             self.error = error
         }
@@ -80,6 +86,7 @@ final class BabyViewModel {
             if selectedBaby?.id == id {
                 selectedBaby = babies.first
             }
+            syncSelectedBaby()
         } catch {
             self.error = error
         }
@@ -87,5 +94,6 @@ final class BabyViewModel {
 
     func selectBaby(_ baby: Baby) {
         selectedBaby = baby
+        syncSelectedBaby()
     }
 }

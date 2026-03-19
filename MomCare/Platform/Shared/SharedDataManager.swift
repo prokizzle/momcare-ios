@@ -109,6 +109,34 @@ struct SharedDataManager: Sendable {
     static var nextVaccineName: String? { defaults.string(forKey: "mc_nextVaccineName") }
     static var nextVaccineAgeMonths: Int? { defaults.object(forKey: "mc_nextVaccineAgeMonths") as? Int }
 
+    // MARK: - Selected Baby
+
+    static func updateSelectedBabyId(_ id: UUID?) {
+        defaults.set(id?.uuidString, forKey: "mc_selectedBabyId")
+    }
+
+    static var selectedBabyId: UUID? {
+        guard let string = defaults.string(forKey: "mc_selectedBabyId") else { return nil }
+        return UUID(uuidString: string)
+    }
+
+    // MARK: - Pending Start Feeding
+
+    /// Written by `StartFeedingIntent` when the user launches a feeding from Siri
+    /// without the app foregrounding first. The main app reads this on next launch
+    /// and kicks off the feeding via `BabyActivityEngine`.
+    static func markFeedingPendingStart(type: String) {
+        defaults.set(type, forKey: "mc_pendingStartFeedingType")
+    }
+
+    static var pendingStartFeedingType: String? {
+        defaults.string(forKey: "mc_pendingStartFeedingType")
+    }
+
+    static func clearPendingStartFeeding() {
+        defaults.removeObject(forKey: "mc_pendingStartFeedingType")
+    }
+
     // MARK: - Pending Activity End
 
     /// Written by `EndActivityIntent` when the user ends a timer from the Live Activity
