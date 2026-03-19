@@ -79,6 +79,8 @@ final class SelfCareViewModel {
                     recentTaps[log.actionType] = log.timestamp
                 }
             }
+
+            syncToSharedData()
         } catch {
             self.error = error
         }
@@ -106,6 +108,8 @@ final class SelfCareViewModel {
             )
 
             await handleEvent(.selfCareLogged(created))
+
+            syncToSharedData()
         } catch {
             self.error = error
         }
@@ -136,5 +140,24 @@ final class SelfCareViewModel {
 
     func dismissCard(_ id: UUID) {
         cards.removeAll { $0.id == id }
+    }
+
+    // MARK: - Shared Data Sync
+
+    private func syncToSharedData() {
+        let items = gridItems.map { item in
+            let isDone = todayLogs.contains { $0.actionType == item.actionType }
+            let lastDone = todayLogs
+                .filter { $0.actionType == item.actionType }
+                .map(\.timestamp)
+                .max()
+            return SharedSelfCareItem(
+                name: item.displayName,
+                icon: item.displayIcon,
+                isDone: isDone,
+                lastDoneDate: lastDone
+            )
+        }
+        SharedDataManager.updateSelfCare(items: items)
     }
 }

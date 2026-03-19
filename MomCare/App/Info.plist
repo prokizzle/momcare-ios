@@ -64,5 +64,7 @@
 	<string>MomCare reads your sleep and activity data to help track your self-care progress.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>MomCare saves your baby's growth measurements to the Health app.</string>
+	<key>NSSupportsLiveActivities</key>
+	<true/>
 </dict>
 </plist>

@@ -141,6 +141,10 @@ struct MomCareApp: App {
                     let babyVM = BabyViewModel(repository: deps.makeBabyRepository())
                     await babyVM.loadBabies()
                     babyViewModel = babyVM
+
+                    if let baby = babyVM.selectedBaby {
+                        SharedDataManager.updateBaby(name: baby.name)
+                    }
                     let contentLibrary = (try? ContentLibrary.loadFromBundle()) ?? ContentLibrary(
                         affirmations: [],
                         pepTalks: [],
@@ -210,6 +214,18 @@ struct MomCareApp: App {
             }
             .onOpenURL { url in
                 appNavigation.handleURL(url)
+                if let activityType = appNavigation.pendingEndActivityType {
+                    appNavigation.pendingEndActivityType = nil
+                    Task {
+                        if let babyId = babyViewModel?.selectedBaby?.id {
+                            if activityType == "feeding", babyActivityEngine?.isFeedingActive == true {
+                                await babyActivityEngine?.endFeeding(babyId: babyId)
+                            } else if activityType == "nap", babyActivityEngine?.isNapActive == true {
+                                await babyActivityEngine?.endNap(babyId: babyId)
+                            }
+                        }
+                    }
+                }
             }
         }
         .modelContainer(sharedModelContainer)

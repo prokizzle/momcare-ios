@@ -93,9 +93,14 @@ let project = Project(
             bundleId: "com.feelingmindful.momcare.widgets",
             deploymentTargets: .iOS("17.0"),
             infoPlist: .file(path: "MomCareWidgetExtension/Info.plist"),
-            sources: ["MomCareWidgetExtension/**/*.swift"],
+            sources: [
+                "MomCareWidgetExtension/**/*.swift",
+                "MomCare/Platform/LiveActivities/**/*.swift",
+                "MomCare/Platform/Shared/**/*.swift",
+            ],
             resources: [
                 "MomCareWidgetExtension/Assets.xcassets",
+                "MomCare/App/Resources/Fonts/**",
             ],
             entitlements: .file(path: "MomCareWidgetExtension/MomCareWidgetExtension.entitlements"),
             settings: .settings(
