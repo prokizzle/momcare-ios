@@ -4,12 +4,29 @@ import WidgetKit
 struct SharedDataManager: Sendable {
     static let suiteName = "group.com.feelingmindful.momcare"
 
+    #if DEBUG
+    /// Allows tests to inject a distinct UserDefaults suite, preventing writes to the
+    /// production App Group. Reset to `nil` after each test (use `.serialized` suite).
+    static var overrideSuiteName: String?
+    #endif
+
     private static var defaults: UserDefaults {
-        guard let defaults = UserDefaults(suiteName: suiteName) else {
+        #if DEBUG
+        let name = overrideSuiteName ?? suiteName
+        #else
+        let name = suiteName
+        #endif
+        guard let defaults = UserDefaults(suiteName: name) else {
             #if DEBUG
-            assertionFailure("Failed to create UserDefaults for suite: \(suiteName)")
-            #endif
+            fatalError(
+                "Failed to create UserDefaults for App Group suite '\(name)'. "
+                + "Verify the entitlement is present in both the app and widget extension targets."
+            )
+            #else
+            // In production, fall back rather than crash. The widget bridge will not
+            // function, but the app itself remains usable.
             return .standard
+            #endif
         }
         return defaults
     }
@@ -83,6 +100,35 @@ struct SharedDataManager: Sendable {
 
     static var nextVaccineName: String? { defaults.string(forKey: "mc_nextVaccineName") }
     static var nextVaccineAgeMonths: Int? { defaults.object(forKey: "mc_nextVaccineAgeMonths") as? Int }
+
+    // MARK: - Pending Activity End
+
+    /// Written by `EndActivityIntent` when the user ends a timer from the Live Activity
+    /// without opening the app. The main app reads this on next launch and finalises the
+    /// timer record in the database.
+    static func markActivityEnded(type: String) {
+        if type == "feeding" {
+            updateFeeding(SharedFeedingState(
+                lastTime: Date(),
+                lastType: lastFeedingType,
+                isInProgress: false,
+                startTime: nil,
+                detail: nil,
+                todayCount: todayFeedingCount
+            ))
+        } else if type == "nap" {
+            updateNap(isInProgress: false, startTime: nil)
+        }
+        defaults.set(type, forKey: "mc_pendingEndActivityType")
+    }
+
+    static var pendingEndActivityType: String? {
+        defaults.string(forKey: "mc_pendingEndActivityType")
+    }
+
+    static func clearPendingEndActivity() {
+        defaults.removeObject(forKey: "mc_pendingEndActivityType")
+    }
 
     // MARK: - Widget Reload
 

@@ -147,7 +147,7 @@ final class SelfCareViewModel {
     private func syncToSharedData() {
         let items = gridItems.map { item in
             let isDone = todayLogs.contains { $0.actionType == item.actionType }
-            let lastDone = todayLogs
+            let lastDone = allRecentLogs
                 .filter { $0.actionType == item.actionType }
                 .map(\.timestamp)
                 .max()

@@ -2,8 +2,22 @@ import Testing
 import Foundation
 @testable import MomCare
 
-@Suite("SharedDataManager")
-struct SharedDataManagerTests {
+/// Uses a class-based suite so `init`/`deinit` run per-test for setup and teardown.
+/// `.serialized` prevents parallel tests from racing on the static `overrideSuiteName`.
+@Suite("SharedDataManager", .serialized)
+final class SharedDataManagerTests {
+
+    let testSuiteName: String
+
+    init() {
+        testSuiteName = "test.SharedDataManager.\(UUID().uuidString)"
+        SharedDataManager.overrideSuiteName = testSuiteName
+    }
+
+    deinit {
+        UserDefaults(suiteName: testSuiteName)?.removePersistentDomain(forName: testSuiteName)
+        SharedDataManager.overrideSuiteName = nil
+    }
 
     @Test("Baby name round-trips through UserDefaults")
     func babyName() {
@@ -59,8 +73,20 @@ struct SharedDataManagerTests {
 
     @Test("Default baby name is Baby")
     func defaultBabyName() {
-        // Clear any existing value
-        UserDefaults(suiteName: SharedDataManager.suiteName)?.removeObject(forKey: "mc_babyName")
+        // Fresh suite has no stored value; expect the default
         #expect(SharedDataManager.babyName == "Baby")
+    }
+
+    @Test("markActivityEnded writes pending end type and clears feeding state")
+    func pendingActivityEnd() {
+        SharedDataManager.updateFeeding(SharedFeedingState(
+            lastTime: nil, lastType: "breast", isInProgress: true,
+            startTime: .now, detail: "Left breast", todayCount: 3
+        ))
+        SharedDataManager.markActivityEnded(type: "feeding")
+        #expect(SharedDataManager.pendingEndActivityType == "feeding")
+        #expect(SharedDataManager.isFeedingInProgress == false)
+        SharedDataManager.clearPendingEndActivity()
+        #expect(SharedDataManager.pendingEndActivityType == nil)
     }
 }

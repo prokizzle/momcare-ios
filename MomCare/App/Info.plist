@@ -66,5 +66,7 @@
 	<string>MomCare saves your baby's growth measurements to the Health app.</string>
 	<key>NSSupportsLiveActivities</key>
 	<true/>
+	<key>ITSAppUsesNonExemptEncryption</key>
+	<false/>
 </dict>
 </plist>
