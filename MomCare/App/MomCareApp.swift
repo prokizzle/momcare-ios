@@ -174,6 +174,21 @@ struct MomCareApp: App {
                     }
                     babyActivityEngine = engine
 
+                    // Resolve any pending activity end that arrived before the engine was
+                    // ready: either a URL deep link on cold start or an AppIntent write.
+                    let pendingType = appNavigation.pendingEndActivityType
+                        ?? SharedDataManager.pendingEndActivityType
+                    if let activityType = pendingType,
+                       let babyId = babyVM.selectedBaby?.id {
+                        appNavigation.pendingEndActivityType = nil
+                        SharedDataManager.clearPendingEndActivity()
+                        if activityType == "feeding", engine.isFeedingActive {
+                            await engine.endFeeding(babyId: babyId)
+                        } else if activityType == "nap", engine.isNapActive {
+                            await engine.endNap(babyId: babyId)
+                        }
+                    }
+
                     // Sleep
                     sleepViewModel = SleepViewModel(
                         repository: deps.makeSleepRepository()
@@ -214,16 +229,18 @@ struct MomCareApp: App {
             }
             .onOpenURL { url in
                 appNavigation.handleURL(url)
-                if let activityType = appNavigation.pendingEndActivityType {
-                    appNavigation.pendingEndActivityType = nil
-                    Task {
-                        if let babyId = babyViewModel?.selectedBaby?.id {
-                            if activityType == "feeding", babyActivityEngine?.isFeedingActive == true {
-                                await babyActivityEngine?.endFeeding(babyId: babyId)
-                            } else if activityType == "nap", babyActivityEngine?.isNapActive == true {
-                                await babyActivityEngine?.endNap(babyId: babyId)
-                            }
-                        }
+                // Only process immediately if the engine is already initialised.
+                // If not (cold start from lock-screen tap), leave pendingEndActivityType
+                // set so the init task above picks it up once the engine is ready.
+                guard let activityType = appNavigation.pendingEndActivityType,
+                      let babyId = babyViewModel?.selectedBaby?.id,
+                      let engine = babyActivityEngine else { return }
+                appNavigation.pendingEndActivityType = nil
+                Task {
+                    if activityType == "feeding", engine.isFeedingActive {
+                        await engine.endFeeding(babyId: babyId)
+                    } else if activityType == "nap", engine.isNapActive {
+                        await engine.endNap(babyId: babyId)
                     }
                 }
             }

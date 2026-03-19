@@ -30,7 +30,7 @@ struct InProgressActivityLiveActivity: Widget {
                     }
                 }
                 DynamicIslandExpandedRegion(.bottom) {
-                    Link(destination: URL(string: "momcare://end-activity?type=\(context.attributes.activityType)")!) {
+                    Button(intent: EndActivityIntent(activityType: context.attributes.activityType)) {
                         Text("End \(context.attributes.activityType.capitalized)")
                             .font(.subheadline.weight(.semibold))
                             .foregroundStyle(.white)
@@ -38,6 +38,7 @@ struct InProgressActivityLiveActivity: Widget {
                             .padding(.vertical, 8)
                             .background(.tint, in: RoundedRectangle(cornerRadius: 12))
                     }
+                    .buttonStyle(.plain)
                 }
             } compactLeading: {
                 Image(systemName: context.attributes.activityIcon)
@@ -78,11 +79,12 @@ struct InProgressActivityLiveActivity: Widget {
 
             Spacer()
 
-            Link(destination: URL(string: "momcare://end-activity?type=\(context.attributes.activityType)")!) {
+            Button(intent: EndActivityIntent(activityType: context.attributes.activityType)) {
                 Image(systemName: "stop.circle.fill")
                     .font(.title)
                     .foregroundStyle(.tint)
             }
+            .buttonStyle(.plain)
         }
         .padding()
         .activityBackgroundTint(.black.opacity(0.6))
