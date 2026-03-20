@@ -5,6 +5,7 @@ import Foundation
 final class GrowthViewModel {
     private let repository: any GrowthRepositoryProtocol
     private let chartService: GrowthChartService
+    private let healthKit: (any HealthKitServiceProtocol)?
 
     private(set) var records: [GrowthRecord] = []
     var selectedMeasurement: GrowthChartService.MeasurementType = .weight
@@ -16,10 +17,12 @@ final class GrowthViewModel {
 
     init(
         repository: any GrowthRepositoryProtocol,
-        chartService: GrowthChartService = GrowthChartService()
+        chartService: GrowthChartService = GrowthChartService(),
+        healthKit: (any HealthKitServiceProtocol)? = nil
     ) {
         self.repository = repository
         self.chartService = chartService
+        self.healthKit = healthKit
     }
 
     func loadRecords(babyId: UUID) async {
@@ -60,6 +63,16 @@ final class GrowthViewModel {
             let created = try await repository.create(record)
             records.insert(created, at: 0)
             records.sort { $0.date > $1.date }
+            if let healthKit {
+                Task {
+                    await healthKit.writeBabyMeasurement(
+                        weightGrams: weightGrams,
+                        heightCm: lengthCm,
+                        headCircumferenceCm: headCircumferenceCm,
+                        date: date
+                    )
+                }
+            }
             return true
         } catch {
             self.error = error

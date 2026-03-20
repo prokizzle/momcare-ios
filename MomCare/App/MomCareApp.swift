@@ -156,10 +156,15 @@ struct MomCareApp: App {
                         contentLibrary: contentLibrary
                     )
 
+                    // HealthKit
+                    let healthKitSvc = HealthKitService()
+                    await healthKitSvc.requestAuthorization()
+
                     // Dashboard
                     let dashboardVM = DashboardViewModel(
                         feedingRepository: deps.makeFeedingRepository(),
-                        selfCareRepository: deps.makeSelfCareRepository()
+                        selfCareRepository: deps.makeSelfCareRepository(),
+                        healthKit: healthKitSvc
                     )
                     dashboardViewModel = dashboardVM
 
@@ -196,7 +201,8 @@ struct MomCareApp: App {
 
                     // Growth
                     growthViewModel = GrowthViewModel(
-                        repository: deps.makeGrowthRepository()
+                        repository: deps.makeGrowthRepository(),
+                        healthKit: healthKitSvc
                     )
 
                     // Health Events

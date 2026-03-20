@@ -74,19 +74,24 @@ final class DashboardViewModel {
         return "\(hours)h \(mins)m ago"
     }
 
+    private(set) var momStepsToday: Int = 0
+
     // MARK: - Dependencies
 
     private let feedingRepository: any FeedingRepositoryProtocol
     private let selfCareRepository: any SelfCareRepositoryProtocol
+    private let healthKit: (any HealthKitServiceProtocol)?
 
     // MARK: - Init
 
     init(
         feedingRepository: any FeedingRepositoryProtocol,
-        selfCareRepository: any SelfCareRepositoryProtocol
+        selfCareRepository: any SelfCareRepositoryProtocol,
+        healthKit: (any HealthKitServiceProtocol)? = nil
     ) {
         self.feedingRepository = feedingRepository
         self.selfCareRepository = selfCareRepository
+        self.healthKit = healthKit
     }
 
     // MARK: - Load
@@ -97,8 +102,14 @@ final class DashboardViewModel {
 
         await loadFeedingData(babyId: babyId)
         await loadSelfCareData()
+        await loadHealthKitData()
 
         suggestions = generateSuggestions()
+    }
+
+    private func loadHealthKitData() async {
+        guard let healthKit else { return }
+        momStepsToday = await healthKit.readStepCount(for: .now)
     }
 
     private func loadFeedingData(babyId: UUID?) async {
@@ -167,6 +178,14 @@ final class DashboardViewModel {
             result.append(SmartSuggestion(
                 message: "No meals logged yet. Remember to fuel yourself too.",
                 actionTab: .selfCare
+            ))
+        }
+
+        // Activity nudge — only when HealthKit data is available and steps are low
+        if momStepsToday > 0 && momStepsToday < 3_000 {
+            result.append(SmartSuggestion(
+                message: "Only \(momStepsToday) steps today. Even a short walk can boost your mood.",
+                actionTab: nil
             ))
         }
 
