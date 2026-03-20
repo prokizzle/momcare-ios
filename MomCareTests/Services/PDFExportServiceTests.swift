@@ -71,17 +71,29 @@ struct PDFExportServiceTests {
             weightGrams: 3500
         )
 
-        // Both records passed — service should filter to range internally.
-        // Generating without crash is the primary assertion; PDF size difference
-        // would confirm filtering if we had a way to inspect content.
-        let url = try await service.generateReport(
+        // Generate once with only the in-range record, then again with both.
+        // The service filters internally, so both PDFs must be identical — if
+        // the out-of-range record were included the rendered page would differ.
+        let urlInRangeOnly = try await service.generateReport(
+            baby: baby,
+            records: [inRange],
+            events: [],
+            dateRange: range
+        )
+        let urlWithOutOfRange = try await service.generateReport(
             baby: baby,
             records: [inRange, outOfRange],
             events: [],
             dateRange: range
         )
-        let data = try Data(contentsOf: url)
-        #expect(data.count > 0)
+
+        let dataInRangeOnly = try Data(contentsOf: urlInRangeOnly)
+        let dataWithOutOfRange = try Data(contentsOf: urlWithOutOfRange)
+
+        // Both PDFs must have non-trivial content and be equal in size,
+        // confirming the out-of-range record was excluded.
+        #expect(dataInRangeOnly.count > 1024)
+        #expect(dataInRangeOnly.count == dataWithOutOfRange.count)
     }
 
     @Test("Generate report writes valid temp file")

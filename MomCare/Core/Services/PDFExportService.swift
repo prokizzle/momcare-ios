@@ -11,13 +11,13 @@ enum PDFExportError: LocalizedError {
     }
 }
 
-@MainActor
-final class PDFExportService {
+final class PDFExportService: Sendable {
 
     // MARK: - Report Generation
 
     /// Renders a growth report PDF and writes it to a temporary file.
     /// Returns the file URL, suitable for use with ShareLink or UIActivityViewController.
+    /// ImageRenderer capture runs on MainActor; PDF encoding and file I/O run off-main.
     func generateReport(
         baby: Baby,
         records: [GrowthRecord],
@@ -31,30 +31,30 @@ final class PDFExportService {
             .filter { dateRange.contains($0.date) }
             .sorted { $0.date < $1.date }
 
-        let reportView = GrowthReportView(
-            baby: baby,
-            records: filteredRecords,
-            events: filteredEvents,
-            dateRange: dateRange
-        )
+        // ImageRenderer is @MainActor — capture the UIImage on the main thread.
+        let image: UIImage = try await MainActor.run {
+            let reportView = GrowthReportView(
+                baby: baby,
+                records: filteredRecords,
+                events: filteredEvents,
+                dateRange: dateRange
+            )
+            let renderer = ImageRenderer(content: reportView.frame(width: 612))
+            renderer.scale = 2.0
+            guard let uiImage = renderer.uiImage else {
+                throw PDFExportError.renderFailed
+            }
+            return uiImage
+        }
 
-        let pdfData = try renderToPDF(view: reportView)
+        // PDF encoding and file I/O are CPU/IO-bound — run off the main thread.
+        let pdfData = renderToPDF(image: image)
         return try writeTempFile(data: pdfData, filename: reportFilename(baby: baby))
     }
 
     // MARK: - Private Helpers
 
-    private func renderToPDF<V: View>(view: V) throws -> Data {
-        // Render the SwiftUI view to a high-resolution image first, then
-        // embed it into a PDF page. This is more reliable than trying to
-        // drive a CGPDFContext from within ImageRenderer.render.
-        let renderer = ImageRenderer(content: view.frame(width: 612))
-        renderer.scale = 2.0
-
-        guard let image = renderer.uiImage else {
-            throw PDFExportError.renderFailed
-        }
-
+    private func renderToPDF(image: UIImage) -> Data {
         let pageWidth: CGFloat = 612  // US Letter: 8.5in at 72 dpi
         let pageHeight = image.size.height * (pageWidth / image.size.width)
         let pageRect = CGRect(x: 0, y: 0, width: pageWidth, height: pageHeight)
@@ -76,7 +76,14 @@ final class PDFExportService {
 
     private func reportFilename(baby: Baby) -> String {
         let date = Date.now.formatted(.iso8601.year().month().day())
-        let safeName = baby.name.components(separatedBy: .whitespacesAndNewlines).joined()
-        return "\(safeName)_GrowthReport_\(date)"
+        // Allow only alphanumerics, hyphens, and underscores to prevent filesystem issues.
+        let allowedCharacters = CharacterSet.alphanumerics.union(.init(charactersIn: "-_"))
+        let safeName = baby.name.unicodeScalars
+            .filter { allowedCharacters.contains($0) }
+            .map { String($0) }
+            .joined()
+            .prefix(40)
+        let uniqueSuffix = UUID().uuidString.prefix(8)
+        return "\(safeName)_GrowthReport_\(date)_\(uniqueSuffix)"
     }
 }

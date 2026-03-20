@@ -89,11 +89,22 @@ struct ExportSheet: View {
     // MARK: - Helpers
 
     private var filteredRecords: [GrowthRecord] {
-        records.filter { (startDate...endDate).contains($0.date) }
+        let range = normalizedRange
+        return records.filter { range.contains($0.date) }
     }
 
     private var filteredEvents: [HealthEvent] {
-        events.filter { (startDate...endDate).contains($0.date) }
+        let range = normalizedRange
+        return events.filter { range.contains($0.date) }
+    }
+
+    /// Expands the selected dates to full-day boundaries so records on the
+    /// boundary days are never excluded due to time-of-day components.
+    private var normalizedRange: ClosedRange<Date> {
+        let calendar = Calendar.current
+        let start = calendar.startOfDay(for: startDate)
+        let end = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: endDate) ?? endDate
+        return start...end
     }
 
     private func generate() async {
@@ -105,7 +116,7 @@ struct ExportSheet: View {
                 baby: baby,
                 records: records,
                 events: events,
-                dateRange: startDate...endDate
+                dateRange: normalizedRange
             )
         } catch {
             errorMessage = error.localizedDescription
