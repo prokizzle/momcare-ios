@@ -6,7 +6,11 @@ struct GrowthScreen: View {
     let babyId: UUID
     let dateOfBirth: Date
     let biologicalSex: Baby.BiologicalSex?
+    let baby: Baby
+    let healthEvents: [HealthEvent]
     @Bindable var viewModel: GrowthViewModel
+
+    @State private var showExport = false
 
     var body: some View {
         ScrollView {
@@ -21,6 +25,24 @@ struct GrowthScreen: View {
             .padding(.vertical, MCSpacing.lg)
         }
         .navigationTitle("Growth")
+        .toolbar {
+            ToolbarItem(placement: .topBarTrailing) {
+                Button {
+                    MCHaptic.tap()
+                    showExport = true
+                } label: {
+                    Image(systemName: "square.and.arrow.up")
+                }
+                .accessibilityLabel("Export growth report")
+            }
+        }
+        .sheet(isPresented: $showExport) {
+            ExportSheet(
+                baby: baby,
+                records: viewModel.records,
+                events: healthEvents
+            )
+        }
         .task {
             await viewModel.loadRecords(babyId: babyId)
             viewModel.updateChartData(sex: biologicalSex, dateOfBirth: dateOfBirth)
