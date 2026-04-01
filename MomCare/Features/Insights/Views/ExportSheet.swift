@@ -103,7 +103,14 @@ struct ExportSheet: View {
     private var normalizedRange: ClosedRange<Date> {
         let calendar = Calendar.current
         let start = calendar.startOfDay(for: startDate)
-        let end = calendar.date(bySettingHour: 23, minute: 59, second: 59, of: endDate) ?? endDate
+        let endDayStart = calendar.startOfDay(for: endDate)
+        let end: Date
+        if let nextDay = calendar.date(byAdding: .day, value: 1, to: endDayStart),
+           let inclusiveEnd = calendar.date(byAdding: .second, value: -1, to: nextDay) {
+            end = inclusiveEnd
+        } else {
+            end = endDate
+        }
         return start...end
     }
 

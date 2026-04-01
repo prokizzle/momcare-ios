@@ -78,12 +78,12 @@ final class PDFExportService: Sendable {
         let date = Date.now.formatted(.iso8601.year().month().day())
         // Allow only alphanumerics, hyphens, and underscores to prevent filesystem issues.
         let allowedCharacters = CharacterSet.alphanumerics.union(.init(charactersIn: "-_"))
-        let safeName = baby.name.unicodeScalars
+        let filtered = baby.name.unicodeScalars
             .filter { allowedCharacters.contains($0) }
             .map { String($0) }
             .joined()
-            .prefix(40)
+        let stem = filtered.isEmpty ? "Baby" : String(filtered.prefix(40))
         let uniqueSuffix = UUID().uuidString.prefix(8)
-        return "\(safeName)_GrowthReport_\(date)_\(uniqueSuffix)"
+        return "\(stem)_GrowthReport_\(date)_\(uniqueSuffix)"
     }
 }

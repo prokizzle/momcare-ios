@@ -90,10 +90,11 @@ struct PDFExportServiceTests {
         let dataInRangeOnly = try Data(contentsOf: urlInRangeOnly)
         let dataWithOutOfRange = try Data(contentsOf: urlWithOutOfRange)
 
-        // Both PDFs must have non-trivial content and be equal in size,
-        // confirming the out-of-range record was excluded.
         #expect(dataInRangeOnly.count > 1024)
-        #expect(dataInRangeOnly.count == dataWithOutOfRange.count)
+        #expect(
+            dataInRangeOnly == dataWithOutOfRange,
+            "Out-of-range records must not change the generated PDF"
+        )
     }
 
     @Test("Generate report writes valid temp file")
