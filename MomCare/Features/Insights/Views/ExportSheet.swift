@@ -58,6 +58,7 @@ struct ExportSheet: View {
                         }
 
                         Button("Generate New Report") {
+                            cleanupExportFile()
                             exportURL = nil
                         }
                         .foregroundStyle(.secondary)
@@ -83,6 +84,7 @@ struct ExportSheet: View {
             }
             .navigationTitle("Export Report")
             .navigationBarTitleDisplayMode(.inline)
+            .onDisappear { cleanupExportFile() }
         }
     }
 
@@ -119,15 +121,23 @@ struct ExportSheet: View {
         errorMessage = nil
         defer { isGenerating = false }
         do {
+            // Pass pre-filtered, sorted arrays so PDFExportService does not re-filter.
+            let sorted = filteredRecords.sorted { $0.date < $1.date }
+            let sortedEvents = filteredEvents.sorted { $0.date < $1.date }
             exportURL = try await service.generateReport(
                 baby: baby,
-                records: records,
-                events: events,
+                records: sorted,
+                events: sortedEvents,
                 dateRange: normalizedRange
             )
         } catch {
             errorMessage = error.localizedDescription
         }
+    }
+
+    private func cleanupExportFile() {
+        guard let url = exportURL else { return }
+        try? FileManager.default.removeItem(at: url)
     }
 }
 

@@ -98,7 +98,7 @@ struct GrowthReportView: View {
 
             Divider()
 
-            ForEach(records) { record in
+            ForEach(records.sorted { $0.date < $1.date }) { record in
                 HStack {
                     Text(record.date.formatted(date: .abbreviated, time: .omitted))
                         .frame(width: 110, alignment: .leading)

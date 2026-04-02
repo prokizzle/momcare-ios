@@ -18,25 +18,21 @@ final class PDFExportService: Sendable {
     /// Renders a growth report PDF and writes it to a temporary file.
     /// Returns the file URL, suitable for use with ShareLink or UIActivityViewController.
     /// ImageRenderer capture runs on MainActor; PDF encoding and file I/O run off-main.
+    ///
+    /// - Note: Caller is responsible for pre-filtering and sorting `records` and `events`
+    ///   to the desired date range before calling this method.
     func generateReport(
         baby: Baby,
         records: [GrowthRecord],
         events: [HealthEvent],
         dateRange: ClosedRange<Date>
     ) async throws -> URL {
-        let filteredRecords = records
-            .filter { dateRange.contains($0.date) }
-            .sorted { $0.date < $1.date }
-        let filteredEvents = events
-            .filter { dateRange.contains($0.date) }
-            .sorted { $0.date < $1.date }
-
         // ImageRenderer is @MainActor — capture the UIImage on the main thread.
         let image: UIImage = try await MainActor.run {
             let reportView = GrowthReportView(
                 baby: baby,
-                records: filteredRecords,
-                events: filteredEvents,
+                records: records,
+                events: events,
                 dateRange: dateRange
             )
             let renderer = ImageRenderer(content: reportView.frame(width: 612))
@@ -50,6 +46,27 @@ final class PDFExportService: Sendable {
         // PDF encoding and file I/O are CPU/IO-bound — run off the main thread.
         let pdfData = renderToPDF(image: image)
         return try writeTempFile(data: pdfData, filename: reportFilename(baby: baby))
+    }
+
+    // MARK: - Cleanup
+
+    /// Removes export PDFs from the temp directory that are older than 24 hours.
+    /// Call on app launch or when the export sheet is dismissed.
+    func cleanupOldExports() {
+        let tempDir = FileManager.default.temporaryDirectory
+        let cutoff = Date.now.addingTimeInterval(-24 * 60 * 60)
+        guard let contents = try? FileManager.default.contentsOfDirectory(
+            at: tempDir,
+            includingPropertiesForKeys: [.creationDateKey],
+            options: .skipsHiddenFiles
+        ) else { return }
+
+        for url in contents where url.pathExtension == "pdf" && url.lastPathComponent.contains("_GrowthReport_") {
+            let created = (try? url.resourceValues(forKeys: [.creationDateKey]).creationDate) ?? .distantFuture
+            if created < cutoff {
+                try? FileManager.default.removeItem(at: url)
+            }
+        }
     }
 
     // MARK: - Private Helpers
