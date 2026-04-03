@@ -42,19 +42,24 @@ struct GrowthReportChartSection: View {
                     .foregroundStyle(.secondary)
 
                 Chart {
-                    ForEach(weightReferencePoints) { point in
-                        LineMark(
-                            x: .value("Date", point.date),
-                            y: .value("Weight (g)", point.value)
-                        )
-                        .foregroundStyle(Color.gray.opacity(0.4))
-                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 2]))
+                    // Group by percentile so Swift Charts draws continuous lines.
+                    ForEach(["P3", "P50", "P97"], id: \.self) { percentile in
+                        ForEach(weightReferencePoints.filter { $0.percentile == percentile }) { point in
+                            LineMark(
+                                x: .value("Date", point.date),
+                                y: .value("Weight (g)", point.value),
+                                series: .value("Percentile", percentile)
+                            )
+                            .foregroundStyle(Color.gray.opacity(0.4))
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 2]))
+                        }
                     }
                     ForEach(sorted) { record in
                         if let grams = record.weightGrams {
                             LineMark(
                                 x: .value("Date", record.date),
-                                y: .value("Weight (g)", grams)
+                                y: .value("Weight (g)", grams),
+                                series: .value("Series", "Baby")
                             )
                             .foregroundStyle(Color.black)
                             .symbol(.circle)
@@ -90,19 +95,24 @@ struct GrowthReportChartSection: View {
                     .foregroundStyle(.secondary)
 
                 Chart {
-                    ForEach(lengthReferencePoints) { point in
-                        LineMark(
-                            x: .value("Date", point.date),
-                            y: .value("Length (cm)", point.value)
-                        )
-                        .foregroundStyle(Color.gray.opacity(0.4))
-                        .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 2]))
+                    // Group by percentile so Swift Charts draws continuous lines.
+                    ForEach(["P3", "P50", "P97"], id: \.self) { percentile in
+                        ForEach(lengthReferencePoints.filter { $0.percentile == percentile }) { point in
+                            LineMark(
+                                x: .value("Date", point.date),
+                                y: .value("Length (cm)", point.value),
+                                series: .value("Percentile", percentile)
+                            )
+                            .foregroundStyle(Color.gray.opacity(0.4))
+                            .lineStyle(StrokeStyle(lineWidth: 1, dash: [4, 2]))
+                        }
                     }
                     ForEach(sorted) { record in
                         if let lengthCm = record.lengthCm {
                             LineMark(
                                 x: .value("Date", record.date),
-                                y: .value("Length (cm)", lengthCm)
+                                y: .value("Length (cm)", lengthCm),
+                                series: .value("Series", "Baby")
                             )
                             .foregroundStyle(Color.gray)
                             .symbol(.square)

@@ -71,37 +71,34 @@ struct PDFExportServiceTests {
             weightGrams: 3500
         )
 
-        // The caller is responsible for pre-filtering. Pass only records within
-        // the range to the service (as ExportSheet.generate() does at runtime).
-        // Both calls receive the same in-range record so both PDFs must be nearly
-        // identical in size — confirming the out-of-range record is excluded at
-        // the call site rather than silently included in the PDF.
+        // PDFExportService is a dumb renderer: it includes whatever records the caller
+        // passes. Pre-filtering is the caller's responsibility (ExportSheet does this).
+        // Verify that passing allRecords (including out-of-range) produces a larger PDF
+        // than passing only the filtered subset.
         let allRecords = [inRange, outOfRange]
-        let filteredRecords = allRecords.filter { range.contains($0.date) }
 
-        let urlInRangeOnly = try await service.generateReport(
+        let urlFiltered = try await service.generateReport(
             baby: baby,
             records: [inRange],
             events: [],
             dateRange: range
         )
-        let urlWithOutOfRange = try await service.generateReport(
+        let urlUnfiltered = try await service.generateReport(
             baby: baby,
-            records: filteredRecords,
+            records: allRecords,
             events: [],
             dateRange: range
         )
 
-        let dataInRangeOnly = try Data(contentsOf: urlInRangeOnly)
-        let dataWithOutOfRange = try Data(contentsOf: urlWithOutOfRange)
+        let dataFiltered = try Data(contentsOf: urlFiltered)
+        let dataUnfiltered = try Data(contentsOf: urlUnfiltered)
 
-        #expect(dataInRangeOnly.count > 1024)
-        // Both PDFs contain the same in-range record plus a footer timestamp embedded
-        // by ImageRenderer. Two consecutive renders may differ by a handful of bytes if
-        // a second boundary is crossed, so we compare sizes within a tolerance rather
-        // than byte-for-byte to avoid flakiness.
-        let sizeDiff = abs(dataInRangeOnly.count - dataWithOutOfRange.count)
-        #expect(sizeDiff < 200, "PDFs should be nearly identical in size — out-of-range record must be excluded")
+        #expect(dataFiltered.count > 1024)
+        // The unfiltered PDF renders an extra row, so it must be strictly larger.
+        #expect(
+            dataUnfiltered.count > dataFiltered.count,
+            "PDF with out-of-range record should be larger — confirms service renders all passed records"
+        )
     }
 
     @Test("Generate report writes valid temp file")

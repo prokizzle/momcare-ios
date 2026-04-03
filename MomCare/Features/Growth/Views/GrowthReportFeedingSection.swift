@@ -99,7 +99,8 @@ struct GrowthReportFeedingSection: View {
             from: dateRange.lowerBound,
             to: dateRange.upperBound
         )
-        let days = max(1, dayComponents.day ?? 1)
+        // Add 1 for inclusive count: Jan 1–Jan 3 = 3 days, not 2.
+        let days = max(1, (dayComponents.day ?? 0) + 1)
         let perDay = Double(total) / Double(days)
 
         var typeCounts: [Feeding.FeedingType: Int] = [:]

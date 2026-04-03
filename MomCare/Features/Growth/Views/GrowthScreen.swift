@@ -40,7 +40,8 @@ struct GrowthScreen: View {
             ExportSheet(
                 baby: baby,
                 records: viewModel.records,
-                events: healthEvents
+                events: healthEvents,
+                feedings: viewModel.feedings
             )
         }
         .task {

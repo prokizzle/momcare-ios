@@ -84,7 +84,7 @@ struct ExportSheet: View {
                                 .frame(maxWidth: .infinity)
                                 .font(MCTypography.headline)
                         }
-                        .disabled(filteredRecords.isEmpty && filteredEvents.isEmpty)
+                        .disabled(filteredRecords.isEmpty && filteredEvents.isEmpty && filteredFeedings.isEmpty)
                     }
                 }
 
@@ -115,7 +115,7 @@ struct ExportSheet: View {
 
     private var filteredFeedings: [Feeding] {
         let range = normalizedRange
-        return feedings.filter { range.contains($0.date) }
+        return feedings.filter { range.contains($0.startTime) }
     }
 
     /// Expands the selected dates to full-day boundaries so records on the

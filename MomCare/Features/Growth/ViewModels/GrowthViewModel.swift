@@ -4,10 +4,12 @@ import Foundation
 @MainActor
 final class GrowthViewModel {
     private let repository: any GrowthRepositoryProtocol
+    private let feedingRepository: (any FeedingRepositoryProtocol)?
     private let chartService: GrowthChartService
     private let healthKit: (any HealthKitServiceProtocol)?
 
     private(set) var records: [GrowthRecord] = []
+    private(set) var feedings: [Feeding] = []
     var selectedMeasurement: GrowthChartService.MeasurementType = .weight
     var chartData: GrowthChartService.GrowthChartData?
     var latestPercentile: Double?
@@ -17,10 +19,12 @@ final class GrowthViewModel {
 
     init(
         repository: any GrowthRepositoryProtocol,
+        feedingRepository: (any FeedingRepositoryProtocol)? = nil,
         chartService: GrowthChartService = GrowthChartService(),
         healthKit: (any HealthKitServiceProtocol)? = nil
     ) {
         self.repository = repository
+        self.feedingRepository = feedingRepository
         self.chartService = chartService
         self.healthKit = healthKit
     }
@@ -31,6 +35,9 @@ final class GrowthViewModel {
         defer { isLoading = false }
         do {
             records = try await repository.getRecordsForBaby(babyId, limit: nil)
+            if let feedingRepository {
+                feedings = try await feedingRepository.getFeedingsForBaby(babyId, limit: nil)
+            }
         } catch {
             self.error = error
         }
