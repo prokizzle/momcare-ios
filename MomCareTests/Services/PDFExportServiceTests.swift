@@ -56,6 +56,41 @@ struct PDFExportServiceTests {
         #expect(header == "%PDF")
     }
 
+    @Test("Generate report with feedings produces larger PDF than without feedings")
+    func generateReportWithFeedings() async throws {
+        let records: [GrowthRecord] = [
+            .fixture(weightGrams: 4500, lengthCm: 55)
+        ]
+        let feedings: [Feeding] = [
+            .fixture(feedingType: .breast, startTime: Date.now.addingTimeInterval(-3600)),
+            .fixture(feedingType: .bottle, startTime: Date.now.addingTimeInterval(-7200), amountMl: 150)
+        ]
+
+        let urlWithout = try await service.generateReport(
+            baby: baby,
+            records: records,
+            events: [],
+            dateRange: dateRange,
+            feedings: []
+        )
+        let urlWith = try await service.generateReport(
+            baby: baby,
+            records: records,
+            events: [],
+            dateRange: dateRange,
+            feedings: feedings
+        )
+
+        let dataWithout = try Data(contentsOf: urlWithout)
+        let dataWith = try Data(contentsOf: urlWith)
+
+        #expect(dataWithout.count > 1024)
+        #expect(
+            dataWith.count > dataWithout.count,
+            "PDF with feedings should be larger — confirms feedings section is rendered"
+        )
+    }
+
     @Test("Date range filtering excludes out-of-range records")
     func dateRangeFiltering() async throws {
         let now = Date.now
@@ -118,37 +153,40 @@ struct PDFExportServiceTests {
 
     @Test("cleanupOldExports removes files older than 24h and keeps recent ones")
     func cleanupOldExports() throws {
-        let tempDir = FileManager.default.temporaryDirectory
+        // Use an isolated subdirectory so this test never touches files from
+        // other tests or production exports running concurrently.
+        let testDir = FileManager.default.temporaryDirectory
+            .appendingPathComponent("PDFExportServiceTests_\(UUID().uuidString)", isDirectory: true)
+        try FileManager.default.createDirectory(at: testDir, withIntermediateDirectories: true)
+        defer { try? FileManager.default.removeItem(at: testDir) }
+
+        let isolatedService = PDFExportService(exportsDirectory: testDir)
         let oldDate = Date.now.addingTimeInterval(-25 * 60 * 60)
         let recentDate = Date.now.addingTimeInterval(-60)
 
         // Create an old export file that should be deleted.
-        let oldURL = tempDir.appendingPathComponent("TestBaby_GrowthReport_2024-01-01_AABBCCDD.pdf")
+        let oldURL = testDir.appendingPathComponent("TestBaby_GrowthReport_2024-01-01_AABBCCDD.pdf")
         try Data("old".utf8).write(to: oldURL)
         try FileManager.default.setAttributes([.creationDate: oldDate], ofItemAtPath: oldURL.path)
 
         // Create a recent export file that should survive.
-        let recentURL = tempDir.appendingPathComponent("TestBaby_GrowthReport_2024-01-02_EEFF0011.pdf")
+        let recentURL = testDir.appendingPathComponent("TestBaby_GrowthReport_2024-01-02_EEFF0011.pdf")
         try Data("recent".utf8).write(to: recentURL)
         try FileManager.default.setAttributes([.creationDate: recentDate], ofItemAtPath: recentURL.path)
 
         // Create a non-export PDF that should not be touched.
-        let otherURL = tempDir.appendingPathComponent("unrelated.pdf")
+        let otherURL = testDir.appendingPathComponent("unrelated.pdf")
         try Data("other".utf8).write(to: otherURL)
         try FileManager.default.setAttributes([.creationDate: oldDate], ofItemAtPath: otherURL.path)
 
-        service.cleanupOldExports()
+        isolatedService.cleanupOldExports()
 
         #expect(!FileManager.default.fileExists(atPath: oldURL.path), "Old export should be deleted")
         #expect(FileManager.default.fileExists(atPath: recentURL.path), "Recent export should be kept")
         #expect(FileManager.default.fileExists(atPath: otherURL.path), "Unrelated file should not be touched")
-
-        // Clean up remaining test files.
-        try? FileManager.default.removeItem(at: recentURL)
-        try? FileManager.default.removeItem(at: otherURL)
     }
 
-    @Test("Filename includes baby name and date")
+    @Test("Filename includes sanitized baby name stem and .pdf extension")
     func filenameFormat() async throws {
         let url = try await service.generateReport(
             baby: baby,
@@ -156,7 +194,16 @@ struct PDFExportServiceTests {
             events: [],
             dateRange: dateRange
         )
-        #expect(url.lastPathComponent.contains(baby.name), "Filename should include the baby's name")
+
+        // Replicate the service's sanitization logic to compute the expected stem.
+        let allowedCharacters = CharacterSet.alphanumerics.union(.init(charactersIn: "-_"))
+        let filtered = baby.name.unicodeScalars
+            .filter { allowedCharacters.contains($0) }
+            .map { String($0) }
+            .joined()
+        let expectedStem = filtered.isEmpty ? "Baby" : String(filtered.prefix(40))
+
+        #expect(url.lastPathComponent.contains(expectedStem), "Filename should include the sanitized baby name stem")
         #expect(url.lastPathComponent.hasSuffix(".pdf"))
     }
 }

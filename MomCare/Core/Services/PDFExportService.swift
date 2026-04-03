@@ -13,6 +13,15 @@ enum PDFExportError: LocalizedError {
 
 final class PDFExportService: Sendable {
 
+    /// Directory where export PDFs are written and from which old ones are purged.
+    /// Defaults to the system temporary directory. Override in tests to isolate
+    /// file I/O without touching shared state.
+    let exportsDirectory: URL
+
+    init(exportsDirectory: URL = FileManager.default.temporaryDirectory) {
+        self.exportsDirectory = exportsDirectory
+    }
+
     // MARK: - Report Generation
 
     /// Renders a growth report PDF and writes it to a temporary file.
@@ -68,10 +77,9 @@ final class PDFExportService: Sendable {
     /// Removes export PDFs from the temp directory that are older than 24 hours.
     /// Call on app launch or when the export sheet is dismissed.
     func cleanupOldExports() {
-        let tempDir = FileManager.default.temporaryDirectory
         let cutoff = Date.now.addingTimeInterval(-24 * 60 * 60)
         guard let contents = try? FileManager.default.contentsOfDirectory(
-            at: tempDir,
+            at: exportsDirectory,
             includingPropertiesForKeys: [.creationDateKey],
             options: .skipsHiddenFiles
         ) else { return }
@@ -87,7 +95,7 @@ final class PDFExportService: Sendable {
     // MARK: - Private Helpers
 
     private func writeTempFile(data: Data, filename: String) throws -> URL {
-        let url = FileManager.default.temporaryDirectory
+        let url = exportsDirectory
             .appendingPathComponent(filename)
             .appendingPathExtension("pdf")
         try data.write(to: url, options: .atomic)
