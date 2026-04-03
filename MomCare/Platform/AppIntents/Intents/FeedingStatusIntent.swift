@@ -15,7 +15,7 @@ struct FeedingStatusIntent: AppIntent {
         if SharedDataManager.isFeedingInProgress {
             let detail = SharedDataManager.feedingDetail ?? ""
             return .result(
-                dialog: "\(baby) is currently feeding\(detail.isEmpty ? "" : " — \(detail)")."
+                dialog: "\(baby) is currently feeding\(detail.isEmpty ? "" : " — \(detail)")"
             )
         }
         let count = SharedDataManager.todayFeedingCount

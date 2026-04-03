@@ -17,8 +17,8 @@ enum FeedingTypeOption: String, AppEnum {
     /// Maps to the engine's `FeedMethod`. Breast defaults to left side.
     var feedMethod: FeedMethod {
         switch self {
-        case .breast: .left
-        case .bottle: .bottle
+        case .breast: return .left
+        case .bottle: return .bottle
         }
     }
 }
