@@ -17,7 +17,10 @@ final class PDFExportService: Sendable {
 
     /// Renders a growth report PDF and writes it to a temporary file.
     /// Returns the file URL, suitable for use with ShareLink or UIActivityViewController.
-    /// ImageRenderer capture runs on MainActor; PDF encoding and file I/O run off-main.
+    ///
+    /// Uses `ImageRenderer.render { size, drawInContext in }` to draw directly into a
+    /// `UIGraphicsPDFRenderer` context, avoiding the large intermediate UIImage allocation
+    /// that `ImageRenderer.uiImage` would produce for long reports.
     ///
     /// - Note: Caller is responsible for pre-filtering and sorting `records` and `events`
     ///   to the desired date range before calling this method.
@@ -27,8 +30,9 @@ final class PDFExportService: Sendable {
         events: [HealthEvent],
         dateRange: ClosedRange<Date>
     ) async throws -> URL {
-        // ImageRenderer is @MainActor — capture the UIImage on the main thread.
-        let image: UIImage = try await MainActor.run {
+        // ImageRenderer is @MainActor — render directly into the PDF context on the main thread
+        // to avoid allocating a full uncompressed UIImage intermediate.
+        let pdfData: Data = try await MainActor.run {
             let reportView = GrowthReportView(
                 baby: baby,
                 records: records,
@@ -37,14 +41,23 @@ final class PDFExportService: Sendable {
             )
             let renderer = ImageRenderer(content: reportView.frame(width: 612))
             renderer.scale = 2.0
-            guard let uiImage = renderer.uiImage else {
+
+            var renderedData: Data?
+            renderer.render { size, drawInContext in
+                let pageRect = CGRect(origin: .zero, size: size)
+                let pdfRenderer = UIGraphicsPDFRenderer(bounds: pageRect)
+                renderedData = pdfRenderer.pdfData { context in
+                    context.beginPage()
+                    drawInContext(context.cgContext)
+                }
+            }
+            guard let data = renderedData else {
                 throw PDFExportError.renderFailed
             }
-            return uiImage
+            return data
         }
 
-        // PDF encoding and file I/O are CPU/IO-bound — run off the main thread.
-        let pdfData = renderToPDF(image: image)
+        // File I/O is CPU/IO-bound — run off the main thread.
         return try writeTempFile(data: pdfData, filename: reportFilename(baby: baby))
     }
 
@@ -70,18 +83,6 @@ final class PDFExportService: Sendable {
     }
 
     // MARK: - Private Helpers
-
-    private func renderToPDF(image: UIImage) -> Data {
-        let pageWidth: CGFloat = 612  // US Letter: 8.5in at 72 dpi
-        let pageHeight = image.size.height * (pageWidth / image.size.width)
-        let pageRect = CGRect(x: 0, y: 0, width: pageWidth, height: pageHeight)
-
-        let pdfRenderer = UIGraphicsPDFRenderer(bounds: pageRect)
-        return pdfRenderer.pdfData { context in
-            context.beginPage()
-            image.draw(in: pageRect)
-        }
-    }
 
     private func writeTempFile(data: Data, filename: String) throws -> URL {
         let url = FileManager.default.temporaryDirectory

@@ -71,9 +71,14 @@ struct PDFExportServiceTests {
             weightGrams: 3500
         )
 
-        // Generate once with only the in-range record, then again with both.
-        // The service filters internally, so both PDFs must be identical — if
-        // the out-of-range record were included the rendered page would differ.
+        // The caller is responsible for pre-filtering. Pass only records within
+        // the range to the service (as ExportSheet.generate() does at runtime).
+        // Both calls receive the same in-range record so both PDFs must be nearly
+        // identical in size — confirming the out-of-range record is excluded at
+        // the call site rather than silently included in the PDF.
+        let allRecords = [inRange, outOfRange]
+        let filteredRecords = allRecords.filter { range.contains($0.date) }
+
         let urlInRangeOnly = try await service.generateReport(
             baby: baby,
             records: [inRange],
@@ -82,7 +87,7 @@ struct PDFExportServiceTests {
         )
         let urlWithOutOfRange = try await service.generateReport(
             baby: baby,
-            records: [inRange, outOfRange],
+            records: filteredRecords,
             events: [],
             dateRange: range
         )

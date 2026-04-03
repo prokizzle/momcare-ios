@@ -1,3 +1,4 @@
+import Charts
 import SwiftUI
 
 /// A print-ready SwiftUI view used as the source for PDF rendering.
@@ -14,6 +15,8 @@ struct GrowthReportView: View {
             Divider().padding(.vertical, 16)
 
             if !records.isEmpty {
+                growthChartSection
+                Divider().padding(.vertical, 16)
                 growthSection
                 Divider().padding(.vertical, 16)
             }
@@ -68,6 +71,79 @@ struct GrowthReportView: View {
                 .font(.system(size: 12))
                 .foregroundStyle(.tertiary)
                 .padding(.top, 2)
+        }
+    }
+
+    // MARK: - Growth Chart
+
+    private var growthChartSection: some View {
+        VStack(alignment: .leading, spacing: 10) {
+            Text("Growth Chart")
+                .font(.system(size: 16, weight: .semibold))
+
+            let sorted = records.sorted { $0.date < $1.date }
+            let hasWeight = sorted.contains { $0.weightGrams != nil }
+            let hasLength = sorted.contains { $0.lengthCm != nil }
+
+            Chart {
+                if hasWeight {
+                    ForEach(sorted) { record in
+                        if let grams = record.weightGrams {
+                            LineMark(
+                                x: .value("Date", record.date),
+                                y: .value("Weight (g)", grams)
+                            )
+                            .foregroundStyle(by: .value("Series", "Weight"))
+                            .symbol(.circle)
+                            .interpolationMethod(.catmullRom)
+
+                            PointMark(
+                                x: .value("Date", record.date),
+                                y: .value("Weight (g)", grams)
+                            )
+                            .foregroundStyle(by: .value("Series", "Weight"))
+                            .symbolSize(30)
+                        }
+                    }
+                }
+                if hasLength {
+                    ForEach(sorted) { record in
+                        if let lengthCm = record.lengthCm {
+                            LineMark(
+                                x: .value("Date", record.date),
+                                y: .value("Length (cm)", lengthCm)
+                            )
+                            .foregroundStyle(by: .value("Series", "Length"))
+                            .symbol(.square)
+                            .interpolationMethod(.catmullRom)
+
+                            PointMark(
+                                x: .value("Date", record.date),
+                                y: .value("Length (cm)", lengthCm)
+                            )
+                            .foregroundStyle(by: .value("Series", "Length"))
+                            .symbolSize(30)
+                        }
+                    }
+                }
+            }
+            .frame(height: 200)
+            .chartXAxis {
+                AxisMarks(values: .stride(by: .month)) { _ in
+                    AxisGridLine()
+                    AxisValueLabel(format: .dateTime.month(.abbreviated))
+                }
+            }
+            .chartYAxis {
+                AxisMarks { _ in
+                    AxisGridLine()
+                    AxisValueLabel()
+                }
+            }
+            .chartForegroundStyleScale([
+                "Weight": Color.black,
+                "Length": Color.gray
+            ])
         }
     }
 
@@ -129,7 +205,7 @@ struct GrowthReportView: View {
             Text("Health Events")
                 .font(.system(size: 16, weight: .semibold))
 
-            ForEach(events) { event in
+            ForEach(events.sorted { $0.date < $1.date }) { event in
                 HStack(alignment: .top, spacing: 10) {
                     Text(event.date.formatted(date: .abbreviated, time: .omitted))
                         .frame(width: 110, alignment: .leading)
