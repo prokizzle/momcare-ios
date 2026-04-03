@@ -4,10 +4,12 @@ import Foundation
 @MainActor
 final class GrowthViewModel {
     private let repository: any GrowthRepositoryProtocol
+    private let feedingRepository: (any FeedingRepositoryProtocol)?
     private let chartService: GrowthChartService
     private let healthKit: (any HealthKitServiceProtocol)?
 
     private(set) var records: [GrowthRecord] = []
+    private(set) var feedings: [Feeding] = []
     var selectedMeasurement: GrowthChartService.MeasurementType = .weight
     var chartData: GrowthChartService.GrowthChartData?
     var latestPercentile: Double?
@@ -17,10 +19,12 @@ final class GrowthViewModel {
 
     init(
         repository: any GrowthRepositoryProtocol,
+        feedingRepository: (any FeedingRepositoryProtocol)? = nil,
         chartService: GrowthChartService = GrowthChartService(),
         healthKit: (any HealthKitServiceProtocol)? = nil
     ) {
         self.repository = repository
+        self.feedingRepository = feedingRepository
         self.chartService = chartService
         self.healthKit = healthKit
     }
@@ -33,6 +37,16 @@ final class GrowthViewModel {
             records = try await repository.getRecordsForBaby(babyId, limit: nil)
         } catch {
             self.error = error
+            return
+        }
+        if let feedingRepository {
+            do {
+                feedings = try await feedingRepository.getFeedingsForBaby(babyId, limit: nil)
+            } catch {
+                // Feeding data is supplementary — keep feedings empty rather than
+                // masking the successfully loaded records with a feeding error.
+                feedings = []
+            }
         }
     }
 
@@ -108,3 +122,35 @@ final class GrowthViewModel {
         }
     }
 }
+
+#if DEBUG
+// MARK: - Preview Support
+
+private final class PreviewGrowthRepository: GrowthRepositoryProtocol {
+    private let preloadedRecords: [GrowthRecord]
+
+    init(records: [GrowthRecord]) {
+        self.preloadedRecords = records
+    }
+
+    func getAll() async throws -> [GrowthRecord] { preloadedRecords }
+    func getById(_ id: UUID) async throws -> GrowthRecord? { nil }
+    func create(_ entity: GrowthRecord) async throws -> GrowthRecord { entity }
+    func update(_ entity: GrowthRecord) async throws -> GrowthRecord { entity }
+    func delete(_ id: UUID) async throws {}
+    func getRecordsForBaby(_ babyId: UUID, limit: Int?) async throws -> [GrowthRecord] { preloadedRecords }
+    func getRecordsForDateRange(babyId: UUID, start: Date, end: Date) async throws -> [GrowthRecord] {
+        preloadedRecords.filter { $0.date >= start && $0.date <= end }
+    }
+}
+
+extension GrowthViewModel {
+    @MainActor
+    static func preview(records: [GrowthRecord] = []) -> GrowthViewModel {
+        GrowthViewModel(
+            repository: PreviewGrowthRepository(records: records),
+            feedingRepository: nil
+        )
+    }
+}
+#endif

@@ -64,6 +64,7 @@ struct ContentView: View {
         NavigationStack(path: $navigation.babyPath) {
             BabyScreen(
                 babyId: babyViewModel.selectedBaby?.id,
+                baby: babyViewModel.selectedBaby,
                 dateOfBirth: babyViewModel.selectedBaby?.dateOfBirth,
                 biologicalSex: babyViewModel.selectedBaby?.biologicalSex,
                 sleepViewModel: sleepViewModel,

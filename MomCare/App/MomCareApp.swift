@@ -202,6 +202,7 @@ struct MomCareApp: App {
                     // Growth
                     growthViewModel = GrowthViewModel(
                         repository: deps.makeGrowthRepository(),
+                        feedingRepository: deps.makeFeedingRepository(),
                         healthKit: healthKitSvc
                     )
 

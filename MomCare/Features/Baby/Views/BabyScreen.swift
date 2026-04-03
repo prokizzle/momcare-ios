@@ -3,6 +3,7 @@ import SwiftUI
 @MainActor
 struct BabyScreen: View {
     let babyId: UUID?
+    var baby: Baby?
     var dateOfBirth: Date?
     var biologicalSex: Baby.BiologicalSex?
     var sleepViewModel: SleepViewModel?
@@ -93,11 +94,13 @@ struct BabyScreen: View {
                     SleepTimerView(babyId: babyId)
                 }
             case .growth:
-                if let growthViewModel, let babyId, let dateOfBirth {
+                if let growthViewModel, let babyId, let dateOfBirth, let baby {
                     GrowthScreen(
                         babyId: babyId,
                         dateOfBirth: dateOfBirth,
                         biologicalSex: biologicalSex,
+                        baby: baby,
+                        healthEvents: healthEventsViewModel?.events ?? [],
                         viewModel: growthViewModel
                     )
                 }
