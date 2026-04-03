@@ -194,6 +194,24 @@ struct MomCareApp: App {
                         }
                     }
 
+                    // Resolve any pending feeding start written by StartFeedingIntent
+                    // before the app was foregrounded.
+                    if let feedingTypeRaw = SharedDataManager.pendingStartFeedingType,
+                       let babyId = babyVM.selectedBaby?.id,
+                       !engine.isFeedingActive {
+                        SharedDataManager.clearPendingStartFeeding()
+                        let method: FeedMethod
+                        if let option = FeedingTypeOption(rawValue: feedingTypeRaw) {
+                            method = option.feedMethod
+                        } else {
+                            method = .left
+                        }
+                        await engine.startFeeding(babyId: babyId, method: method)
+                    }
+
+                    // Index babies into Core Spotlight.
+                    SpotlightIndexer.shared.indexBabies(babyVM.babies)
+
                     // Sleep
                     sleepViewModel = SleepViewModel(
                         repository: deps.makeSleepRepository()
