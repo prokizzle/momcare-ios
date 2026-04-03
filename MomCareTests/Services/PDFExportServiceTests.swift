@@ -119,6 +119,38 @@ struct PDFExportServiceTests {
         #expect(size > 0)
     }
 
+    @Test("cleanupOldExports removes files older than 24h and keeps recent ones")
+    func cleanupOldExports() throws {
+        let tempDir = FileManager.default.temporaryDirectory
+        let oldDate = Date.now.addingTimeInterval(-25 * 60 * 60)
+        let recentDate = Date.now.addingTimeInterval(-60)
+
+        // Create an old export file that should be deleted.
+        let oldURL = tempDir.appendingPathComponent("TestBaby_GrowthReport_2024-01-01_AABBCCDD.pdf")
+        try Data("old".utf8).write(to: oldURL)
+        try FileManager.default.setAttributes([.creationDate: oldDate], ofItemAtPath: oldURL.path)
+
+        // Create a recent export file that should survive.
+        let recentURL = tempDir.appendingPathComponent("TestBaby_GrowthReport_2024-01-02_EEFF0011.pdf")
+        try Data("recent".utf8).write(to: recentURL)
+        try FileManager.default.setAttributes([.creationDate: recentDate], ofItemAtPath: recentURL.path)
+
+        // Create a non-export PDF that should not be touched.
+        let otherURL = tempDir.appendingPathComponent("unrelated.pdf")
+        try Data("other".utf8).write(to: otherURL)
+        try FileManager.default.setAttributes([.creationDate: oldDate], ofItemAtPath: otherURL.path)
+
+        service.cleanupOldExports()
+
+        #expect(!FileManager.default.fileExists(atPath: oldURL.path), "Old export should be deleted")
+        #expect(FileManager.default.fileExists(atPath: recentURL.path), "Recent export should be kept")
+        #expect(FileManager.default.fileExists(atPath: otherURL.path), "Unrelated file should not be touched")
+
+        // Clean up remaining test files.
+        try? FileManager.default.removeItem(at: recentURL)
+        try? FileManager.default.removeItem(at: otherURL)
+    }
+
     @Test("Filename includes baby name and date")
     func filenameFormat() async throws {
         let url = try await service.generateReport(

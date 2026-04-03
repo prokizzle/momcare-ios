@@ -1,4 +1,3 @@
-import Charts
 import SwiftUI
 
 /// A print-ready SwiftUI view used as the source for PDF rendering.
@@ -8,6 +7,21 @@ struct GrowthReportView: View {
     let records: [GrowthRecord]
     let events: [HealthEvent]
     let dateRange: ClosedRange<Date>
+    let feedings: [Feeding]
+
+    init(
+        baby: Baby,
+        records: [GrowthRecord],
+        events: [HealthEvent],
+        dateRange: ClosedRange<Date>,
+        feedings: [Feeding] = []
+    ) {
+        self.baby = baby
+        self.records = records
+        self.events = events
+        self.dateRange = dateRange
+        self.feedings = feedings
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
@@ -15,9 +29,14 @@ struct GrowthReportView: View {
             Divider().padding(.vertical, 16)
 
             if !records.isEmpty {
-                growthChartSection
+                GrowthReportChartSection(baby: baby, records: records)
                 Divider().padding(.vertical, 16)
                 growthSection
+                Divider().padding(.vertical, 16)
+            }
+
+            if !feedings.isEmpty {
+                GrowthReportFeedingSection(feedings: feedings, dateRange: dateRange)
                 Divider().padding(.vertical, 16)
             }
 
@@ -26,7 +45,7 @@ struct GrowthReportView: View {
                 Divider().padding(.vertical, 16)
             }
 
-            if records.isEmpty && events.isEmpty {
+            if records.isEmpty && feedings.isEmpty && events.isEmpty {
                 emptyState
             }
 
@@ -74,79 +93,6 @@ struct GrowthReportView: View {
         }
     }
 
-    // MARK: - Growth Chart
-
-    private var growthChartSection: some View {
-        VStack(alignment: .leading, spacing: 10) {
-            Text("Growth Chart")
-                .font(.system(size: 16, weight: .semibold))
-
-            let sorted = records.sorted { $0.date < $1.date }
-            let hasWeight = sorted.contains { $0.weightGrams != nil }
-            let hasLength = sorted.contains { $0.lengthCm != nil }
-
-            Chart {
-                if hasWeight {
-                    ForEach(sorted) { record in
-                        if let grams = record.weightGrams {
-                            LineMark(
-                                x: .value("Date", record.date),
-                                y: .value("Weight (g)", grams)
-                            )
-                            .foregroundStyle(by: .value("Series", "Weight"))
-                            .symbol(.circle)
-                            .interpolationMethod(.catmullRom)
-
-                            PointMark(
-                                x: .value("Date", record.date),
-                                y: .value("Weight (g)", grams)
-                            )
-                            .foregroundStyle(by: .value("Series", "Weight"))
-                            .symbolSize(30)
-                        }
-                    }
-                }
-                if hasLength {
-                    ForEach(sorted) { record in
-                        if let lengthCm = record.lengthCm {
-                            LineMark(
-                                x: .value("Date", record.date),
-                                y: .value("Length (cm)", lengthCm)
-                            )
-                            .foregroundStyle(by: .value("Series", "Length"))
-                            .symbol(.square)
-                            .interpolationMethod(.catmullRom)
-
-                            PointMark(
-                                x: .value("Date", record.date),
-                                y: .value("Length (cm)", lengthCm)
-                            )
-                            .foregroundStyle(by: .value("Series", "Length"))
-                            .symbolSize(30)
-                        }
-                    }
-                }
-            }
-            .frame(height: 200)
-            .chartXAxis {
-                AxisMarks(values: .stride(by: .month)) { _ in
-                    AxisGridLine()
-                    AxisValueLabel(format: .dateTime.month(.abbreviated))
-                }
-            }
-            .chartYAxis {
-                AxisMarks { _ in
-                    AxisGridLine()
-                    AxisValueLabel()
-                }
-            }
-            .chartForegroundStyleScale([
-                "Weight": Color.black,
-                "Length": Color.gray
-            ])
-        }
-    }
-
     // MARK: - Growth Measurements
 
     private var growthSection: some View {
@@ -154,7 +100,6 @@ struct GrowthReportView: View {
             Text("Growth Measurements")
                 .font(.system(size: 16, weight: .semibold))
 
-            // Column headers
             HStack {
                 Text("Date")
                     .frame(width: 110, alignment: .leading)
@@ -278,6 +223,11 @@ struct GrowthReportView: View {
             .fixture(eventType: .vaccine, title: "DTaP - Dose 1"),
             .fixture(eventType: .milestone, title: "First smile")
         ],
-        dateRange: Calendar.current.date(byAdding: .month, value: -3, to: .now)!...Date.now
+        dateRange: Calendar.current.date(byAdding: .month, value: -3, to: .now)!...Date.now,
+        feedings: [
+            .fixture(feedingType: .breast),
+            .fixture(feedingType: .bottle),
+            .fixture(feedingType: .breast)
+        ]
     )
 }

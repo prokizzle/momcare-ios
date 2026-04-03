@@ -6,6 +6,19 @@ struct ExportSheet: View {
     let baby: Baby
     let records: [GrowthRecord]
     let events: [HealthEvent]
+    let feedings: [Feeding]
+
+    init(
+        baby: Baby,
+        records: [GrowthRecord],
+        events: [HealthEvent],
+        feedings: [Feeding] = []
+    ) {
+        self.baby = baby
+        self.records = records
+        self.events = events
+        self.feedings = feedings
+    }
 
     @State private var startDate: Date = Calendar.current.date(byAdding: .month, value: -6, to: .now) ?? .now
     @State private var endDate: Date = .now
@@ -100,6 +113,11 @@ struct ExportSheet: View {
         return events.filter { range.contains($0.date) }
     }
 
+    private var filteredFeedings: [Feeding] {
+        let range = normalizedRange
+        return feedings.filter { range.contains($0.date) }
+    }
+
     /// Expands the selected dates to full-day boundaries so records on the
     /// boundary days are never excluded due to time-of-day components.
     private var normalizedRange: ClosedRange<Date> {
@@ -128,7 +146,8 @@ struct ExportSheet: View {
                 baby: baby,
                 records: sorted,
                 events: sortedEvents,
-                dateRange: normalizedRange
+                dateRange: normalizedRange,
+                feedings: filteredFeedings
             )
         } catch {
             errorMessage = error.localizedDescription

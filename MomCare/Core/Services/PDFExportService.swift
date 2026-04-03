@@ -28,7 +28,8 @@ final class PDFExportService: Sendable {
         baby: Baby,
         records: [GrowthRecord],
         events: [HealthEvent],
-        dateRange: ClosedRange<Date>
+        dateRange: ClosedRange<Date>,
+        feedings: [Feeding] = []
     ) async throws -> URL {
         // ImageRenderer is @MainActor — render directly into the PDF context on the main thread
         // to avoid allocating a full uncompressed UIImage intermediate.
@@ -37,7 +38,8 @@ final class PDFExportService: Sendable {
                 baby: baby,
                 records: records,
                 events: events,
-                dateRange: dateRange
+                dateRange: dateRange,
+                feedings: feedings
             )
             let renderer = ImageRenderer(content: reportView.frame(width: 612))
             renderer.scale = 2.0
@@ -92,6 +94,10 @@ final class PDFExportService: Sendable {
         return url
     }
 
+    /// Produces `{name}_GrowthReport_{YYYY-MM-DD}_{8-char-UUID}.pdf`.
+    /// `cleanupOldExports()` depends on `_GrowthReport_` being present.
+    /// Baby name is filtered to alphanumerics/hyphens/underscores and truncated to 40 chars;
+    /// falls back to "Baby" when the filtered result is empty.
     private func reportFilename(baby: Baby) -> String {
         let date = Date.now.formatted(.iso8601.year().month().day())
         // Allow only alphanumerics, hyphens, and underscores to prevent filesystem issues.
