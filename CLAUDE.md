@@ -163,7 +163,7 @@ Tuist is installed via mise (see `mise.toml`). Run `mise install` if `tuist` is 
 | **Microapps** (current) | None | `ViewModel.Dependencies` struct with function types, injected via init. App container maps services to feature deps. | Zero dependencies, explicit, but verbose wiring at app root. |
 | **Point-Free Dependencies** | `swift-dependencies` | `@Dependency(\.key)` property wrapper. `DependencyKey` with `liveValue`/`testValue`. `withDependencies { } operation: { }` for test overrides. | Clean testing ergonomics, but adds a dependency and hides the graph behind property wrappers. |
 | **Factory** | `Factory` | Container-based with `@Injected(\.key)`. Scopes: `.singleton`, `.session`, `.cached`, `.shared`. Contexts: `.onDebug`, `.onTest`, `.onPreview`. | Rich lifecycle management, but global mutable container. |
-| **Swift Service** | `swift-service` | `@Service`/`@MainService` wrappers. Task-local environments for isolation. | iOS 18+ only -- not viable until we drop iOS 17. |
+| **Swift Service** | `swift-service` | `@Service`/`@MainService` wrappers. Task-local environments for isolation. | Now viable with iOS 26 deployment target -- evaluate when simplifying DI. |
 
 **When to consider switching:** If the app root wiring in `MomCareApp.swift` becomes unwieldy (>15 ViewModels), evaluate Point-Free Dependencies or Factory. Until then, microapps keeps the dependency graph explicit and the project dependency-free.
 

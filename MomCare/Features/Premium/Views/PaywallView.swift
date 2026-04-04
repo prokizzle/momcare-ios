@@ -96,8 +96,8 @@ struct PaywallView: View {
             Text("Annual")
                 .font(MCTypography.subheadline)
                 .foregroundStyle(showAnnual ? .white : .white.opacity(0.5))
-            if showAnnual {
-                Text("Save 44%")
+            if showAnnual, let savingsText = annualSavingsText {
+                Text(savingsText)
                     .font(MCTypography.badge)
                     .foregroundStyle(.white)
                     .padding(.horizontal, MCSpacing.sm)
@@ -105,6 +105,9 @@ struct PaywallView: View {
                     .background(MCColor.accent)
                     .clipShape(Capsule())
             }
+        }
+        .onChange(of: showAnnual) { _, _ in
+            MCHaptic.toggle()
         }
     }
 
@@ -188,6 +191,7 @@ struct PaywallView: View {
 
     private var restoreButton: some View {
         Button("Restore Purchases") {
+            MCHaptic.tap()
             Task { await restorePurchases() }
         }
         .font(MCTypography.caption)
@@ -217,6 +221,8 @@ struct PaywallView: View {
                 .background(Color.white.opacity(MCOpacity.whisper))
                 .clipShape(Circle())
         }
+        .frame(width: 44, height: 44)
+        .contentShape(Circle())
         .padding(MCSpacing.lg)
     }
 
@@ -236,7 +242,24 @@ struct PaywallView: View {
         return products.first { $0.id == id }
     }
 
-    private func periodLabel(_ product: Product) -> String {
+}
+
+// MARK: - Helpers
+
+private extension PaywallView {
+
+    var annualSavingsText: String? {
+        guard let monthly = monthlyProduct,
+              let annual = annualProduct else { return nil }
+        let yearlyFromMonthly = monthly.price * Decimal(12)
+        guard yearlyFromMonthly > 0 else { return nil }
+        let savings = (yearlyFromMonthly - annual.price) / yearlyFromMonthly * Decimal(100)
+        let percent = NSDecimalNumber(decimal: savings).intValue
+        guard percent > 0 else { return nil }
+        return "Save \(percent)%"
+    }
+
+    func periodLabel(_ product: Product) -> String {
         guard let subscription = product.subscription else { return "" }
         switch subscription.subscriptionPeriod.unit {
         case .month: return "month"
@@ -245,20 +268,22 @@ struct PaywallView: View {
         }
     }
 
-    private func monthlyEquivalentPrice(_ product: Product) -> String? {
+    func monthlyEquivalentPrice(_ product: Product) -> String? {
         guard let subscription = product.subscription,
               subscription.subscriptionPeriod.unit == .year else { return nil }
-        let monthly = product.price / 12
-        return monthly.formatted(.currency(code: product.priceFormatStyle.currencyCode))
+        let monthly = product.price / Decimal(12)
+        let code = product.priceFormatStyle.currencyCode
+        let currencyCode = code.isEmpty ? "USD" : code
+        return monthly.formatted(.currency(code: currencyCode))
     }
 
-    private func loadProducts() async {
+    func loadProducts() async {
         let store = StoreManager.shared
         await store.loadProducts()
         products = await store.products
     }
 
-    private func handlePurchase() async {
+    func handlePurchase() async {
         let product: Product? = showAnnual ? annualProduct : monthlyProduct
         guard let product else { return }
         isPurchasing = true
@@ -279,7 +304,7 @@ struct PaywallView: View {
         }
     }
 
-    private func restorePurchases() async {
+    func restorePurchases() async {
         await StoreManager.shared.restore()
         let tier = await StoreManager.shared.currentTier
         if tier > .free {

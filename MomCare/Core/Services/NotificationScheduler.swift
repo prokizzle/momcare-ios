@@ -1,5 +1,13 @@
 import Foundation
+import OSLog
 import UserNotifications
+
+private extension Logger {
+    static let notifications = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.feelingmindful.momcare",
+        category: "Notifications"
+    )
+}
 
 /// Schedules MomCare-specific local notifications (feeding reminders,
 /// hydration nudges, self-care check-ins, weekly recaps).
@@ -19,12 +27,13 @@ struct NotificationScheduler: Sendable {
     /// Schedules a one-shot feeding reminder after a given interval.
     ///
     /// - Parameters:
+    ///   - babyId: The baby's unique identifier for the notification ID.
     ///   - babyName: The baby's name for the notification body.
     ///   - interval: Seconds until the reminder fires (e.g., 3 hours = 10800).
-    func scheduleFeedingReminder(babyName: String, afterSeconds interval: TimeInterval) async throws {
+    func scheduleFeedingReminder(babyId: UUID, babyName: String, afterSeconds interval: TimeInterval) async throws {
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: false)
         try await service.scheduleLocal(
-            id: "feeding-reminder-\(babyName)",
+            id: "feeding-reminder-\(babyId.uuidString)",
             title: "Feeding Reminder",
             body: "Time to feed \(babyName)? Last feeding was a while ago.",
             trigger: trigger,
@@ -33,8 +42,8 @@ struct NotificationScheduler: Sendable {
     }
 
     /// Cancels any pending feeding reminder for the given baby.
-    func cancelFeedingReminder(babyName: String) {
-        service.cancelPending(ids: ["feeding-reminder-\(babyName)"])
+    func cancelFeedingReminder(babyId: UUID) {
+        service.cancelPending(ids: ["feeding-reminder-\(babyId.uuidString)"])
     }
 
     // MARK: - Hydration Nudges
@@ -102,9 +111,21 @@ struct NotificationScheduler: Sendable {
     }
 
     /// Sets up the default notification schedule for a new user.
-    func setupDefaults(babyName: String) async {
-        try? await scheduleHydrationNudge()
-        try? await scheduleSelfCareCheckIn()
-        try? await scheduleWeeklyRecap()
+    func setupDefaults() async {
+        do {
+            try await scheduleHydrationNudge()
+        } catch {
+            Logger.notifications.error("Failed to schedule hydration nudge: \(error)")
+        }
+        do {
+            try await scheduleSelfCareCheckIn()
+        } catch {
+            Logger.notifications.error("Failed to schedule self-care check-in: \(error)")
+        }
+        do {
+            try await scheduleWeeklyRecap()
+        } catch {
+            Logger.notifications.error("Failed to schedule weekly recap: \(error)")
+        }
     }
 }

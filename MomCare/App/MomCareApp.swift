@@ -52,6 +52,11 @@ struct MomCareApp: App {
             #endif
         }
         NotificationManager.shared.registerCategories()
+
+        Task {
+            await StoreManager.shared.startObservingTransactions()
+            await StoreManager.shared.refreshEntitlements()
+        }
     }
 
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
@@ -102,6 +107,9 @@ struct MomCareApp: App {
                     let babyRepo = deps.makeBabyRepository()
                     onboardingViewModel = OnboardingViewModel(dependencies: .init(
                         requestNotifications: {
+                            // Intentional direct usage: NotificationManager is a system
+                            // singleton (wraps UNUserNotificationCenter) and does not
+                            // belong in the AppDependencies container.
                             await NotificationManager.shared.requestAuthorization()
                         },
                         requestHealthKit: {
@@ -213,10 +221,8 @@ struct MomCareApp: App {
                     SpotlightIndexer.shared.indexBabies(babyVM.babies)
 
                     // Set up default notification schedule.
-                    if let baby = babyVM.selectedBaby {
-                        let scheduler = NotificationScheduler()
-                        await scheduler.setupDefaults(babyName: baby.name)
-                    }
+                    let scheduler = NotificationScheduler()
+                    await scheduler.setupDefaults()
 
                     // Sleep
                     sleepViewModel = SleepViewModel(

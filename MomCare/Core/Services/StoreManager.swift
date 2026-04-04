@@ -61,11 +61,10 @@ actor StoreManager {
 
     func startObservingTransactions() {
         guard updateTask == nil else { return }
-        updateTask = Task { [weak self] in
+        updateTask = Task {
             for await result in Transaction.updates {
-                guard let self else { return }
                 if let transaction = try? result.payloadValue {
-                    await self.handleTransaction(transaction)
+                    await handleTransaction(transaction)
                 }
             }
         }
@@ -91,10 +90,15 @@ actor StoreManager {
             let result = try await product.purchase()
             switch result {
             case .success(let verification):
-                let transaction = try verification.payloadValue
-                await transaction.finish()
-                await refreshEntitlements()
-                return true
+                do {
+                    let transaction = try verification.payloadValue
+                    await transaction.finish()
+                    await refreshEntitlements()
+                    return true
+                } catch {
+                    purchaseError = "Transaction verification failed. Please contact support."
+                    return false
+                }
             case .userCancelled:
                 return false
             case .pending:

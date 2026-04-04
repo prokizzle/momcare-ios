@@ -54,6 +54,8 @@ final class NotificationManager: NotificationServiceProtocol, @unchecked Sendabl
         self.center = center
     }
 
+    deinit {}
+
     // MARK: - Authorization
 
     func requestAuthorization() async -> Bool {
@@ -158,6 +160,7 @@ final class NotificationManager: NotificationServiceProtocol, @unchecked Sendabl
 
 // MARK: - Stub for Testing
 
+#if DEBUG
 final class StubNotificationManager: NotificationServiceProtocol, @unchecked Sendable {
 
     struct ScheduledEntry {
@@ -191,3 +194,4 @@ final class StubNotificationManager: NotificationServiceProtocol, @unchecked Sen
         scheduledNotifications.removeAll()
     }
 }
+#endif
