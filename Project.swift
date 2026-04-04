@@ -24,7 +24,7 @@ let project = Project(
             destinations: .iOS,
             product: .app,
             bundleId: "com.feelingmindful.momcare",
-            deploymentTargets: .iOS("17.0"),
+            deploymentTargets: .iOS("26.0"),
             infoPlist: .file(path: "MomCare/App/Info.plist"),
             sources: ["MomCare/**/*.swift"],
             resources: [
@@ -67,7 +67,7 @@ let project = Project(
             destinations: .iOS,
             product: .unitTests,
             bundleId: "com.feelingmindful.momcare.tests",
-            deploymentTargets: .iOS("17.0"),
+            deploymentTargets: .iOS("26.0"),
             infoPlist: .default,
             sources: ["MomCareTests/**/*.swift"],
             dependencies: [
@@ -79,7 +79,7 @@ let project = Project(
             destinations: .iOS,
             product: .uiTests,
             bundleId: "com.feelingmindful.momcare.uitests",
-            deploymentTargets: .iOS("17.0"),
+            deploymentTargets: .iOS("26.0"),
             infoPlist: .default,
             sources: ["MomCareUITests/**/*.swift"],
             dependencies: [
@@ -91,7 +91,7 @@ let project = Project(
             destinations: .iOS,
             product: .appExtension,
             bundleId: "com.feelingmindful.momcare.widgets",
-            deploymentTargets: .iOS("17.0"),
+            deploymentTargets: .iOS("26.0"),
             infoPlist: .file(path: "MomCareWidgetExtension/Info.plist"),
             sources: [
                 "MomCareWidgetExtension/**/*.swift",

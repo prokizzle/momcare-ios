@@ -40,8 +40,8 @@ Never use emojis in code, comments, commit messages, documentation, or UI string
 ## Project Overview
 
 - **App**: MomCare — premium baby & mother care tracker
-- **Stack**: SwiftUI + @Observable + SwiftData + Firebase (iOS 17+)
-- **Architecture**: Clean Architecture with vertical feature modules
+- **Stack**: SwiftUI + @Observable + SwiftData + Firebase (iOS 26+)
+- **Architecture**: Clean Architecture with vertical feature modules (MVVM: View + @Observable ViewModel + Repository protocol)
 - **Concurrency**: Swift 6 strict concurrency (async/await + actors)
 - **Testing**: Swift Testing framework (`#expect`, `@Suite`, `@Test`)
 - **Project Generation**: Tuist (`Project.swift` → .xcodeproj, managed via mise)
@@ -181,6 +181,14 @@ Tuist is installed via mise (see `mise.toml`). Run `mise install` if `tuist` is 
 All work is tracked in Linear under team **MomCare** (MOM-1 through MOM-17).
 - iOS App project: issues MOM-1 to MOM-15, MOM-17
 - Android App project: MOM-16
+
+## Notifications
+
+- All notification logic goes through `NotificationManager` / `NotificationScheduler`
+- Never call `UNUserNotificationCenter` directly from views or view models
+- Categories are registered in `MomCareApp.init()` before authorization is requested
+- Use `NotificationScheduler` for MomCare-specific scheduling (feeding, hydration, self-care, weekly recap)
+- Push provider: Firebase Cloud Messaging (FCM) -- not yet implemented, local-only for now
 
 ## Flutter Reference
 

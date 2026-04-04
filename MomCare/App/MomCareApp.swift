@@ -51,6 +51,7 @@ struct MomCareApp: App {
             print("Warning: GoogleService-Info.plist not found. Firebase is not configured.")
             #endif
         }
+        NotificationManager.shared.registerCategories()
     }
 
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
@@ -101,8 +102,7 @@ struct MomCareApp: App {
                     let babyRepo = deps.makeBabyRepository()
                     onboardingViewModel = OnboardingViewModel(dependencies: .init(
                         requestNotifications: {
-                            let center = UNUserNotificationCenter.current()
-                            return (try? await center.requestAuthorization(options: [.alert, .badge, .sound])) ?? false
+                            await NotificationManager.shared.requestAuthorization()
                         },
                         requestHealthKit: {
                             // Placeholder until MOM-13 (HealthKit)
@@ -211,6 +211,12 @@ struct MomCareApp: App {
 
                     // Index babies into Core Spotlight.
                     SpotlightIndexer.shared.indexBabies(babyVM.babies)
+
+                    // Set up default notification schedule.
+                    if let baby = babyVM.selectedBaby {
+                        let scheduler = NotificationScheduler()
+                        await scheduler.setupDefaults(babyName: baby.name)
+                    }
 
                     // Sleep
                     sleepViewModel = SleepViewModel(
