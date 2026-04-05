@@ -46,13 +46,10 @@ struct FeedingTimerView: View {
     }
 
     private var timerDisplay: some View {
-        Text(viewModel.elapsedTimeFormatted)
-            .font(MCTypography.timer)
-            .monospacedDigit()
-            .foregroundStyle(.white)
-            .contentTransition(.numericText())
-            .animation(reduceMotion ? nil : .default, value: viewModel.elapsedTimeFormatted)
-            .accessibilityLabel("Timer: \(viewModel.elapsedTimeFormatted)")
+        FeedingTimerRing(
+            startTime: viewModel.inProgressFeeding?.startTime,
+            timerText: viewModel.elapsedTimeFormatted
+        )
     }
 
     private var breastSideToggle: some View {

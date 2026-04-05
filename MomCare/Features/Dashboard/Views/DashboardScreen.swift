@@ -33,6 +33,7 @@ struct DashboardScreen: View {
             .padding(.horizontal, MCSpacing.xl)
             .padding(.vertical, MCSpacing.lg)
         }
+        .ambientBackground()
         .task {
             await viewModel.loadDashboard(babyId: babyId)
         }
