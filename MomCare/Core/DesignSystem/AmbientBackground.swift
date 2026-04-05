@@ -8,7 +8,10 @@ import SwiftUI
 @MainActor
 struct AmbientBackground: View {
     @State private var phase: Double = 0
+    @State private var palette: [Color] = []
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
+    @Environment(\.colorScheme) private var colorScheme
+    @Environment(\.scenePhase) private var scenePhase
 
     private static let animationDuration: Double = 18.0
 
@@ -17,16 +20,22 @@ struct AmbientBackground: View {
             width: 3,
             height: 3,
             points: controlPoints(phase: phase),
-            colors: timeOfDayColors()
+            colors: palette.isEmpty ? timeOfDayColors() : palette
         )
         .ignoresSafeArea()
-        .opacity(0.08)
+        .opacity(colorScheme == .dark ? 0.08 : 0.04)
         .onAppear {
+            palette = timeOfDayColors()
             guard !reduceMotion else { return }
             withAnimation(
                 .easeInOut(duration: Self.animationDuration).repeatForever(autoreverses: true)
             ) {
                 phase = 1.0
+            }
+        }
+        .onChange(of: scenePhase) { _, newPhase in
+            if newPhase == .active {
+                palette = timeOfDayColors()
             }
         }
     }

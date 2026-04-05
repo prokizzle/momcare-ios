@@ -101,6 +101,7 @@ struct MomCareApp: App {
                     ProgressView()
                 }
             }
+            .chromeTheming()
             .task(id: hasCompletedOnboarding) {
                 if !hasCompletedOnboarding && onboardingViewModel == nil {
                     let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)

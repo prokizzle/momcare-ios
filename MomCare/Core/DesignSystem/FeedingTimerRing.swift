@@ -27,24 +27,24 @@ struct FeedingTimerRing: View {
 
     @ViewBuilder
     private var ringLayer: some View {
-        if reduceMotion {
-            Canvas { ctx, size in
-                drawRing(ctx, size: size, progress: currentProgress)
-            }
-        } else {
+        if let startTime, !reduceMotion {
             TimelineView(.animation) { context in
-                let elapsed = startTime.map { context.date.timeIntervalSince($0) } ?? 0
-                let progress = CGFloat(min(elapsed / maxDuration, 1.0))
+                let elapsed = context.date.timeIntervalSince(startTime)
+                let progress = CGFloat(max(0, min(elapsed / maxDuration, 1.0)))
                 Canvas { ctx, size in
                     drawRing(ctx, size: size, progress: progress)
                 }
+            }
+        } else {
+            Canvas { ctx, size in
+                drawRing(ctx, size: size, progress: currentProgress)
             }
         }
     }
 
     private var currentProgress: CGFloat {
         guard let startTime else { return 0 }
-        return CGFloat(min(Date.now.timeIntervalSince(startTime) / maxDuration, 1.0))
+        return CGFloat(max(0, min(Date.now.timeIntervalSince(startTime) / maxDuration, 1.0)))
     }
 
     // MARK: - Drawing
@@ -95,9 +95,10 @@ struct FeedingTimerRing: View {
         Text(timerText)
             .font(MCTypography.timer)
             .monospacedDigit()
-            .foregroundStyle(.white)
+            .foregroundStyle(.primary)
             .contentTransition(.numericText())
             .animation(reduceMotion ? nil : .default, value: timerText)
-            .accessibilityLabel("Timer: \(timerText)")
+            .accessibilityLabel(Text("Timer"))
+            .accessibilityValue(Text(timerText))
     }
 }
