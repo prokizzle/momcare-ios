@@ -50,7 +50,15 @@ final class OnboardingViewModel {
     /// Raw nonce generated before each Apple Sign-In request. Must be set
     /// in the `SignInWithAppleButton` request block and passed to Firebase
     /// in the completion block for replay protection.
-    var currentNonce: String = ""
+    private(set) var currentNonce: String = ""
+
+    /// Generates a fresh nonce, stores it for later Firebase verification,
+    /// and returns the SHA-256 hash to pass to the Apple Sign-In request.
+    func prepareNonce() -> String {
+        let nonce = AppleSignInNonce.randomNonceString()
+        currentNonce = nonce
+        return AppleSignInNonce.sha256(nonce)
+    }
 
     var babyFormIsValid: Bool {
         !babyName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty

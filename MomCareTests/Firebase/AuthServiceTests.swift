@@ -102,7 +102,11 @@ struct AuthServiceTests {
         }
 
         #expect(received.count == 1)
-        #expect(received.first??.id == "anon-uid")
+        guard let first = received.first, let user = first else {
+            Issue.record("Expected a non-nil user in authStateStream")
+            return
+        }
+        #expect(user.id == "anon-uid")
     }
 
     @Test("AuthProvider raw values")

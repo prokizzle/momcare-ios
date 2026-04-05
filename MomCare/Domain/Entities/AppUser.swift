@@ -12,6 +12,7 @@ struct AppUser: Sendable, Equatable, Identifiable {
         case apple
         case google
         case anonymous
+        case unknown
     }
 
     let provider: AuthProvider

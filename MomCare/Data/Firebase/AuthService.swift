@@ -8,6 +8,7 @@ import Security
 
 protocol AuthServiceProtocol: Sendable {
     func signInWithApple(authorization: ASAuthorization, nonce: String) async throws -> AppUser
+    func signInWithGoogle() async throws -> AppUser
     func signInAnonymously() async throws -> AppUser
     func linkAppleCredential(authorization: ASAuthorization, nonce: String) async throws -> AppUser
     func signOut() throws
@@ -23,6 +24,7 @@ enum AuthError: LocalizedError, Sendable {
     case noCurrentUser
     case linkingFailed(String)
     case googleSignInNotAvailable
+    case firebaseNotConfigured
 
     var errorDescription: String? {
         switch self {
@@ -36,6 +38,8 @@ enum AuthError: LocalizedError, Sendable {
             return "Account linking failed: \(reason)"
         case .googleSignInNotAvailable:
             return "Google Sign-In is not yet available."
+        case .firebaseNotConfigured:
+            return "Firebase is not configured. Sign-in is unavailable."
         }
     }
 }
@@ -92,6 +96,12 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         )
         let result = try await auth.signIn(with: credential)
         return Self.mapUser(result.user, provider: .apple)
+    }
+
+    // MARK: - Sign in with Google
+
+    func signInWithGoogle() async throws -> AppUser {
+        throw AuthError.googleSignInNotAvailable
     }
 
     // MARK: - Anonymous
@@ -181,7 +191,7 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         let providerIDs = user.providerData.map(\.providerID)
         if providerIDs.contains("apple.com") { return .apple }
         if providerIDs.contains("google.com") { return .google }
-        return .anonymous
+        return .unknown
     }
 }
 
@@ -206,6 +216,10 @@ final class StubAuthService: AuthServiceProtocol, @unchecked Sendable {
         )
         stubbedUser = user
         return user
+    }
+
+    func signInWithGoogle() async throws -> AppUser {
+        throw AuthError.googleSignInNotAvailable
     }
 
     func signInAnonymously() async throws -> AppUser {
