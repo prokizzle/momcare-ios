@@ -8,8 +8,8 @@ import SwiftUI
 struct FeedingTimerRing: View {
     let startTime: Date?
     let timerText: String
+    var maxDuration: TimeInterval = 45 * 60
 
-    private static let maxDuration: TimeInterval = 45 * 60  // 45-minute reference cycle
     private static let ringSize: CGFloat = 220
     private static let lineWidth: CGFloat = 8
 
@@ -34,7 +34,7 @@ struct FeedingTimerRing: View {
         } else {
             TimelineView(.animation) { context in
                 let elapsed = startTime.map { context.date.timeIntervalSince($0) } ?? 0
-                let progress = CGFloat(min(elapsed / Self.maxDuration, 1.0))
+                let progress = CGFloat(min(elapsed / maxDuration, 1.0))
                 Canvas { ctx, size in
                     drawRing(ctx, size: size, progress: progress)
                 }
@@ -44,7 +44,7 @@ struct FeedingTimerRing: View {
 
     private var currentProgress: CGFloat {
         guard let startTime else { return 0 }
-        return CGFloat(min(Date.now.timeIntervalSince(startTime) / Self.maxDuration, 1.0))
+        return CGFloat(min(Date.now.timeIntervalSince(startTime) / maxDuration, 1.0))
     }
 
     // MARK: - Drawing

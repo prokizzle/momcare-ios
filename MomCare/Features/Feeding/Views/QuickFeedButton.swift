@@ -3,7 +3,8 @@ import SwiftUI
 struct QuickFeedButton: View {
     let action: () -> Void
     @State private var rippleTrigger: Date? = nil
-    @State private var buttonCenter: CGPoint = .zero
+    @State private var rippleOrigin: CGPoint = .zero
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         Button {
@@ -23,17 +24,19 @@ struct QuickFeedButton: View {
             .background(MCColor.feeding)
             .clipShape(RoundedRectangle(cornerRadius: MCRadius.lg))
         }
-        .background(
-            GeometryReader { geo in
-                Color.clear.onAppear {
-                    buttonCenter = CGPoint(x: geo.size.width / 2, y: geo.size.height / 2)
-                }
+        .simultaneousGesture(
+            SpatialTapGesture().onEnded { value in
+                rippleOrigin = value.location
             }
         )
-        .rippleEffect(trigger: rippleTrigger, origin: buttonCenter)
+        .rippleEffect(trigger: reduceMotion ? nil : rippleTrigger, origin: rippleOrigin)
         .task(id: rippleTrigger) {
             guard rippleTrigger != nil else { return }
-            try? await Task.sleep(for: .seconds(RippleModifier.duration + 0.1))
+            do {
+                try await Task.sleep(for: .seconds(RippleModifier.duration + 0.1))
+            } catch {
+                return
+            }
             rippleTrigger = nil
         }
     }

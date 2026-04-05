@@ -8,6 +8,7 @@ import SwiftUI
 @MainActor
 struct AmbientBackground: View {
     @State private var phase: Double = 0
+    @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     private static let animationDuration: Double = 18.0
 
@@ -21,6 +22,7 @@ struct AmbientBackground: View {
         .ignoresSafeArea()
         .opacity(0.08)
         .onAppear {
+            guard !reduceMotion else { return }
             withAnimation(
                 .easeInOut(duration: Self.animationDuration).repeatForever(autoreverses: true)
             ) {
