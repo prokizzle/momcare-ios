@@ -40,8 +40,8 @@ Never use emojis in code, comments, commit messages, documentation, or UI string
 ## Project Overview
 
 - **App**: MomCare — premium baby & mother care tracker
-- **Stack**: SwiftUI + @Observable + SwiftData + Firebase (iOS 17+)
-- **Architecture**: Clean Architecture with vertical feature modules
+- **Stack**: SwiftUI + @Observable + SwiftData + Firebase (iOS 26+)
+- **Architecture**: Clean Architecture with vertical feature modules (MVVM: View + @Observable ViewModel + Repository protocol)
 - **Concurrency**: Swift 6 strict concurrency (async/await + actors)
 - **Testing**: Swift Testing framework (`#expect`, `@Suite`, `@Test`)
 - **Project Generation**: Tuist (`Project.swift` → .xcodeproj, managed via mise)
@@ -163,7 +163,7 @@ Tuist is installed via mise (see `mise.toml`). Run `mise install` if `tuist` is 
 | **Microapps** (current) | None | `ViewModel.Dependencies` struct with function types, injected via init. App container maps services to feature deps. | Zero dependencies, explicit, but verbose wiring at app root. |
 | **Point-Free Dependencies** | `swift-dependencies` | `@Dependency(\.key)` property wrapper. `DependencyKey` with `liveValue`/`testValue`. `withDependencies { } operation: { }` for test overrides. | Clean testing ergonomics, but adds a dependency and hides the graph behind property wrappers. |
 | **Factory** | `Factory` | Container-based with `@Injected(\.key)`. Scopes: `.singleton`, `.session`, `.cached`, `.shared`. Contexts: `.onDebug`, `.onTest`, `.onPreview`. | Rich lifecycle management, but global mutable container. |
-| **Swift Service** | `swift-service` | `@Service`/`@MainService` wrappers. Task-local environments for isolation. | iOS 18+ only -- not viable until we drop iOS 17. |
+| **Swift Service** | `swift-service` | `@Service`/`@MainService` wrappers. Task-local environments for isolation. | Now viable with iOS 26 deployment target -- evaluate when simplifying DI. |
 
 **When to consider switching:** If the app root wiring in `MomCareApp.swift` becomes unwieldy (>15 ViewModels), evaluate Point-Free Dependencies or Factory. Until then, microapps keeps the dependency graph explicit and the project dependency-free.
 
@@ -181,6 +181,14 @@ Tuist is installed via mise (see `mise.toml`). Run `mise install` if `tuist` is 
 All work is tracked in Linear under team **MomCare** (MOM-1 through MOM-17).
 - iOS App project: issues MOM-1 to MOM-15, MOM-17
 - Android App project: MOM-16
+
+## Notifications
+
+- All notification logic goes through `NotificationManager` / `NotificationScheduler`
+- Never call `UNUserNotificationCenter` directly from views or view models
+- Categories are registered in `MomCareApp.init()` before authorization is requested
+- Use `NotificationScheduler` for MomCare-specific scheduling (feeding, hydration, self-care, weekly recap)
+- Push provider: Firebase Cloud Messaging (FCM) -- not yet implemented, local-only for now
 
 ## Flutter Reference
 

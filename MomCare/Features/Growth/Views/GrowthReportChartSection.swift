@@ -153,7 +153,7 @@ struct GrowthReportChartSection: View {
         switch baby.biologicalSex {
         case .male: return "(male)"
         case .female: return "(female)"
-        case nil: return "(approx., combined M/F)"
+        case .other, .preferNotToSay, nil: return "(approx., combined M/F)"
         }
     }
 
@@ -162,9 +162,9 @@ struct GrowthReportChartSection: View {
     private var weightReferencePoints: [ReferencePoint] {
         let table: [ReferenceRow]
         switch baby.biologicalSex {
-        case .male:   table = weightTableMale
-        case .female: table = weightTableFemale
-        case nil:     table = weightTableCombined
+        case .male:                          table = weightTableMale
+        case .female:                        table = weightTableFemale
+        case .other, .preferNotToSay, nil:   table = weightTableCombined
         }
         return referencePoints(from: table)
     }
@@ -172,9 +172,9 @@ struct GrowthReportChartSection: View {
     private var lengthReferencePoints: [ReferencePoint] {
         let table: [ReferenceRow]
         switch baby.biologicalSex {
-        case .male:   table = lengthTableMale
-        case .female: table = lengthTableFemale
-        case nil:     table = lengthTableCombined
+        case .male:                          table = lengthTableMale
+        case .female:                        table = lengthTableFemale
+        case .other, .preferNotToSay, nil:   table = lengthTableCombined
         }
         return referencePoints(from: table)
     }

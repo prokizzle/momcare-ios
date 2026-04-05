@@ -181,7 +181,6 @@ struct SleepTimerView: View {
         }
         .padding(.horizontal, MCSpacing.xl)
         .presentationDetents([.height(260)])
-        .presentationBackground(MCColor.canvas)
     }
 
     private func qualityRow(_ quality: BabySleep.SleepQuality) -> some View {
