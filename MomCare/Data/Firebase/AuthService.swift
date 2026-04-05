@@ -155,6 +155,10 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
 
     // MARK: - Auth State Stream
 
+    /// Returns an infinite stream of auth-state changes. By design the stream
+    /// never terminates on its own — it is meant to live for the app's lifetime.
+    /// Callers are expected to cancel their `for await` iteration (e.g. via task
+    /// cancellation) when they no longer need updates.
     func authStateStream() -> AsyncStream<AppUser?> {
         let auth = self.auth
         return AsyncStream { continuation in

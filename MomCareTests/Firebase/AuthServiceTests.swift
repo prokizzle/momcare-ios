@@ -114,5 +114,6 @@ struct AuthServiceTests {
         #expect(AppUser.AuthProvider.apple.rawValue == "apple")
         #expect(AppUser.AuthProvider.google.rawValue == "google")
         #expect(AppUser.AuthProvider.anonymous.rawValue == "anonymous")
+        #expect(AppUser.AuthProvider.unknown.rawValue == "unknown")
     }
 }

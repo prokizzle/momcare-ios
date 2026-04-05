@@ -105,6 +105,7 @@ struct MomCareApp: App {
                 if !hasCompletedOnboarding && onboardingViewModel == nil {
                     let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)
                     let babyRepo = deps.makeBabyRepository()
+                    let authService = FirebaseApp.app() != nil ? AuthService() : nil
                     onboardingViewModel = OnboardingViewModel(dependencies: .init(
                         requestNotifications: {
                             // Intentional direct usage: NotificationManager is a system
@@ -117,10 +118,9 @@ struct MomCareApp: App {
                             return false
                         },
                         signInWithApple: { authorization, nonce in
-                            guard FirebaseApp.app() != nil else {
+                            guard let authService else {
                                 throw AuthError.firebaseNotConfigured
                             }
-                            let authService = AuthService()
                             _ = try await authService.signInWithApple(
                                 authorization: authorization,
                                 nonce: nonce
@@ -130,10 +130,9 @@ struct MomCareApp: App {
                             throw AuthError.googleSignInNotAvailable
                         },
                         signInAnonymously: {
-                            guard FirebaseApp.app() != nil else {
+                            guard let authService else {
                                 throw AuthError.firebaseNotConfigured
                             }
-                            let authService = AuthService()
                             _ = try await authService.signInAnonymously()
                         },
                         createBaby: { formData in
