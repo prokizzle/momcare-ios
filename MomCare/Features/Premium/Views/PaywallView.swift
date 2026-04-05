@@ -2,11 +2,8 @@ import StoreKit
 import SwiftUI
 
 struct PaywallView: View {
-    @State private var selectedTier: SubscriptionTier = .premium
-    @State private var showAnnual = true
-    @State private var products: [Product] = []
-    @State private var isPurchasing = false
-    @State private var errorMessage: String?
+    @State private var viewModel = PaywallViewModel()
+    @State private var pulseOpacity = false
 
     @Environment(\.dismiss) private var dismiss
 
@@ -25,7 +22,7 @@ struct PaywallView: View {
             .padding(.vertical, MCSpacing.xl)
         }
         .nightlightBackground()
-        .task { await loadProducts() }
+        .task { await viewModel.loadProducts() }
         .overlay(alignment: .topTrailing) { closeButton }
     }
 
@@ -57,15 +54,15 @@ struct PaywallView: View {
 
     private func tierTab(_ title: String, tier: SubscriptionTier) -> some View {
         Button {
-            withAnimation(MCAnimation.quick) { selectedTier = tier }
+            withAnimation(MCAnimation.quick) { viewModel.selectedTier = tier }
             MCHaptic.select()
         } label: {
             Text(title)
                 .font(MCTypography.button)
-                .foregroundStyle(selectedTier == tier ? .white : .white.opacity(0.5))
+                .foregroundStyle(viewModel.selectedTier == tier ? .white : .white.opacity(0.5))
                 .padding(.horizontal, MCSpacing.xl)
                 .padding(.vertical, MCSpacing.sm)
-                .background(selectedTier == tier ? MCColor.accent.opacity(0.3) : .clear)
+                .background(viewModel.selectedTier == tier ? MCColor.accent.opacity(0.3) : .clear)
                 .clipShape(Capsule())
         }
     }
@@ -75,10 +72,10 @@ struct PaywallView: View {
     private var planCards: some View {
         VStack(spacing: MCSpacing.md) {
             billingToggle
-            if let annual = annualProduct {
+            if let annual = viewModel.annualProduct {
                 planCard(product: annual, isRecommended: true)
             }
-            if let monthly = monthlyProduct {
+            if let monthly = viewModel.monthlyProduct {
                 planCard(product: monthly, isRecommended: false)
             }
         }
@@ -88,15 +85,15 @@ struct PaywallView: View {
         HStack {
             Text("Monthly")
                 .font(MCTypography.subheadline)
-                .foregroundStyle(!showAnnual ? .white : .white.opacity(0.5))
-            Toggle("", isOn: $showAnnual)
+                .foregroundStyle(!viewModel.showAnnual ? .white : .white.opacity(0.5))
+            Toggle("", isOn: $viewModel.showAnnual)
                 .toggleStyle(.switch)
                 .tint(MCColor.accent)
                 .labelsHidden()
             Text("Annual")
                 .font(MCTypography.subheadline)
-                .foregroundStyle(showAnnual ? .white : .white.opacity(0.5))
-            if showAnnual, let savingsText = annualSavingsText {
+                .foregroundStyle(viewModel.showAnnual ? .white : .white.opacity(0.5))
+            if viewModel.showAnnual, let savingsText = viewModel.annualSavingsText {
                 Text(savingsText)
                     .font(MCTypography.badge)
                     .foregroundStyle(.white)
@@ -106,7 +103,7 @@ struct PaywallView: View {
                     .clipShape(Capsule())
             }
         }
-        .onChange(of: showAnnual) { _, _ in
+        .onChange(of: viewModel.showAnnual) { _, _ in
             MCHaptic.toggle()
         }
     }
@@ -152,18 +149,29 @@ struct PaywallView: View {
     // MARK: - Feature Comparison
 
     private var featureComparison: some View {
-        PaywallFeatureList(tier: selectedTier)
+        PaywallFeatureList(tier: viewModel.selectedTier)
     }
 
     // MARK: - CTA
 
     private var ctaButton: some View {
         Button {
-            Task { await handlePurchase() }
+            Task {
+                let success = await viewModel.handlePurchase()
+                if success { dismiss() }
+            }
         } label: {
             Group {
-                if isPurchasing {
-                    ProgressView().tint(.white)
+                if viewModel.isPurchasing {
+                    Text("Processing...")
+                        .font(MCTypography.button)
+                        .opacity(pulseOpacity ? 0.4 : 1.0)
+                        .animation(
+                            .easeInOut(duration: 0.8).repeatForever(autoreverses: true),
+                            value: pulseOpacity
+                        )
+                        .onAppear { pulseOpacity = true }
+                        .onDisappear { pulseOpacity = false }
                 } else {
                     Text("Start Free Trial")
                         .font(MCTypography.button)
@@ -175,11 +183,11 @@ struct PaywallView: View {
             .background(MCColor.accent)
             .clipShape(RoundedRectangle(cornerRadius: MCRadius.lg))
         }
-        .disabled(isPurchasing)
+        .disabled(viewModel.isPurchasing)
 
         // Error display
         .overlay(alignment: .bottom) {
-            if let errorMessage {
+            if let errorMessage = viewModel.errorMessage {
                 Text(errorMessage)
                     .font(MCTypography.caption)
                     .foregroundStyle(MCColor.error)
@@ -192,7 +200,10 @@ struct PaywallView: View {
     private var restoreButton: some View {
         Button("Restore Purchases") {
             MCHaptic.tap()
-            Task { await restorePurchases() }
+            Task {
+                let restored = await viewModel.restorePurchases()
+                if restored { dismiss() }
+            }
         }
         .font(MCTypography.caption)
         .foregroundStyle(.white.opacity(0.5))
@@ -225,39 +236,11 @@ struct PaywallView: View {
         .contentShape(Circle())
         .padding(MCSpacing.lg)
     }
-
-    // MARK: - Logic
-
-    private var annualProduct: Product? {
-        let id = selectedTier == .premium
-            ? StoreProduct.premiumAnnual.rawValue
-            : StoreProduct.premiumPlusAnnual.rawValue
-        return products.first { $0.id == id }
-    }
-
-    private var monthlyProduct: Product? {
-        let id = selectedTier == .premium
-            ? StoreProduct.premiumMonthly.rawValue
-            : StoreProduct.premiumPlusMonthly.rawValue
-        return products.first { $0.id == id }
-    }
-
 }
 
 // MARK: - Helpers
 
 private extension PaywallView {
-
-    var annualSavingsText: String? {
-        guard let monthly = monthlyProduct,
-              let annual = annualProduct else { return nil }
-        let yearlyFromMonthly = monthly.price * Decimal(12)
-        guard yearlyFromMonthly > 0 else { return nil }
-        let savings = (yearlyFromMonthly - annual.price) / yearlyFromMonthly * Decimal(100)
-        let percent = NSDecimalNumber(decimal: savings).intValue
-        guard percent > 0 else { return nil }
-        return "Save \(percent)%"
-    }
 
     func periodLabel(_ product: Product) -> String {
         guard let subscription = product.subscription else { return "" }
@@ -275,41 +258,5 @@ private extension PaywallView {
         let code = product.priceFormatStyle.currencyCode
         let currencyCode = code.isEmpty ? "USD" : code
         return monthly.formatted(.currency(code: currencyCode))
-    }
-
-    func loadProducts() async {
-        let store = StoreManager.shared
-        await store.loadProducts()
-        products = await store.products
-    }
-
-    func handlePurchase() async {
-        let product: Product? = showAnnual ? annualProduct : monthlyProduct
-        guard let product else { return }
-        isPurchasing = true
-        errorMessage = nil
-        MCHaptic.tap()
-
-        let success = await StoreManager.shared.purchase(product)
-        isPurchasing = false
-
-        if success {
-            MCHaptic.success()
-            dismiss()
-        } else {
-            errorMessage = await StoreManager.shared.purchaseError
-            if errorMessage != nil {
-                MCHaptic.error()
-            }
-        }
-    }
-
-    func restorePurchases() async {
-        await StoreManager.shared.restore()
-        let tier = await StoreManager.shared.currentTier
-        if tier > .free {
-            MCHaptic.success()
-            dismiss()
-        }
     }
 }

@@ -39,13 +39,28 @@ enum SubscriptionTier: String, Comparable, Sendable {
     }
 }
 
+// MARK: - Protocol
+
+/// Abstraction over store operations so PaywallView/MomCareApp can be
+/// tested with a stub that never touches StoreKit.
+protocol StoreManagerProtocol: Actor {
+    var products: [Product] { get }
+    var currentTier: SubscriptionTier { get }
+    var purchaseError: String? { get }
+
+    func loadProducts() async
+    func purchase(_ product: Product) async -> Bool
+    func restore() async
+    func refreshEntitlements() async
+}
+
 // MARK: - Store Manager
 
 /// Manages StoreKit 2 subscriptions. Actor-isolated for thread safety.
 ///
 /// Listens for `Transaction.updates` to handle renewals, expirations, and
 /// external purchases (Family Sharing, App Store refunds).
-actor StoreManager {
+actor StoreManager: StoreManagerProtocol {
 
     static let shared = StoreManager()
 
@@ -130,6 +145,10 @@ actor StoreManager {
     func refreshEntitlements() async {
         var highestTier: SubscriptionTier = .free
 
+        // The `for await` holds the actor during iteration, which is acceptable
+        // here because a user will have at most 1-2 active subscriptions. If the
+        // entitlement count ever grows significantly, consider collecting results
+        // outside actor isolation and then updating state in a single hop.
         for await result in Transaction.currentEntitlements {
             guard let transaction = try? result.payloadValue,
                   transaction.revocationDate == nil else { continue }
