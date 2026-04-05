@@ -6,8 +6,8 @@ struct AuthServiceTests {
 
     // MARK: - AppUser Entity
 
-    @Test("AppUser equality by id")
-    func appUserEquality() {
+    @Test("AppUser equality checks all fields")
+    func appUserEqualityChecksAllFields() {
         let user1 = AppUser(
             id: "uid-1", email: "a@b.com", displayName: "A",
             isAnonymous: false, photoURL: nil, provider: .apple
@@ -17,6 +17,13 @@ struct AuthServiceTests {
             isAnonymous: false, photoURL: nil, provider: .apple
         )
         #expect(user1 == user2)
+
+        // Same ID but different displayName => not equal (struct compares all fields)
+        let user3 = AppUser(
+            id: "uid-1", email: "a@b.com", displayName: "B",
+            isAnonymous: false, photoURL: nil, provider: .apple
+        )
+        #expect(user1 != user3)
     }
 
     @Test("Anonymous user is anonymous")
@@ -82,6 +89,20 @@ struct AuthServiceTests {
         } catch {
             // Expected
         }
+    }
+
+    @Test("Stub authStateStream yields current user")
+    func stubAuthStateStream() async throws {
+        let stub = StubAuthService()
+        _ = try await stub.signInAnonymously()
+
+        var received: [AppUser?] = []
+        for await user in stub.authStateStream() {
+            received.append(user)
+        }
+
+        #expect(received.count == 1)
+        #expect(received.first??.id == "anon-uid")
     }
 
     @Test("AuthProvider raw values")

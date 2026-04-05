@@ -117,6 +117,7 @@ struct MomCareApp: App {
                             return false
                         },
                         signInWithApple: { authorization, nonce in
+                            guard FirebaseApp.app() != nil else { return }
                             let authService = AuthService()
                             _ = try await authService.signInWithApple(
                                 authorization: authorization,
@@ -124,9 +125,10 @@ struct MomCareApp: App {
                             )
                         },
                         signInWithGoogle: {
-                            // Google Sign-In requires GoogleSignIn SDK (future)
+                            throw AuthError.googleSignInNotAvailable
                         },
                         signInAnonymously: {
+                            guard FirebaseApp.app() != nil else { return }
                             let authService = AuthService()
                             _ = try await authService.signInAnonymously()
                         },

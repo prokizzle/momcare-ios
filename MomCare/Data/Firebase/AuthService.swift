@@ -2,6 +2,7 @@ import AuthenticationServices
 import CryptoKit
 import FirebaseAuth
 import Foundation
+import Security
 
 // MARK: - Protocol
 
@@ -21,6 +22,7 @@ enum AuthError: LocalizedError, Sendable {
     case missingIdentityToken
     case noCurrentUser
     case linkingFailed(String)
+    case googleSignInNotAvailable
 
     var errorDescription: String? {
         switch self {
@@ -32,6 +34,8 @@ enum AuthError: LocalizedError, Sendable {
             return "No signed-in user found."
         case .linkingFailed(let reason):
             return "Account linking failed: \(reason)"
+        case .googleSignInNotAvailable:
+            return "Google Sign-In is not yet available."
         }
     }
 }
@@ -87,14 +91,14 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
             fullName: appleCredential.fullName
         )
         let result = try await auth.signIn(with: credential)
-        return mapUser(result.user, provider: .apple)
+        return Self.mapUser(result.user, provider: .apple)
     }
 
     // MARK: - Anonymous
 
     func signInAnonymously() async throws -> AppUser {
         let result = try await auth.signInAnonymously()
-        return mapUser(result.user, provider: .anonymous)
+        return Self.mapUser(result.user, provider: .anonymous)
     }
 
     // MARK: - Link Anonymous → Apple
@@ -119,7 +123,7 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
 
         do {
             let result = try await currentUser.link(with: credential)
-            return mapUser(result.user, provider: .apple)
+            return Self.mapUser(result.user, provider: .apple)
         } catch {
             throw AuthError.linkingFailed(error.localizedDescription)
         }
@@ -135,8 +139,8 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
 
     func currentUser() -> AppUser? {
         guard let user = auth.currentUser else { return nil }
-        let provider = detectProvider(user)
-        return mapUser(user, provider: provider)
+        let provider = Self.detectProvider(user)
+        return Self.mapUser(user, provider: provider)
     }
 
     // MARK: - Auth State Stream
@@ -146,26 +150,8 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         return AsyncStream { continuation in
             let handle = auth.addStateDidChangeListener { _, user in
                 if let user {
-                    let isAnon = user.isAnonymous
-                    let providerIDs = user.providerData.map(\.providerID)
-                    let provider: AppUser.AuthProvider
-                    if isAnon {
-                        provider = .anonymous
-                    } else if providerIDs.contains("apple.com") {
-                        provider = .apple
-                    } else if providerIDs.contains("google.com") {
-                        provider = .google
-                    } else {
-                        provider = .anonymous
-                    }
-                    continuation.yield(AppUser(
-                        id: user.uid,
-                        email: user.email,
-                        displayName: user.displayName,
-                        isAnonymous: isAnon,
-                        photoURL: user.photoURL,
-                        provider: provider
-                    ))
+                    let provider = AuthService.detectProvider(user)
+                    continuation.yield(AuthService.mapUser(user, provider: provider))
                 } else {
                     continuation.yield(nil)
                 }
@@ -179,7 +165,7 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
 
     // MARK: - Private Helpers
 
-    private func mapUser(_ user: FirebaseAuth.User, provider: AppUser.AuthProvider) -> AppUser {
+    private static func mapUser(_ user: FirebaseAuth.User, provider: AppUser.AuthProvider) -> AppUser {
         AppUser(
             id: user.uid,
             email: user.email,
@@ -190,7 +176,7 @@ final class AuthService: AuthServiceProtocol, @unchecked Sendable {
         )
     }
 
-    private func detectProvider(_ user: FirebaseAuth.User) -> AppUser.AuthProvider {
+    private static func detectProvider(_ user: FirebaseAuth.User) -> AppUser.AuthProvider {
         if user.isAnonymous { return .anonymous }
         let providerIDs = user.providerData.map(\.providerID)
         if providerIDs.contains("apple.com") { return .apple }
