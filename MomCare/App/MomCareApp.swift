@@ -105,6 +105,7 @@ struct MomCareApp: App {
                 if !hasCompletedOnboarding && onboardingViewModel == nil {
                     let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)
                     let babyRepo = deps.makeBabyRepository()
+                    let authService = FirebaseApp.app() != nil ? AuthService() : nil
                     onboardingViewModel = OnboardingViewModel(dependencies: .init(
                         requestNotifications: {
                             // Intentional direct usage: NotificationManager is a system
@@ -116,14 +117,23 @@ struct MomCareApp: App {
                             // Placeholder until MOM-13 (HealthKit)
                             return false
                         },
-                        signInWithApple: { _ in
-                            // Placeholder until MOM-12 (Firebase Auth)
+                        signInWithApple: { authorization, nonce in
+                            guard let authService else {
+                                throw AuthError.firebaseNotConfigured
+                            }
+                            _ = try await authService.signInWithApple(
+                                authorization: authorization,
+                                nonce: nonce
+                            )
                         },
                         signInWithGoogle: {
-                            // Placeholder until MOM-12 (Firebase Auth)
+                            throw AuthError.googleSignInNotAvailable
                         },
                         signInAnonymously: {
-                            // Placeholder until MOM-12 (Firebase Auth)
+                            guard let authService else {
+                                throw AuthError.firebaseNotConfigured
+                            }
+                            _ = try await authService.signInAnonymously()
                         },
                         createBaby: { formData in
                             let baby = Baby(

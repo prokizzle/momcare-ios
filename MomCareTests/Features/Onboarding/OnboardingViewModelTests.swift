@@ -26,7 +26,7 @@ struct OnboardingViewModelTests {
     private func makeSUT(
         requestNotifications: @escaping () async -> Bool = { true },
         requestHealthKit: @escaping () async -> Bool = { true },
-        signInWithApple: @escaping (ASAuthorization) async throws -> Void = { _ in },
+        signInWithApple: @escaping (ASAuthorization, String) async throws -> Void = { _, _ in },
         signInWithGoogle: @escaping () async throws -> Void = {},
         signInAnonymously: @escaping () async throws -> Void = {},
         createBaby: @escaping (BabyFormData) async throws -> Baby = { _ in .fixture() }
@@ -104,7 +104,7 @@ struct OnboardingViewModelTests {
 
     @Test("signInWithApple sets error when dependency throws")
     func signInWithAppleDependencyFailure() async {
-        let sut = makeSUT(signInWithApple: { _ in throw TestError.simulated })
+        let sut = makeSUT(signInWithApple: { _, _ in throw TestError.simulated })
         sut.currentStep = .auth
         // Use a real ASAuthorizationAppleIDProvider to get an authorization controller
         // Since ASAuthorization cannot be instantiated in tests, we test the failure
