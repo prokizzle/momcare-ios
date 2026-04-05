@@ -26,7 +26,10 @@ struct AuthStepView: View {
 
             VStack(spacing: MCSpacing.lg) {
                 SignInWithAppleButton(.signIn) { request in
+                    let nonce = AppleSignInNonce.randomNonceString()
+                    viewModel.currentNonce = nonce
                     request.requestedScopes = [.fullName, .email]
+                    request.nonce = AppleSignInNonce.sha256(nonce)
                 } onCompletion: { result in
                     MCHaptic.tap()
                     Task {

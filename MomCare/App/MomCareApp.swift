@@ -116,14 +116,19 @@ struct MomCareApp: App {
                             // Placeholder until MOM-13 (HealthKit)
                             return false
                         },
-                        signInWithApple: { _ in
-                            // Placeholder until MOM-12 (Firebase Auth)
+                        signInWithApple: { authorization, nonce in
+                            let authService = AuthService()
+                            _ = try await authService.signInWithApple(
+                                authorization: authorization,
+                                nonce: nonce
+                            )
                         },
                         signInWithGoogle: {
-                            // Placeholder until MOM-12 (Firebase Auth)
+                            // Google Sign-In requires GoogleSignIn SDK (future)
                         },
                         signInAnonymously: {
-                            // Placeholder until MOM-12 (Firebase Auth)
+                            let authService = AuthService()
+                            _ = try await authService.signInAnonymously()
                         },
                         createBaby: { formData in
                             let baby = Baby(

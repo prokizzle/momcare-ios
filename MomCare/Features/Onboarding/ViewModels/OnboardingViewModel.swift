@@ -19,7 +19,7 @@ final class OnboardingViewModel {
     struct Dependencies {
         var requestNotifications: () async -> Bool
         var requestHealthKit: () async -> Bool
-        var signInWithApple: (ASAuthorization) async throws -> Void
+        var signInWithApple: (ASAuthorization, String) async throws -> Void
         var signInWithGoogle: () async throws -> Void
         var signInAnonymously: () async throws -> Void
         var createBaby: (BabyFormData) async throws -> Baby
@@ -44,6 +44,13 @@ final class OnboardingViewModel {
     var babyBirthHeadCircumference = ""
     var babyPhotoData: Data?
     var babySubmitSucceeded = false
+
+    // MARK: - Apple Sign-In Nonce
+
+    /// Raw nonce generated before each Apple Sign-In request. Must be set
+    /// in the `SignInWithAppleButton` request block and passed to Firebase
+    /// in the completion block for replay protection.
+    var currentNonce: String = ""
 
     var babyFormIsValid: Bool {
         !babyName.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -84,7 +91,7 @@ final class OnboardingViewModel {
         authError = nil
         do {
             let authorization = try result.get()
-            try await dependencies.signInWithApple(authorization)
+            try await dependencies.signInWithApple(authorization, currentNonce)
             advance()
         } catch {
             authError = error.localizedDescription
