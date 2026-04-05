@@ -8,21 +8,25 @@ struct RippleModifier: ViewModifier {
     let origin: CGPoint
 
     static let duration: Double = 0.9
+    private static let intensity: Float = 10
+    private static let frequency: Float = 15
+    private static let decay: Float = 9
+    private static let maxSampleOffset = CGSize(width: 10, height: 10)
 
     func body(content: Content) -> some View {
         if let trigger {
             TimelineView(.animation) { context in
-                let elapsed = Float(context.date.timeIntervalSince(trigger))
+                let elapsed = max(Float(context.date.timeIntervalSince(trigger)), 0)
                 content
                     .distortionEffect(
                         ShaderLibrary.feedingRipple(
                             .float2(origin),
                             .float(elapsed),
-                            .float(10.0),
-                            .float(15.0),
-                            .float(9.0)
+                            .float(Self.intensity),
+                            .float(Self.frequency),
+                            .float(Self.decay)
                         ),
-                        maxSampleOffset: CGSize(width: 10, height: 10),
+                        maxSampleOffset: Self.maxSampleOffset,
                         isEnabled: elapsed < Float(Self.duration)
                     )
             }

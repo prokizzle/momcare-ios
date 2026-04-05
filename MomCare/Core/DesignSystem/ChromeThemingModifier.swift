@@ -1,4 +1,5 @@
 import SwiftUI
+import UIKit
 
 /// Applies MomCare's design system tokens to all native UIKit chrome — nav bar,
 /// tab bar, and toolbar — at app startup via appearance proxies.
@@ -25,10 +26,12 @@ struct ChromeThemingModifier: ViewModifier {
         appearance.configureWithDefaultBackground() // preserves Liquid Glass on iOS 26
 
         if let titleFont = UIFont(name: "Nunito-SemiBold", size: 17) {
-            appearance.titleTextAttributes = [.font: titleFont]
+            let scaled = UIFontMetrics(forTextStyle: .headline).scaledFont(for: titleFont)
+            appearance.titleTextAttributes = [.font: scaled]
         }
         if let largeTitleFont = UIFont(name: "Nunito-Bold", size: 34) {
-            appearance.largeTitleTextAttributes = [.font: largeTitleFont]
+            let scaled = UIFontMetrics(forTextStyle: .largeTitle).scaledFont(for: largeTitleFont)
+            appearance.largeTitleTextAttributes = [.font: scaled]
         }
 
         UINavigationBar.appearance().standardAppearance = appearance
@@ -55,6 +58,7 @@ struct ChromeThemingModifier: ViewModifier {
         appearance.configureWithDefaultBackground()
         UIToolbar.appearance().standardAppearance = appearance
         UIToolbar.appearance().scrollEdgeAppearance = appearance
+        UIToolbar.appearance().tintColor = UIColor(MCColor.accent)
     }
 }
 
