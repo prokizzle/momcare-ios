@@ -26,7 +26,7 @@ let project = Project(
             bundleId: "com.feelingmindful.momcare",
             deploymentTargets: .iOS("26.0"),
             infoPlist: .file(path: "MomCare/App/Info.plist"),
-            sources: ["MomCare/**/*.swift"],
+            sources: ["MomCare/**/*.swift", "MomCare/**/*.metal"],
             resources: [
                 "MomCare/App/Assets.xcassets",
                 "MomCare/App/GoogleService-Info.plist",
