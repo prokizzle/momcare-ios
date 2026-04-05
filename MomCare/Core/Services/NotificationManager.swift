@@ -167,6 +167,7 @@ final class StubNotificationManager: NotificationServiceProtocol, @unchecked Sen
         let id: String
         let title: String
         let body: String
+        let categoryIdentifier: String?
     }
 
     var grantAuthorization = true
@@ -183,7 +184,12 @@ final class StubNotificationManager: NotificationServiceProtocol, @unchecked Sen
         trigger: UNNotificationTrigger,
         categoryIdentifier: String?
     ) async throws {
-        scheduledNotifications.append(ScheduledEntry(id: id, title: title, body: body))
+        scheduledNotifications.append(ScheduledEntry(
+            id: id,
+            title: title,
+            body: body,
+            categoryIdentifier: categoryIdentifier
+        ))
     }
 
     func cancelPending(ids: [String]) {

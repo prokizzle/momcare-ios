@@ -90,6 +90,8 @@ struct PaywallView: View {
                 .toggleStyle(.switch)
                 .tint(MCColor.accent)
                 .labelsHidden()
+                .accessibilityLabel("Billing period")
+                .accessibilityValue(viewModel.showAnnual ? "Annual" : "Monthly")
             Text("Annual")
                 .font(MCTypography.subheadline)
                 .foregroundStyle(viewModel.showAnnual ? .white : .white.opacity(0.5))
@@ -183,7 +185,7 @@ struct PaywallView: View {
             .background(MCColor.accent)
             .clipShape(RoundedRectangle(cornerRadius: MCRadius.lg))
         }
-        .disabled(viewModel.isPurchasing)
+        .disabled(viewModel.isPurchasing || viewModel.isLoading)
 
         // Error display
         .overlay(alignment: .bottom) {
@@ -207,6 +209,7 @@ struct PaywallView: View {
         }
         .font(MCTypography.caption)
         .foregroundStyle(.white.opacity(0.5))
+        .frame(minHeight: 44)
     }
 
     private var legalFooter: some View {

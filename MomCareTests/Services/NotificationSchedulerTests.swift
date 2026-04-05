@@ -24,6 +24,7 @@ struct NotificationSchedulerTests {
         let entry = try #require(stub.scheduledNotifications.first)
         #expect(entry.id == "feeding-reminder-\(babyId.uuidString)")
         #expect(entry.title == "Feeding Reminder")
+        #expect(entry.categoryIdentifier == NotificationCategory.feeding.rawValue)
     }
 
     @Test("cancelFeedingReminder cancels the correct ID")
@@ -54,6 +55,7 @@ struct NotificationSchedulerTests {
         let entry = try #require(stub.scheduledNotifications.first)
         #expect(entry.id == "hydration-daily")
         #expect(entry.title == "Stay Hydrated")
+        #expect(entry.categoryIdentifier == NotificationCategory.selfCare.rawValue)
     }
 
     // MARK: - Setup Defaults

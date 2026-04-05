@@ -12,6 +12,7 @@ final class PaywallViewModel {
     var products: [Product] = []
     var selectedTier: SubscriptionTier = .premium
     var showAnnual = true
+    var isLoading = true
     var isPurchasing = false
     var errorMessage: String?
 
@@ -22,6 +23,8 @@ final class PaywallViewModel {
     init(storeManager: any StoreManagerProtocol = StoreManager.shared) {
         self.storeManager = storeManager
     }
+
+    deinit {}
 
     // MARK: - Computed Properties
 
@@ -53,12 +56,18 @@ final class PaywallViewModel {
     // MARK: - Actions
 
     func loadProducts() async {
+        isLoading = true
         await storeManager.loadProducts()
         products = await storeManager.products
+        isLoading = false
     }
 
     /// Returns `true` when the purchase completes successfully.
     func handlePurchase() async -> Bool {
+        guard !isLoading else {
+            errorMessage = "Products are still loading. Please wait a moment."
+            return false
+        }
         let product: Product? = showAnnual ? annualProduct : monthlyProduct
         guard let product else { return false }
         isPurchasing = true
@@ -82,11 +91,23 @@ final class PaywallViewModel {
 
     /// Returns `true` when the restore reveals an active subscription.
     func restorePurchases() async -> Bool {
+        isPurchasing = true
+        errorMessage = nil
         await storeManager.restore()
         let tier = await storeManager.currentTier
+        isPurchasing = false
+
         if tier > .free {
             MCHaptic.success()
             return true
+        }
+
+        let restoreError = await storeManager.purchaseError
+        if let restoreError {
+            errorMessage = restoreError
+            MCHaptic.error()
+        } else {
+            errorMessage = "No active subscription found."
         }
         return false
     }

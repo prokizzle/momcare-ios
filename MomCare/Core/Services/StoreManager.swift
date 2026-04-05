@@ -1,5 +1,13 @@
 import Foundation
+import OSLog
 import StoreKit
+
+private extension Logger {
+    static let store = Logger(
+        subsystem: Bundle.main.bundleIdentifier ?? "com.feelingmindful.momcare",
+        category: "StoreManager"
+    )
+}
 
 // MARK: - Product Identifiers
 
@@ -78,8 +86,11 @@ actor StoreManager: StoreManagerProtocol {
         guard updateTask == nil else { return }
         updateTask = Task {
             for await result in Transaction.updates {
-                if let transaction = try? result.payloadValue {
+                do {
+                    let transaction = try result.payloadValue
                     await handleTransaction(transaction)
+                } catch {
+                    Logger.store.error("Transaction verification failed in updates stream: \(error)")
                 }
             }
         }
@@ -120,6 +131,7 @@ actor StoreManager: StoreManagerProtocol {
                 purchaseError = "Purchase is pending approval."
                 return false
             @unknown default:
+                purchaseError = "An unexpected purchase result occurred. Please try again."
                 return false
             }
         } catch {
