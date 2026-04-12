@@ -65,14 +65,14 @@ struct GrowthReportView: View {
             HStack {
                 VStack(alignment: .leading, spacing: 4) {
                     Text("Growth Report")
-                        .font(.system(size: 24, weight: .bold))
+                        .font(.system(size: 24, weight: .bold)) // Fixed size for PDF layout
                     Text(baby.name)
-                        .font(.system(size: 18, weight: .semibold))
+                        .font(.system(size: 18, weight: .semibold)) // Fixed size for PDF layout
                         .foregroundStyle(.secondary)
                 }
                 Spacer()
                 Image(systemName: "heart.text.square.fill")
-                    .font(.system(size: 40))
+                    .font(.system(size: 40)) // Fixed size for PDF layout
                     .foregroundStyle(.pink.opacity(0.7))
             }
 
@@ -83,11 +83,11 @@ struct GrowthReportView: View {
                 )
                 Label("Age: \(baby.ageString)", systemImage: "person.fill")
             }
-            .font(.system(size: 13))
+            .font(.system(size: 13)) // Fixed size for PDF layout
             .foregroundStyle(.secondary)
 
             Text(dateRangeLabel)
-                .font(.system(size: 12))
+                .font(.system(size: 12)) // Fixed size for PDF layout
                 .foregroundStyle(.tertiary)
                 .padding(.top, 2)
         }
@@ -98,7 +98,7 @@ struct GrowthReportView: View {
     private var growthSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Growth Measurements")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 16, weight: .semibold)) // Fixed size for PDF layout
 
             HStack {
                 Text("Date")
@@ -113,7 +113,7 @@ struct GrowthReportView: View {
                 Text("Notes")
                     .frame(maxWidth: .infinity, alignment: .leading)
             }
-            .font(.system(size: 11, weight: .semibold))
+            .font(.system(size: 11, weight: .semibold)) // Fixed size for PDF layout
             .foregroundStyle(.secondary)
             .padding(.bottom, 4)
 
@@ -134,7 +134,7 @@ struct GrowthReportView: View {
                         .frame(maxWidth: .infinity, alignment: .leading)
                         .foregroundStyle(.secondary)
                 }
-                .font(.system(size: 12))
+                .font(.system(size: 12)) // Fixed size for PDF layout
                 .padding(.vertical, 3)
 
                 Divider()
@@ -148,7 +148,7 @@ struct GrowthReportView: View {
     private var healthEventsSection: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Health Events")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 16, weight: .semibold)) // Fixed size for PDF layout
 
             ForEach(events.sorted { $0.date < $1.date }) { event in
                 HStack(alignment: .top, spacing: 10) {
@@ -168,7 +168,7 @@ struct GrowthReportView: View {
                     }
                     Spacer()
                 }
-                .font(.system(size: 12))
+                .font(.system(size: 12)) // Fixed size for PDF layout
                 .padding(.vertical, 3)
 
                 Divider()
@@ -181,7 +181,7 @@ struct GrowthReportView: View {
 
     private var emptyState: some View {
         Text("No records in the selected date range.")
-            .font(.system(size: 13))
+            .font(.system(size: 13)) // Fixed size for PDF layout
             .foregroundStyle(.secondary)
             .padding(.vertical, 20)
     }
@@ -194,7 +194,7 @@ struct GrowthReportView: View {
             Spacer()
             Text(Date.now.formatted(date: .abbreviated, time: .shortened))
         }
-        .font(.system(size: 10))
+        .font(.system(size: 10)) // Fixed size for PDF layout
         .foregroundStyle(.tertiary)
         .padding(.top, 16)
     }

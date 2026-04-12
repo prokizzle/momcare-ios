@@ -46,7 +46,7 @@ struct PaywallFeatureList: View {
         HStack(spacing: MCSpacing.sm) {
             Image(systemName: included ? "checkmark.circle.fill" : "xmark.circle")
                 .foregroundStyle(included ? MCColor.accent : .white.opacity(0.3))
-                .font(.system(size: 16))
+                .font(MCTypography.callout)
             Text(text)
                 .font(MCTypography.subheadline)
                 .foregroundStyle(included ? .white : .white.opacity(0.4))

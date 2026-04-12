@@ -24,16 +24,28 @@ struct JournalScreen: View {
                 .padding(.horizontal, MCSpacing.lg)
                 .padding(.vertical, MCSpacing.sm)
 
-            List {
-                ForEach(viewModel.groupedEntries, id: \.0) { section, entries in
-                    Section(section) {
-                        ForEach(entries) { entry in
-                            JournalEntryRow(entry: entry)
+            if viewModel.groupedEntries.isEmpty {
+                EmptyStateView(
+                    illustration: .emptyJournal,
+                    title: "No Journal Entries",
+                    message: "Capture moments, milestones, and reflections for your little one."
+                )
+            } else {
+                List {
+                    ForEach(viewModel.groupedEntries, id: \.0) { section, entries in
+                        Section(section) {
+                            ForEach(entries) { entry in
+                                JournalEntryRow(entry: entry)
+                            }
                         }
                     }
                 }
+                .listStyle(.insetGrouped)
+                .refreshable {
+                    guard let babyId else { return }
+                    await viewModel.load(babyId: babyId)
+                }
             }
-            .listStyle(.insetGrouped)
         }
         .task {
             guard !didLoad, let babyId else { return }

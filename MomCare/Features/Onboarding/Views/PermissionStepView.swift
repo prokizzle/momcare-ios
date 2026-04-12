@@ -63,7 +63,7 @@ struct PermissionStepView: View {
             Spacer()
 
             // Lottie placeholder - will be replaced with notification bell or health/heart animation
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: MCRadius.xlg)
                 .fill(Color.white.opacity(0.05))
                 .frame(height: 200)
                 .overlay {
@@ -115,7 +115,7 @@ struct PermissionStepView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
-                    .background(MCColor.accent, in: RoundedRectangle(cornerRadius: 16))
+                    .background(MCColor.accent, in: RoundedRectangle(cornerRadius: MCRadius.lg))
             }
 
             Button {

@@ -1,5 +1,6 @@
 import CoreSpotlight
 import Foundation
+import os
 import UniformTypeIdentifiers
 
 /// Indexes MomCare content into Core Spotlight so babies and feedings
@@ -14,6 +15,8 @@ final class SpotlightIndexer {
     private let babyDomain = "com.feelingmindful.momcare.babies"
     private let feedingDomain = "com.feelingmindful.momcare.feedings"
 
+    private static let logger = Logger(subsystem: "com.momcare", category: "SpotlightIndexer")
+
     private init() {}
 
     // MARK: - Baby
@@ -22,9 +25,7 @@ final class SpotlightIndexer {
         let items = babies.map { makeItem(for: $0) }
         CSSearchableIndex.default().indexSearchableItems(items) { error in
             if let error {
-                #if DEBUG
-                print("SpotlightIndexer: failed to index babies — \(error)")
-                #endif
+                Self.logger.error("Failed to index babies: \(error)")
             }
         }
     }
@@ -47,9 +48,7 @@ final class SpotlightIndexer {
         let items = feedings.map { makeItem(for: $0) }
         CSSearchableIndex.default().indexSearchableItems(items) { error in
             if let error {
-                #if DEBUG
-                print("SpotlightIndexer: failed to index feedings — \(error)")
-                #endif
+                Self.logger.error("Failed to index feedings: \(error)")
             }
         }
     }

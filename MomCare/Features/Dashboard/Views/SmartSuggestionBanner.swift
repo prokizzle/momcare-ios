@@ -42,6 +42,7 @@ struct SmartSuggestionBanner: View {
                 }
                 .onEnded { value in
                     if value.translation.width < -80 {
+                        MCHaptic.tap()
                         withAnimation(reduceMotion ? nil : MCAnimation.quick) {
                             dragOffset = -400
                         }
@@ -54,6 +55,7 @@ struct SmartSuggestionBanner: View {
                 }
         )
         .onTapGesture {
+            MCHaptic.tap()
             onTap?()
         }
         .accessibilityAddTraits(.isButton)

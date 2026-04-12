@@ -7,16 +7,21 @@ struct BabySelectorView: View {
 
     var body: some View {
         Menu {
-            ForEach(viewModel.babies) { baby in
-                Button {
-                    viewModel.selectBaby(baby)
-                    MCHaptic.select()
-                } label: {
-                    Label {
-                        Text(baby.name)
-                    } icon: {
-                        if baby.id == viewModel.selectedBaby?.id {
-                            Image(systemName: "checkmark")
+            if viewModel.babies.isEmpty {
+                Text("No babies added yet")
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(viewModel.babies) { baby in
+                    Button {
+                        viewModel.selectBaby(baby)
+                        MCHaptic.select()
+                    } label: {
+                        Label {
+                            Text(baby.name)
+                        } icon: {
+                            if baby.id == viewModel.selectedBaby?.id {
+                                Image(systemName: "checkmark")
+                            }
                         }
                     }
                 }

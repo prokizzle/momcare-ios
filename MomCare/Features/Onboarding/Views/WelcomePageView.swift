@@ -41,7 +41,7 @@ struct WelcomePageView: View {
             Spacer()
 
             // Lottie placeholder - will be replaced with mother & baby illustration animation
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: MCRadius.xlg)
                 .fill(Color.white.opacity(0.05))
                 .frame(height: 200)
                 .overlay {
@@ -63,6 +63,7 @@ struct WelcomePageView: View {
             Spacer()
 
             OnboardingButton(title: "Get Started") {
+                MCHaptic.tap()
                 viewModel.currentStep = .features
             }
         }
@@ -124,6 +125,7 @@ struct WelcomePageView: View {
             Spacer()
 
             OnboardingButton(title: "Next") {
+                MCHaptic.tap()
                 viewModel.currentStep = .philosophy
             }
         }
@@ -138,7 +140,7 @@ struct WelcomePageView: View {
             Spacer()
 
             // Lottie placeholder - will be replaced with peaceful nighttime scene animation
-            RoundedRectangle(cornerRadius: 20)
+            RoundedRectangle(cornerRadius: MCRadius.xlg)
                 .fill(Color.white.opacity(0.05))
                 .frame(height: 200)
                 .overlay {
@@ -171,6 +173,7 @@ struct WelcomePageView: View {
             Spacer()
 
             OnboardingButton(title: "Let's set up") {
+                MCHaptic.tap()
                 viewModel.advance()
             }
         }
@@ -198,7 +201,7 @@ struct WelcomePageView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, MCSpacing.xl)
         .padding(.horizontal, MCSpacing.sm)
-        .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 16))
+        .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: MCRadius.lg))
         .accessibilityElement(children: .combine)
     }
 

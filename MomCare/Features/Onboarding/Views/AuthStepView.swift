@@ -37,7 +37,7 @@ struct AuthStepView: View {
                 }
                 .signInWithAppleButtonStyle(.white)
                 .frame(height: 56)
-                .clipShape(RoundedRectangle(cornerRadius: 16))
+                .clipShape(RoundedRectangle(cornerRadius: MCRadius.lg))
 
                 Button {
                     MCHaptic.tap()
@@ -56,7 +56,7 @@ struct AuthStepView: View {
                     .frame(height: 56)
                     .background(
                         Color.white.opacity(0.12),
-                        in: RoundedRectangle(cornerRadius: 16)
+                        in: RoundedRectangle(cornerRadius: MCRadius.lg)
                     )
                 }
                 .accessibilityLabel("Sign in with Google")

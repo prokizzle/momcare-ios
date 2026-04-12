@@ -170,7 +170,7 @@ struct AddHealthEventView: View {
                                     }
                                 } label: {
                                     Image(systemName: "xmark.circle.fill")
-                                        .font(.system(size: 20))
+                                        .font(MCTypography.title3)
                                         .foregroundStyle(.white, MCColor.error)
                                 }
                                 .offset(x: 6, y: -6)
