@@ -29,6 +29,7 @@ struct SleepHistoryView: View {
         ) {
             Button("Delete", role: .destructive) {
                 if let sleep = sleepToDelete {
+                    MCHaptic.error()
                     Task { await viewModel.deleteSleep(id: sleep.id) }
                 }
             }
@@ -55,6 +56,10 @@ struct SleepHistoryView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .refreshable {
+                guard !viewModel.isLoading else { return }
+                await viewModel.loadSleeps(babyId: babyId)
+            }
     }
 
     private func sectionHeader(title: String, sleeps: [BabySleep]) -> some View {

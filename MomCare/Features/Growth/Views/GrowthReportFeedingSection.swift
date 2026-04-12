@@ -25,31 +25,31 @@ struct GrowthReportFeedingSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 10) {
             Text("Feeding Summary")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 16, weight: .semibold)) // Fixed size for PDF layout
 
             let stats = feedingStats
 
             HStack(spacing: 24) {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(stats.totalCount)")
-                        .font(.system(size: 18, weight: .bold))
+                        .font(.system(size: 18, weight: .bold)) // Fixed size for PDF layout
                     Text("Total")
-                        .font(.system(size: 10))
+                        .font(.system(size: 10)) // Fixed size for PDF layout
                         .foregroundStyle(.secondary)
                 }
                 VStack(alignment: .leading, spacing: 2) {
                     Text(String(format: "%.1f", stats.perDay))
-                        .font(.system(size: 18, weight: .bold))
+                        .font(.system(size: 18, weight: .bold)) // Fixed size for PDF layout
                     Text("Per day")
-                        .font(.system(size: 10))
+                        .font(.system(size: 10)) // Fixed size for PDF layout
                         .foregroundStyle(.secondary)
                 }
                 if let avgMinutes = stats.avgDurationMinutes {
                     VStack(alignment: .leading, spacing: 2) {
                         Text("\(Int(avgMinutes)) min")
-                            .font(.system(size: 18, weight: .bold))
+                            .font(.system(size: 18, weight: .bold)) // Fixed size for PDF layout
                         Text("Avg duration")
-                            .font(.system(size: 10))
+                            .font(.system(size: 10)) // Fixed size for PDF layout
                             .foregroundStyle(.secondary)
                     }
                 }
@@ -67,7 +67,7 @@ struct GrowthReportFeedingSection: View {
                     .frame(width: 60, alignment: .trailing)
                 Spacer()
             }
-            .font(.system(size: 11, weight: .semibold))
+            .font(.system(size: 11, weight: .semibold)) // Fixed size for PDF layout
             .foregroundStyle(.secondary)
 
             ForEach(stats.typeEntries.indices, id: \.self) { idx in
@@ -81,7 +81,7 @@ struct GrowthReportFeedingSection: View {
                         .frame(width: 60, alignment: .trailing)
                     Spacer()
                 }
-                .font(.system(size: 12))
+                .font(.system(size: 12)) // Fixed size for PDF layout
                 .padding(.vertical, 2)
 
                 Divider()

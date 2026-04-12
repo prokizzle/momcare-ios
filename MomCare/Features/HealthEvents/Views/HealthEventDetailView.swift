@@ -53,7 +53,7 @@ struct HealthEventDetailView: View {
     private var typeBadge: some View {
         HStack(spacing: MCSpacing.sm) {
             Image(systemName: event.eventType.systemImage)
-                .font(.system(size: 14))
+                .font(MCTypography.footnote)
             Text(event.eventType.label)
                 .font(MCTypography.badge)
         }

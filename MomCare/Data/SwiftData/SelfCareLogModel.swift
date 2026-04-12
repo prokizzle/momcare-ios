@@ -1,4 +1,5 @@
 import Foundation
+import os
 import SwiftData
 
 @Model
@@ -39,6 +40,7 @@ final class SelfCareLogModel {
         self.updatedAt = Date.now
     }
 
+    private static let logger = Logger(subsystem: "com.momcare", category: "SelfCareLogModel")
     private static let encoder = JSONEncoder()
     private static let decoder = JSONDecoder()
 
@@ -47,9 +49,7 @@ final class SelfCareLogModel {
         do {
             return try encoder.encode(detail)
         } catch {
-            #if DEBUG
-            print("SelfCareLogModel: failed to encode detail: \(error)")
-            #endif
+            logger.error("Failed to encode detail: \(error)")
             return nil
         }
     }
@@ -59,9 +59,7 @@ final class SelfCareLogModel {
         do {
             return try decoder.decode(LogDetail.self, from: data)
         } catch {
-            #if DEBUG
-            print("SelfCareLogModel: failed to decode detail: \(error)")
-            #endif
+            logger.error("Failed to decode detail: \(error)")
             return nil
         }
     }

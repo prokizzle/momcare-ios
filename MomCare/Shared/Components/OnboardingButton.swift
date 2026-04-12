@@ -15,7 +15,7 @@ struct OnboardingButton: View {
                 .foregroundStyle(.white)
                 .frame(maxWidth: .infinity)
                 .frame(height: 56)
-                .background(MCColor.accent, in: RoundedRectangle(cornerRadius: 16))
+                .background(MCColor.accent, in: RoundedRectangle(cornerRadius: MCRadius.lg))
         }
     }
 }

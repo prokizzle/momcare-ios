@@ -180,7 +180,7 @@ struct HealthEventsScreen: View {
                 .frame(width: 40, height: 40)
                 .overlay {
                     Image(systemName: event.eventType.systemImage)
-                        .font(.system(size: 16))
+                        .font(MCTypography.callout)
                         .foregroundStyle(event.eventType.color)
                 }
 

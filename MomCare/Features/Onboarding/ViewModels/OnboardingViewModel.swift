@@ -1,5 +1,6 @@
 import AuthenticationServices
 import Foundation
+import os
 
 enum OnboardingStep: Int, CaseIterable, Sendable {
     case welcome
@@ -25,6 +26,7 @@ final class OnboardingViewModel {
         var createBaby: (BabyFormData) async throws -> Baby
     }
 
+    private static let logger = Logger(subsystem: "com.momcare", category: "OnboardingViewModel")
     private let dependencies: Dependencies
 
     var currentStep: OnboardingStep = .welcome
@@ -88,9 +90,7 @@ final class OnboardingViewModel {
             try await dependencies.signInAnonymously()
         } catch {
             // Log but don't block -- user chose to skip auth
-            #if DEBUG
-            print("Anonymous sign-in failed: \(error.localizedDescription)")
-            #endif
+            Self.logger.warning("Anonymous sign-in failed: \(error.localizedDescription)")
         }
         advance()
     }

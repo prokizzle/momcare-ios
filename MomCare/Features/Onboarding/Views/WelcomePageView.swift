@@ -41,8 +41,8 @@ struct WelcomePageView: View {
             Spacer()
 
             // Lottie placeholder - will be replaced with mother & baby illustration animation
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white.opacity(0.05))
+            RoundedRectangle(cornerRadius: MCRadius.xlg)
+                .fill(MCElevation.surface)
                 .frame(height: 200)
                 .overlay {
                     Image(systemName: "heart.fill")
@@ -138,8 +138,8 @@ struct WelcomePageView: View {
             Spacer()
 
             // Lottie placeholder - will be replaced with peaceful nighttime scene animation
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white.opacity(0.05))
+            RoundedRectangle(cornerRadius: MCRadius.xlg)
+                .fill(MCElevation.surface)
                 .frame(height: 200)
                 .overlay {
                     Image(systemName: "sparkles")
@@ -198,7 +198,7 @@ struct WelcomePageView: View {
         .frame(maxWidth: .infinity)
         .padding(.vertical, MCSpacing.xl)
         .padding(.horizontal, MCSpacing.sm)
-        .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 16))
+        .background(MCElevation.elevated, in: RoundedRectangle(cornerRadius: MCRadius.lg))
         .accessibilityElement(children: .combine)
     }
 

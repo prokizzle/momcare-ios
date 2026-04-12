@@ -1,11 +1,14 @@
 import AuthenticationServices
 import FirebaseCore
+import os
 import SwiftData
 import SwiftUI
 import UserNotifications
 
 @main
 struct MomCareApp: App {
+    private static let logger = Logger(subsystem: "com.momcare", category: "MomCareApp")
+
     var sharedModelContainer: ModelContainer = {
         let schema = Schema(versionedSchema: SchemaV6.self)
         let modelConfiguration = ModelConfiguration(
@@ -24,14 +27,14 @@ struct MomCareApp: App {
 #if DEBUG
             // In development, an unknown schema version means a store from a previous
             // intermediate build is on disk. Delete it and start fresh rather than crashing.
-            print("ModelContainer failed (\(error)). Attempting store recovery in DEBUG mode.")
+            MomCareApp.logger.error("ModelContainer failed (\(error)). Attempting store recovery in DEBUG mode.")
             let storeURL = modelConfiguration.url
             let fileManager = FileManager.default
             let storeFiles = [storeURL, storeURL.appendingPathExtension("shm"), storeURL.appendingPathExtension("wal")]
             for url in storeFiles where fileManager.fileExists(atPath: url.path) {
                 try? fileManager.removeItem(at: url)
             }
-            print("Deleted corrupt store at \(storeURL). Starting fresh.")
+            MomCareApp.logger.debug("Deleted corrupt store at \(storeURL.path). Starting fresh.")
             do {
                 return try ModelContainer(for: schema, configurations: [modelConfiguration])
             } catch {
@@ -47,9 +50,7 @@ struct MomCareApp: App {
         if Bundle.main.path(forResource: "GoogleService-Info", ofType: "plist") != nil {
             FirebaseApp.configure()
         } else {
-            #if DEBUG
-            print("Warning: GoogleService-Info.plist not found. Firebase is not configured.")
-            #endif
+            Self.logger.warning("GoogleService-Info.plist not found. Firebase is not configured.")
         }
         NotificationManager.shared.registerCategories()
 

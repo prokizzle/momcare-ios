@@ -23,6 +23,7 @@ struct FeedingHistoryView: View {
                 }
             }
         }
+        .refreshable { await viewModel.loadFeedings(babyId: babyId) }
         .confirmationDialog(
             "Delete Feeding?",
             isPresented: Binding(
@@ -32,6 +33,7 @@ struct FeedingHistoryView: View {
         ) {
             Button("Delete", role: .destructive) {
                 if let feeding = feedingToDelete {
+                    MCHaptic.error()
                     Task { await viewModel.deleteFeeding(feeding.id) }
                 }
             }

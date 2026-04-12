@@ -41,6 +41,7 @@ struct DiaperHistoryView: View {
         ) {
             Button("Delete", role: .destructive) {
                 if let diaper = diaperToDelete {
+                    MCHaptic.error()
                     Task { await viewModel.deleteDiaper(id: diaper.id) }
                 }
             }
@@ -68,6 +69,10 @@ struct DiaperHistoryView: View {
             }
         }
         .listStyle(.insetGrouped)
+        .refreshable {
+                guard !viewModel.isLoading else { return }
+                await viewModel.loadDiapers(babyId: babyId)
+            }
     }
 
     @ViewBuilder

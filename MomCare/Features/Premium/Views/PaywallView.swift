@@ -229,7 +229,8 @@ struct PaywallView: View {
             MCHaptic.tap()
         } label: {
             Image(systemName: "xmark")
-                .font(.system(size: 14, weight: .semibold))
+                .font(MCTypography.footnote)
+                .fontWeight(.semibold)
                 .foregroundStyle(.white.opacity(0.6))
                 .frame(width: 28, height: 28)
                 .background(Color.white.opacity(MCOpacity.whisper))

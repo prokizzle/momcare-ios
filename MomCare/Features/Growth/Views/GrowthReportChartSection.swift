@@ -32,7 +32,7 @@ struct GrowthReportChartSection: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Growth Chart")
-                .font(.system(size: 16, weight: .semibold))
+                .font(.system(size: 16, weight: .semibold)) // Fixed size for PDF layout
 
             let sorted = records.sorted { $0.date < $1.date }
             let hasWeight = sorted.contains { $0.weightGrams != nil }
@@ -40,7 +40,7 @@ struct GrowthReportChartSection: View {
 
             if hasWeight {
                 Text("Weight (dashed = WHO P3/P50/P97 \(sexLabel))")
-                    .font(.system(size: 11))
+                    .font(.system(size: 11)) // Fixed size for PDF layout
                     .foregroundStyle(.secondary)
 
                 Chart {
@@ -93,7 +93,7 @@ struct GrowthReportChartSection: View {
 
             if hasLength {
                 Text("Length (dashed = WHO P3/P50/P97 \(sexLabel))")
-                    .font(.system(size: 11))
+                    .font(.system(size: 11)) // Fixed size for PDF layout
                     .foregroundStyle(.secondary)
 
                 Chart {

@@ -1,8 +1,11 @@
-import SwiftUI
+import os
 import PhotosUI
+import SwiftUI
 
 @MainActor
 struct AddBabyView: View {
+    private static let logger = Logger(subsystem: "com.momcare", category: "AddBabyView")
+
     @Environment(\.dismiss) private var dismiss
     let viewModel: BabyViewModel
 
@@ -17,6 +20,7 @@ struct AddBabyView: View {
     @State private var photoData: Data?
     @State private var showOptionalDetails = false
     @State private var showError = false
+    @State private var showPhotoError = false
 
     private var isValid: Bool {
         !name.trimmingCharacters(in: .whitespaces).isEmpty
@@ -41,8 +45,19 @@ struct AddBabyView: View {
             }
             .onChange(of: selectedPhoto) { _, newItem in
                 Task {
-                    photoData = try? await newItem?.loadTransferable(type: Data.self)
+                    do {
+                        photoData = try await newItem?.loadTransferable(type: Data.self)
+                    } catch {
+                        Self.logger.error("Failed to load photo: \(error)")
+                        photoData = nil
+                        showPhotoError = true
+                    }
                 }
+            }
+            .alert("Photo Failed", isPresented: $showPhotoError) {
+                Button("OK", role: .cancel) {}
+            } message: {
+                Text("Could not load the selected photo. Please try a different image.")
             }
             .alert("Save Failed", isPresented: $showError) {
                 Button("OK", role: .cancel) {}

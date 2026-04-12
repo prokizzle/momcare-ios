@@ -39,8 +39,8 @@ struct TourPageView: View {
             Spacer()
 
             // Lottie placeholder - will be replaced with arrow annotation animation for dashboard tour
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white.opacity(0.05))
+            RoundedRectangle(cornerRadius: MCRadius.xlg)
+                .fill(MCElevation.surface)
                 .frame(height: 200)
                 .overlay {
                     Image(systemName: "rectangle.grid.2x2.fill")
@@ -89,8 +89,8 @@ struct TourPageView: View {
             Spacer()
 
             // Lottie placeholder - will be replaced with arrow annotation animation for self-care tour
-            RoundedRectangle(cornerRadius: 20)
-                .fill(Color.white.opacity(0.05))
+            RoundedRectangle(cornerRadius: MCRadius.xlg)
+                .fill(MCElevation.surface)
                 .frame(height: 200)
                 .overlay {
                     Image(systemName: "leaf.fill")
@@ -133,7 +133,7 @@ struct TourPageView: View {
                     .foregroundStyle(.white)
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
-                    .background(MCColor.accent, in: RoundedRectangle(cornerRadius: 16))
+                    .background(MCColor.accent, in: RoundedRectangle(cornerRadius: MCRadius.lg))
                     .conditionalEffect(.repeat(.shine, every: 3), condition: appeared)
             }
         }
@@ -163,7 +163,7 @@ struct TourPageView: View {
             Spacer()
         }
         .padding(MCSpacing.lg)
-        .background(Color.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 16))
+        .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.lg))
         .accessibilityElement(children: .combine)
     }
 }

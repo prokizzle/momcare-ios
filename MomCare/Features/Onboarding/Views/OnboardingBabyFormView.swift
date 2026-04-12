@@ -100,10 +100,10 @@ struct OnboardingBabyFormView: View {
             Spacer()
         }
         .padding(MCSpacing.lg)
-        .background(Color.white.opacity(0.06), in: RoundedRectangle(cornerRadius: 16))
+        .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.lg))
         .skeleton(isEnabled: showSkeleton) { _ in
-                RoundedRectangle(cornerRadius: 12)
-                    .fill(Color.white.opacity(0.08))
+                RoundedRectangle(cornerRadius: MCRadius.md)
+                    .fill(MCElevation.elevated)
                     .frame(height: 16)
             }
         .accessibilityElement(children: .combine)
@@ -195,7 +195,7 @@ struct OnboardingBabyFormView: View {
                         }
                     }
                     .padding(MCSpacing.lg)
-                    .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+                    .background(MCElevation.elevated, in: RoundedRectangle(cornerRadius: MCRadius.md))
                 }
                 .accessibilityLabel("Choose baby photo")
 
@@ -249,7 +249,7 @@ struct OnboardingBabyFormView: View {
                 .frame(height: 56)
                 .background(
                     viewModel.babyFormIsValid ? MCColor.accent : MCColor.accent.opacity(0.3),
-                    in: RoundedRectangle(cornerRadius: 16)
+                    in: RoundedRectangle(cornerRadius: MCRadius.lg)
                 )
         }
         .disabled(!viewModel.babyFormIsValid)
@@ -268,7 +268,7 @@ struct OnboardingBabyFormView: View {
 
             content()
                 .padding(MCSpacing.lg)
-                .background(Color.white.opacity(0.08), in: RoundedRectangle(cornerRadius: 12))
+                .background(MCElevation.elevated, in: RoundedRectangle(cornerRadius: MCRadius.md))
         }
     }
 }

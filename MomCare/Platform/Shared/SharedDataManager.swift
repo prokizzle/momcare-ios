@@ -4,6 +4,7 @@ import WidgetKit
 
 struct SharedDataManager: Sendable {
     static let suiteName = "group.com.feelingmindful.momcare"
+    private static let logger = Logger(subsystem: "com.momcare", category: "SharedDataManager")
 
     #if DEBUG
     /// Allows tests to inject a distinct UserDefaults suite, preventing writes to the
@@ -83,15 +84,23 @@ struct SharedDataManager: Sendable {
     // MARK: - Self-Care
 
     static func updateSelfCare(items: [SharedSelfCareItem]) {
-        if let data = try? JSONEncoder().encode(items) {
+        do {
+            let data = try JSONEncoder().encode(items)
             defaults.set(data, forKey: "mc_selfCareItems")
+        } catch {
+            logger.error("Failed to encode self-care items: \(error)")
         }
         reloadWidgets()
     }
 
     static var selfCareItems: [SharedSelfCareItem] {
         guard let data = defaults.data(forKey: "mc_selfCareItems") else { return [] }
-        return (try? JSONDecoder().decode([SharedSelfCareItem].self, from: data)) ?? []
+        do {
+            return try JSONDecoder().decode([SharedSelfCareItem].self, from: data)
+        } catch {
+            logger.error("Failed to decode self-care items: \(error)")
+            return []
+        }
     }
 
     // MARK: - Vaccine

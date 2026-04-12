@@ -31,6 +31,7 @@ struct BabyProfileView: View {
                 deleteSection
             }
         }
+        .refreshable { await viewModel.loadBabies() }
         .navigationTitle(baby.name)
         .navigationBarTitleDisplayMode(.inline)
         .toolbar {
