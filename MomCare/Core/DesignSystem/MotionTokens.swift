@@ -25,6 +25,7 @@ extension View {
             .spray(origin: UnitPoint(x: 0.5, y: 0.5)) {
                 Image(systemName: "sparkle")
                     .foregroundStyle(.white)
+                    .accessibilityHidden(true)
             },
             value: trigger
         )
@@ -43,6 +44,7 @@ extension View {
             .rise(origin: .center) {
                 Image(systemName: "sparkle")
                     .foregroundStyle(.white)
+                    .accessibilityHidden(true)
             },
             value: trigger
         )

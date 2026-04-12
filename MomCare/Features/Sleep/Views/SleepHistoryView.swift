@@ -77,6 +77,7 @@ struct SleepHistoryView: View {
                 .font(.title3)
                 .foregroundStyle(MCColor.baby)
                 .frame(width: 32, height: 32)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: MCSpacing.xs) {
                 Text(sleep.sleepType.label)
@@ -102,6 +103,7 @@ struct SleepHistoryView: View {
                     Image(systemName: quality.systemImage)
                         .font(MCTypography.caption)
                         .foregroundStyle(MCColor.baby)
+                        .accessibilityHidden(true)
                 }
             }
             .foregroundStyle(.secondary)

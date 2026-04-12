@@ -47,6 +47,7 @@ struct PaywallFeatureList: View {
             Image(systemName: included ? "checkmark.circle.fill" : "xmark.circle")
                 .foregroundStyle(included ? MCColor.accent : .white.opacity(0.3))
                 .font(MCTypography.callout)
+                .accessibilityHidden(true)
             Text(text)
                 .font(MCTypography.subheadline)
                 .foregroundStyle(included ? .white : .white.opacity(0.4))

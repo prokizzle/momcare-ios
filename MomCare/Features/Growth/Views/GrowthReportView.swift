@@ -74,6 +74,7 @@ struct GrowthReportView: View {
                 Image(systemName: "heart.text.square.fill")
                     .font(.system(size: 40)) // Fixed size for PDF layout
                     .foregroundStyle(.pink.opacity(0.7))
+                    .accessibilityHidden(true)
             }
 
             HStack(spacing: 16) {

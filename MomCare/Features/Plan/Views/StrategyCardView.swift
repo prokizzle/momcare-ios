@@ -22,6 +22,7 @@ struct StrategyCardView: View {
                     Image(systemName: "checkmark.circle.fill")
                         .foregroundStyle(MCColor.baby)
                         .font(.title2)
+                        .accessibilityHidden(true)
                 }
             }
 

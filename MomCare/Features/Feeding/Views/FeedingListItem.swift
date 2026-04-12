@@ -10,6 +10,7 @@ struct FeedingListItem: View {
                 .font(.title3)
                 .foregroundStyle(MCColor.feeding)
                 .frame(width: 32)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: MCSpacing.xs) {
                 Text(feeding.startTime.formatted(date: .omitted, time: .shortened))

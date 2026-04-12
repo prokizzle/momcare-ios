@@ -92,6 +92,7 @@ struct HealthEventsScreen: View {
             HStack(spacing: MCSpacing.sm) {
                 Image(systemName: "syringe.fill")
                     .foregroundStyle(MCColor.babyStatus)
+                    .accessibilityHidden(true)
                 Text("Upcoming Vaccines")
                     .font(MCTypography.headline)
                     .foregroundStyle(.white)
@@ -216,6 +217,7 @@ struct HealthEventsScreen: View {
         } label: {
             HStack {
                 Image(systemName: "plus.circle.fill")
+                    .accessibilityHidden(true)
                 Text("Add Health Event")
             }
             .font(MCTypography.button)

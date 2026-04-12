@@ -78,5 +78,6 @@ struct MCIllustrationView: View {
             .font(.system(size: size * 0.4))
             .foregroundStyle(tint.opacity(MCOpacity.strong))
             .frame(width: size, height: size)
+            .accessibilityHidden(true)
     }
 }

@@ -55,6 +55,7 @@ struct PlanScreen: View {
                 Spacer()
                 Image(systemName: "lightbulb.fill")
                     .foregroundStyle(MCColor.baby)
+                    .accessibilityHidden(true)
             }
             .padding(MCSpacing.md)
             .background {

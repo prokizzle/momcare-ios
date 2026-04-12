@@ -77,6 +77,7 @@ struct QuickDiaperLogView: View {
                     Image(systemName: showDetails ? "chevron.up" : "chevron.down")
                         .font(MCTypography.badge)
                         .foregroundStyle(.secondary)
+                        .accessibilityHidden(true)
                 }
                 .padding(MCSpacing.md)
                 .background {
@@ -246,6 +247,7 @@ private struct TypeToggleButton: View {
             VStack(spacing: MCSpacing.xs) {
                 Image(systemName: type.systemImage)
                     .font(.title2)
+                    .accessibilityHidden(true)
                 Text(type.label)
                     .font(MCTypography.subheadline).fontWeight(.bold)
             }

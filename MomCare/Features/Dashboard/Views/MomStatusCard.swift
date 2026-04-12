@@ -52,6 +52,7 @@ struct MomStatusCard: View {
                 .font(MCTypography.caption)
                 .foregroundStyle(MCColor.selfCare)
                 .frame(width: 16)
+                .accessibilityHidden(true)
             Text("\(value) \(label)")
                 .font(MCTypography.caption)
                 .foregroundStyle(.secondary)
