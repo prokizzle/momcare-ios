@@ -64,7 +64,7 @@ struct PermissionStepView: View {
 
             // Lottie placeholder - will be replaced with notification bell or health/heart animation
             RoundedRectangle(cornerRadius: MCRadius.xlg)
-                .fill(Color.white.opacity(0.05))
+                .fill(MCElevation.surface)
                 .frame(height: 200)
                 .overlay {
                     Image(systemName: kind.icon)

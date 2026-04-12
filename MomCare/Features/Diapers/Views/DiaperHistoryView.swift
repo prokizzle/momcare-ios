@@ -69,7 +69,10 @@ struct DiaperHistoryView: View {
             }
         }
         .listStyle(.insetGrouped)
-        .refreshable { await viewModel.loadDiapers(babyId: babyId) }
+        .refreshable {
+                guard !viewModel.isLoading else { return }
+                await viewModel.loadDiapers(babyId: babyId)
+            }
     }
 
     @ViewBuilder

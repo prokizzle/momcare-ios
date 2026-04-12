@@ -24,7 +24,9 @@ struct JournalScreen: View {
                 .padding(.horizontal, MCSpacing.lg)
                 .padding(.vertical, MCSpacing.sm)
 
-            if viewModel.groupedEntries.isEmpty {
+            if !didLoad {
+                ProgressView()
+            } else if viewModel.groupedEntries.isEmpty {
                 EmptyStateView(
                     illustration: .emptyJournal,
                     title: "No Journal Entries",

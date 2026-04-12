@@ -55,7 +55,7 @@ struct AuthStepView: View {
                     .frame(maxWidth: .infinity)
                     .frame(height: 56)
                     .background(
-                        Color.white.opacity(0.12),
+                        MCElevation.elevated,
                         in: RoundedRectangle(cornerRadius: MCRadius.lg)
                     )
                 }
