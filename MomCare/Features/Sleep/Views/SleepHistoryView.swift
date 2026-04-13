@@ -103,7 +103,7 @@ struct SleepHistoryView: View {
                     Image(systemName: quality.systemImage)
                         .font(MCTypography.caption)
                         .foregroundStyle(MCColor.baby)
-                        .accessibilityHidden(true)
+                        .accessibilityLabel("\(quality.label) sleep quality")
                 }
             }
             .foregroundStyle(.secondary)

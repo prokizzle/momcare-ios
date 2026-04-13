@@ -151,7 +151,7 @@ struct HealthEventDetailView: View {
         } label: {
             HStack {
                 Image(systemName: "trash")
-                    .accessibilityLabel("Delete event")
+                    .accessibilityHidden(true)
                 Text("Delete Event")
             }
             .font(MCTypography.button)

@@ -44,7 +44,7 @@ struct BabySelectorView: View {
                         .font(MCTypography.title3)
                 } else {
                     Image(systemName: "person.crop.circle.badge.plus")
-                        .accessibilityLabel("Add baby")
+                        .accessibilityHidden(true)
                     Text("Add Baby")
                         .font(MCTypography.title3)
                 }
