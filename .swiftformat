@@ -1,0 +1,52 @@
+# SwiftFormat Configuration — MomCare iOS
+# SwiftFormat owns ALL formatting. SwiftLint owns correctness/style.
+
+--swiftversion 6.0
+--indent 4
+--maxwidth 120
+
+# Trailing commas on multi-line lists (modern Swift, cleaner diffs)
+--trailing-commas always
+
+# Self
+--self remove
+
+# Void
+--void-type Void
+
+# Imports
+--import-grouping testable-last
+
+# Wrapping (inferred from existing code)
+--wrap-collections before-first
+--wrap-parameters before-first
+
+# Args
+--strip-unused-args closure-only
+
+# Preprocessor
+--ifdef no-indent
+
+# Number formatting (inferred — no grouping)
+--binary-grouping none
+--decimal-grouping none
+--hex-grouping none
+--octal-grouping none
+
+# Pattern let
+--pattern-let inline
+
+# Closures
+--closure-void remove
+
+# Empty braces
+--empty-braces no-space
+
+# Ranges
+--no-space-operators ...,..<
+
+# Disable rules that are too opinionated or reorder code
+--disable hoistAwait,hoistTry
+
+# Exclude dependencies and build artifacts
+--exclude Tuist
