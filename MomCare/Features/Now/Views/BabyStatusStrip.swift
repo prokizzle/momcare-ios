@@ -43,6 +43,7 @@ struct BabyStatusStrip: View {
             Image(systemName: icon)
                 .foregroundStyle(color)
                 .font(.caption)
+                .accessibilityHidden(true)
             Text(text)
                 .font(MCTypography.timestamp)
                 .foregroundStyle(color)

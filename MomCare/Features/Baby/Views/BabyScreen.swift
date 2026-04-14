@@ -25,12 +25,14 @@ struct BabyScreen: View {
                             HStack {
                                 Image(systemName: "moon.stars.fill")
                                     .foregroundStyle(MCColor.baby)
+                                    .accessibilityHidden(true)
                                 Text("Sleep History")
                                     .font(MCTypography.title3)
                                 Spacer()
                                 Image(systemName: "chevron.right")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
+                                    .accessibilityHidden(true)
                             }
                             .padding(MCSpacing.md)
                             .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.md))
@@ -43,12 +45,14 @@ struct BabyScreen: View {
                             HStack {
                                 Image(systemName: "chart.line.uptrend.xyaxis")
                                     .foregroundStyle(MCColor.baby)
+                                    .accessibilityHidden(true)
                                 Text("Growth Charts")
                                     .font(MCTypography.title3)
                                 Spacer()
                                 Image(systemName: "chevron.right")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
+                                    .accessibilityHidden(true)
                             }
                             .padding(MCSpacing.md)
                             .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.md))
@@ -61,12 +65,14 @@ struct BabyScreen: View {
                             HStack {
                                 Image(systemName: "cross.case.fill")
                                     .foregroundStyle(MCColor.baby)
+                                    .accessibilityHidden(true)
                                 Text("Health Events")
                                     .font(MCTypography.title3)
                                 Spacer()
                                 Image(systemName: "chevron.right")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
+                                    .accessibilityHidden(true)
                             }
                             .padding(MCSpacing.md)
                             .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.md))

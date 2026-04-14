@@ -14,6 +14,7 @@ struct SelfCareCardView: View {
                 .font(.title3)
                 .foregroundStyle(card.type.accentColor)
                 .frame(width: 24)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: MCSpacing.xs) {
                 if card.type == .streak {

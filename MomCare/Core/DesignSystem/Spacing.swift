@@ -1,6 +1,5 @@
 import Foundation
 
-// swiftlint:disable identifier_name
 enum MCSpacing {
     static let xs: CGFloat = 4
     static let sm: CGFloat = 8
@@ -10,4 +9,3 @@ enum MCSpacing {
     static let xxl: CGFloat = 32
     static let section: CGFloat = 40
 }
-// swiftlint:enable identifier_name

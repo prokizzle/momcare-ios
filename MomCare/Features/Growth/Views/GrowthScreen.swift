@@ -140,6 +140,7 @@ struct GrowthScreen: View {
             Image(systemName: "chart.line.uptrend.xyaxis")
                 .font(.system(size: 48))
                 .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
             Text("No measurements yet")
                 .font(MCTypography.title3)
                 .foregroundStyle(.secondary)
@@ -159,6 +160,7 @@ struct GrowthScreen: View {
             HStack {
                 Image(systemName: "chart.bar.fill")
                     .foregroundStyle(MCColor.accent)
+                    .accessibilityHidden(true)
                 Text("Latest: \(Int(pct))th percentile")
                     .font(MCTypography.title3)
             }
@@ -177,6 +179,7 @@ struct GrowthScreen: View {
         } label: {
             HStack {
                 Image(systemName: "plus.circle.fill")
+                    .accessibilityHidden(true)
                 Text("Add Measurement")
             }
             .font(MCTypography.headline)

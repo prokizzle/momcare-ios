@@ -235,6 +235,7 @@ struct PaywallView: View {
                 .frame(width: 28, height: 28)
                 .background(Color.white.opacity(MCOpacity.whisper))
                 .clipShape(Circle())
+                .accessibilityLabel("Close")
         }
         .frame(width: 44, height: 44)
         .contentShape(Circle())

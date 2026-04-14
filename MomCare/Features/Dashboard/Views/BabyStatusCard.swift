@@ -42,6 +42,7 @@ struct BabyStatusCard: View {
                 .font(.title2)
                 .foregroundStyle(MCColor.feeding)
                 .symbolEffect(.pulse, isActive: !reduceMotion)
+                .accessibilityHidden(true)
         }
     }
 
@@ -75,6 +76,7 @@ struct BabyStatusCard: View {
                     Image(systemName: "clock.fill")
                         .font(.title3)
                         .foregroundStyle(viewModel.urgency.color)
+                        .accessibilityHidden(true)
                 }
         }
     }

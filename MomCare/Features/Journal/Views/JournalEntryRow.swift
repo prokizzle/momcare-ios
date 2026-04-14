@@ -10,6 +10,7 @@ struct JournalEntryRow: View {
                 .font(.title3)
                 .foregroundStyle(color(for: entry.kind))
                 .frame(width: 32)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(entry.kind.label)

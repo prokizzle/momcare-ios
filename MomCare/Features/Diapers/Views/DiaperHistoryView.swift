@@ -116,6 +116,7 @@ private struct DiaperRow: View {
                 .font(.title3)
                 .foregroundStyle(MCColor.diaper)
                 .frame(width: 32)
+                .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: 2) {
                 Text(diaper.type.label)

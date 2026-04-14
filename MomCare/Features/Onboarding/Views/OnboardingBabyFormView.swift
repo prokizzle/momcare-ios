@@ -58,6 +58,7 @@ struct OnboardingBabyFormView: View {
             Image(systemName: "figure.and.child.holdinghands")
                 .font(.system(size: 56))
                 .foregroundStyle(MCColor.accent)
+                .accessibilityHidden(true)
 
             DSText("Add your baby")
                 .font(.title.bold())
@@ -112,6 +113,7 @@ struct OnboardingBabyFormView: View {
             .spray(origin: UnitPoint(x: 0.5, y: 0.5)) {
                 Image(systemName: "star.fill")
                     .foregroundStyle(MCColor.accent)
+                    .accessibilityHidden(true)
             },
             value: showSuccess
         )

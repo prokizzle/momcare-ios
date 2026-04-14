@@ -54,6 +54,7 @@ struct HealthEventDetailView: View {
         HStack(spacing: MCSpacing.sm) {
             Image(systemName: event.eventType.systemImage)
                 .font(MCTypography.footnote)
+                .accessibilityHidden(true)
             Text(event.eventType.label)
                 .font(MCTypography.badge)
         }
@@ -80,6 +81,7 @@ struct HealthEventDetailView: View {
         HStack(spacing: MCSpacing.sm) {
             Image(systemName: "calendar")
                 .foregroundStyle(.secondary)
+                .accessibilityHidden(true)
             Text(formattedDateRange)
                 .font(MCTypography.body)
                 .foregroundStyle(.secondary)
@@ -149,6 +151,7 @@ struct HealthEventDetailView: View {
         } label: {
             HStack {
                 Image(systemName: "trash")
+                    .accessibilityHidden(true)
                 Text("Delete Event")
             }
             .font(MCTypography.button)

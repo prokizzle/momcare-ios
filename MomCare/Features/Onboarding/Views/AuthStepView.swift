@@ -12,6 +12,7 @@ struct AuthStepView: View {
             Image(systemName: "person.crop.circle.badge.checkmark")
                 .font(.system(size: 64))
                 .foregroundStyle(MCColor.accent)
+                .accessibilityHidden(true)
 
             Text("Create your account")
                 .font(.title.bold())
@@ -48,6 +49,7 @@ struct AuthStepView: View {
                     HStack(spacing: MCSpacing.md) {
                         Image(systemName: "globe")
                             .font(.title3)
+                            .accessibilityHidden(true)
                         Text("Sign in with Google")
                             .font(.headline)
                     }

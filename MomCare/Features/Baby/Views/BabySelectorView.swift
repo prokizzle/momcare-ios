@@ -21,6 +21,7 @@ struct BabySelectorView: View {
                         } icon: {
                             if baby.id == viewModel.selectedBaby?.id {
                                 Image(systemName: "checkmark")
+                                    .accessibilityHidden(true)
                             }
                         }
                     }
@@ -43,6 +44,7 @@ struct BabySelectorView: View {
                         .font(MCTypography.title3)
                 } else {
                     Image(systemName: "person.crop.circle.badge.plus")
+                        .accessibilityHidden(true)
                     Text("Add Baby")
                         .font(MCTypography.title3)
                 }

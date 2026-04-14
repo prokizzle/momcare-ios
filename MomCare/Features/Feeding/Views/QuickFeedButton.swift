@@ -14,6 +14,7 @@ struct QuickFeedButton: View {
             HStack(spacing: MCSpacing.md) {
                 Image(systemName: "drop.fill")
                     .font(.title2)
+                    .accessibilityHidden(true)
                 Text("Start Feeding")
                     .font(MCTypography.title3)
             }

@@ -28,6 +28,7 @@ struct DiaperScreen: View {
                         showQuickLog = true
                     } label: {
                         Image(systemName: "plus")
+                            .accessibilityLabel("Log diaper change")
                     }
                 }
             }

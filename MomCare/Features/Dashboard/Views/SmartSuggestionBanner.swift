@@ -15,6 +15,7 @@ struct SmartSuggestionBanner: View {
                 .font(.subheadline)
                 .foregroundStyle(MCColor.selfCare)
                 .frame(width: 20)
+                .accessibilityHidden(true)
 
             Text(suggestion.message)
                 .font(MCTypography.subheadline)
@@ -27,6 +28,7 @@ struct SmartSuggestionBanner: View {
                 Image(systemName: "chevron.right")
                     .font(.caption)
                     .foregroundStyle(.secondary)
+                    .accessibilityHidden(true)
             }
         }
         .padding(MCSpacing.lg)
