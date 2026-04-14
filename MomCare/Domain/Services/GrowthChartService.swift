@@ -4,6 +4,9 @@ struct GrowthChartService: Sendable {
 
     nonisolated(unsafe) let bundle: Bundle
 
+    /// Initializes a new instance of the `GrowthChartService`.
+    ///
+    /// - Parameter bundle: The bundle containing the WHO standard JSON data files. Defaults to `.main`.
     init(bundle: Bundle = .main) {
         self.bundle = bundle
     }
@@ -51,6 +54,13 @@ struct GrowthChartService: Sendable {
 
     // MARK: - Load WHO Data
 
+    /// Loads the WHO standard growth data for a specific measurement and sex.
+    ///
+    /// - Parameters:
+    ///   - measurement: The type of measurement (e.g., weight, length, head circumference).
+    ///   - sex: The biological sex of the baby. Defaults to boys' charts if nil or unspecified.
+    /// - Returns: An array of `WHODataPoint` representing the standard percentiles across months.
+    /// - Throws: `GrowthChartError.dataNotFound` if the JSON file for the requested chart cannot be found.
     func loadStandard(measurement: MeasurementType, sex: Baby.BiologicalSex?) throws -> [WHODataPoint] {
         let sexKey: String
         switch sex {
@@ -77,6 +87,15 @@ struct GrowthChartService: Sendable {
 
     // MARK: - Percentile Calculation
 
+    /// Calculates an approximate percentile for a given measurement value at a specific age.
+    ///
+    /// Extrapolates based on standard WHO percentile bands (p3, p15, p50, p85, p97).
+    ///
+    /// - Parameters:
+    ///   - value: The measured value to evaluate.
+    ///   - ageMonths: The age of the baby in months at the time of measurement.
+    ///   - standard: The WHO growth standard data to compare against.
+    /// - Returns: The calculated percentile as a `Double`, or `nil` if the standard lacks data for `ageMonths`.
     func percentile(value: Double, ageMonths: Int, standard: [WHODataPoint]) -> Double? {
         guard let point = standard.first(where: { $0.month == ageMonths }) else {
             return nil
@@ -121,6 +140,17 @@ struct GrowthChartService: Sendable {
 
     // MARK: - Chart Data
 
+    /// Generates structured chart data containing both standard percentile bands and user-recorded data points.
+    ///
+    /// This combines the static WHO background curves with dynamic data from the app's `GrowthRecord`s.
+    ///
+    /// - Parameters:
+    ///   - records: An array of baby's growth measurements (`GrowthRecord`).
+    ///   - sex: The biological sex of the baby.
+    ///   - measurement: The type of measurement being charted (weight, length, head circumference).
+    ///   - dateOfBirth: The baby's birth date, used to compute precise age at each measurement.
+    /// - Returns: A `GrowthChartData` object containing `WHODataPoint` bands and mapped `BabyDataPoint`s.
+    /// - Throws: `GrowthChartError.dataNotFound` if the necessary WHO reference data cannot be loaded.
     func chartData(
         records: [GrowthRecord],
         sex: Baby.BiologicalSex?,

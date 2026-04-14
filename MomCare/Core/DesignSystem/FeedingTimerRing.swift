@@ -56,8 +56,8 @@ struct FeedingTimerRing: View {
         let fullEnd = Angle.degrees(270)
 
         // Background track
-        let trackPath = Path { p in
-            p.addArc(center: center, radius: radius, startAngle: startAngle, endAngle: fullEnd, clockwise: false)
+        let trackPath = Path { path in
+            path.addArc(center: center, radius: radius, startAngle: startAngle, endAngle: fullEnd, clockwise: false)
         }
         ctx.stroke(
             trackPath,
@@ -69,8 +69,14 @@ struct FeedingTimerRing: View {
 
         // Progress arc
         let progressAngle = startAngle + .degrees(360 * Double(progress))
-        let progressPath = Path { p in
-            p.addArc(center: center, radius: radius, startAngle: startAngle, endAngle: progressAngle, clockwise: false)
+        let progressPath = Path { path in
+            path.addArc(
+                center: center,
+                radius: radius,
+                startAngle: startAngle,
+                endAngle: progressAngle,
+                clockwise: false
+            )
         }
         ctx.stroke(
             progressPath,
