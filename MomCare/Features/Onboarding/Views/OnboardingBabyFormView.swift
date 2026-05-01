@@ -37,7 +37,9 @@ struct OnboardingBabyFormView: View {
             }
             Task { @MainActor in
                 do {
-                    let data = try await newItem.loadTransferable(type: Data.self)
+                    let data = try await Task.detached(priority: .userInitiated) {
+                        try await newItem.loadTransferable(type: Data.self)
+                    }.value
                     viewModel.babyPhotoData = data
                     viewModel.photoLoadError = nil
                 } catch {

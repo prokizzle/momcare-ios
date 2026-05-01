@@ -37,11 +37,11 @@ enum MCTypography {
 
     // MARK: - Badge Token
 
-    static let badgeTracking: CGFloat = 11 * 0.10  // 0.10em at the badge font size.
+    static let badgeTracking: CGFloat = 11 * 0.10  // Fixed 1.1pt tracking from the 11pt badge size.
 }
 
 extension Text {
-    /// Applies the badge token: Nunito Bold caption2 + uppercase + 0.10em tracking.
+    /// Applies the badge token: Nunito Bold caption2 + uppercase + fixed 1.1pt tracking.
     /// `textCase` is a View modifier so the chain returns `some View`, not `Text`.
     func mcBadge() -> some View {
         font(MCTypography.badge)
