@@ -35,17 +35,13 @@ struct OnboardingBabyFormView: View {
                 viewModel.photoLoadError = nil
                 return
             }
-            Task.detached {
+            Task { @MainActor in
                 do {
                     let data = try await newItem.loadTransferable(type: Data.self)
-                    await MainActor.run {
-                        viewModel.babyPhotoData = data
-                        viewModel.photoLoadError = nil
-                    }
+                    viewModel.babyPhotoData = data
+                    viewModel.photoLoadError = nil
                 } catch {
-                    await MainActor.run {
-                        viewModel.photoLoadError = "Failed to load photo. Please try again."
-                    }
+                    viewModel.photoLoadError = "Failed to load photo. Please try again."
                 }
             }
         }
@@ -103,10 +99,10 @@ struct OnboardingBabyFormView: View {
         .padding(MCSpacing.lg)
         .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.lg))
         .skeleton(isEnabled: showSkeleton) { _ in
-                RoundedRectangle(cornerRadius: MCRadius.md)
-                    .fill(MCElevation.elevated)
-                    .frame(height: 16)
-            }
+            RoundedRectangle(cornerRadius: MCRadius.md)
+                .fill(MCElevation.elevated)
+                .frame(height: 16)
+        }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Baby preview: \(viewModel.babyName.isEmpty ? "No name entered" : viewModel.babyName)")
         .changeEffect(
@@ -184,22 +180,28 @@ struct OnboardingBabyFormView: View {
                         .foregroundStyle(.white)
                 }
 
-                PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                    HStack {
-                        Image(systemName: "photo")
-                            .foregroundStyle(MCColor.accent)
-                        Text("Choose Photo")
-                            .foregroundStyle(.white)
-                        Spacer()
-                        if viewModel.babyPhotoData != nil {
-                            Image(systemName: "checkmark.circle.fill")
+                HStack(spacing: MCSpacing.md) {
+                    PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                        HStack {
+                            Image(systemName: "photo")
                                 .foregroundStyle(MCColor.accent)
+                            Text("Choose Photo")
+                                .foregroundStyle(.white)
+                            Spacer()
                         }
+                        .padding(MCSpacing.lg)
+                        .frame(maxWidth: .infinity)
+                        .background(MCElevation.elevated, in: RoundedRectangle(cornerRadius: MCRadius.md))
                     }
-                    .padding(MCSpacing.lg)
-                    .background(MCElevation.elevated, in: RoundedRectangle(cornerRadius: MCRadius.md))
+                    .accessibilityLabel("Choose baby photo")
+
+                    if viewModel.babyPhotoData != nil {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(MCColor.accent)
+                            .accessibilityLabel("Photo added")
+                    }
                 }
-                .accessibilityLabel("Choose baby photo")
 
                 if let photoError = viewModel.photoLoadError {
                     Text(photoError)
@@ -259,9 +261,9 @@ struct OnboardingBabyFormView: View {
 
     // MARK: - Helpers
 
-    private func formField<Content: View>(
+    private func formField(
         title: String,
-        @ViewBuilder content: () -> Content
+        @ViewBuilder content: () -> some View
     ) -> some View {
         VStack(alignment: .leading, spacing: MCSpacing.sm) {
             DSText(title)

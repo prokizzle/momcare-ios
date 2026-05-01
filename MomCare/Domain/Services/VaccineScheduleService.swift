@@ -8,7 +8,7 @@ struct VaccineScheduleService: Sendable {
         let description: String
     }
 
-    nonisolated(unsafe) let bundle: Bundle
+    let bundle: Bundle
 
     init(bundle: Bundle = .main) {
         self.bundle = bundle
