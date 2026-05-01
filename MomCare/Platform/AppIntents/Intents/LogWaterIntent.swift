@@ -25,6 +25,6 @@ struct LogWaterIntent: AppIntent {
         context.insert(SelfCareLogModel(from: entry))
         try context.save()
 
-        return .result(dialog: "Water logged. Stay hydrated!")
+        return .result(dialog: "Water logged. Nice and steady.")
     }
 }

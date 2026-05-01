@@ -28,11 +28,24 @@ enum MCTypography {
     static let footnote: Font = .footnote
     static let caption: Font = .caption
     static let caption2: Font = .caption2
-    static let timestamp: Font = .caption.monospacedDigit()
+    static let timestamp: Font = .system(.caption, design: .monospaced)
 
     // MARK: - Emotional Tier (New York -- warmth)
 
     static let affirmation: Font = .system(.title3, design: .serif).italic()
     static let milestone: Font = .system(.title2, design: .serif, weight: .medium)
 
+    // MARK: - Badge Token
+
+    static let badgeTracking: CGFloat = 11 * 0.10  // Fixed 1.1pt tracking from the 11pt badge size.
+}
+
+extension Text {
+    /// Applies the badge token: Nunito Bold caption2 + uppercase + fixed 1.1pt tracking.
+    /// `textCase` is a View modifier so the chain returns `some View`, not `Text`.
+    func mcBadge() -> some View {
+        font(MCTypography.badge)
+            .tracking(MCTypography.badgeTracking)
+            .textCase(.uppercase)
+    }
 }

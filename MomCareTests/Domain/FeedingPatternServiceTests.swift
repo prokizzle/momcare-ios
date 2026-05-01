@@ -16,9 +16,10 @@ struct FeedingPatternServiceTests {
     func noValidIntervals() {
         let now = Date.now
         let feedings = (0..<5).map { idx in
-            Feeding.fixture(
-                startTime: now.addingTimeInterval(Double(-idx * 600)),
-                endTime: now.addingTimeInterval(Double(-idx * 600) + 300)
+            let offset = TimeInterval(idx) * -600
+            return Feeding.fixture(
+                startTime: now.addingTimeInterval(offset),
+                endTime: now.addingTimeInterval(offset + 300)
             )
         }
         let result = FeedingPatternService.analyzePattern(from: feedings)
@@ -29,9 +30,10 @@ struct FeedingPatternServiceTests {
     func averageInterval() {
         let now = Date.now
         let feedings = (0..<4).map { idx in
-            Feeding.fixture(
-                startTime: now.addingTimeInterval(Double(-idx) * 7200),
-                endTime: now.addingTimeInterval(Double(-idx) * 7200 + 1200)
+            let offset = TimeInterval(idx) * -7200
+            return Feeding.fixture(
+                startTime: now.addingTimeInterval(offset),
+                endTime: now.addingTimeInterval(offset + 1200)
             )
         }
         let result = FeedingPatternService.analyzePattern(from: feedings)
@@ -66,9 +68,10 @@ struct FeedingPatternServiceTests {
     func highConfidence() {
         let now = Date.now
         let feedings = (0..<25).map { idx in
-            Feeding.fixture(
-                startTime: now.addingTimeInterval(Double(-idx) * 9000),
-                endTime: now.addingTimeInterval(Double(-idx) * 9000 + 1200)
+            let offset = TimeInterval(idx) * -9000
+            return Feeding.fixture(
+                startTime: now.addingTimeInterval(offset),
+                endTime: now.addingTimeInterval(offset + 1200)
             )
         }
         let result = FeedingPatternService.analyzePattern(from: feedings)

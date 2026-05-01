@@ -1,8 +1,7 @@
 import Foundation
 
 struct GrowthChartService: Sendable {
-
-    nonisolated(unsafe) let bundle: Bundle
+    let bundle: Bundle
 
     /// Initializes a new instance of the `GrowthChartService`.
     ///
@@ -62,18 +61,16 @@ struct GrowthChartService: Sendable {
     /// - Returns: An array of `WHODataPoint` representing the standard percentiles across months.
     /// - Throws: `GrowthChartError.dataNotFound` if the JSON file for the requested chart cannot be found.
     func loadStandard(measurement: MeasurementType, sex: Baby.BiologicalSex?) throws -> [WHODataPoint] {
-        let sexKey: String
-        switch sex {
-        case .male: sexKey = "boys"
-        case .female: sexKey = "girls"
-        default: sexKey = "boys"
+        let sexKey = switch sex {
+        case .male: "boys"
+        case .female: "girls"
+        default: "boys"
         }
 
-        let measurementKey: String
-        switch measurement {
-        case .weight: measurementKey = "weight"
-        case .length: measurementKey = "length"
-        case .headCircumference: measurementKey = "head"
+        let measurementKey = switch measurement {
+        case .weight: "weight"
+        case .length: "length"
+        case .headCircumference: "head"
         }
 
         let fileName = "\(measurementKey)_\(sexKey)"
@@ -106,7 +103,7 @@ struct GrowthChartService: Sendable {
             (15, point.p15),
             (50, point.p50),
             (85, point.p85),
-            (97, point.p97)
+            (97, point.p97),
         ]
 
         // Below p3
@@ -127,7 +124,7 @@ struct GrowthChartService: Sendable {
         for index in 0..<(knownPercentiles.count - 1) {
             let lower = knownPercentiles[index]
             let upper = knownPercentiles[index + 1]
-            if value >= lower.value && value <= upper.value {
+            if value >= lower.value, value <= upper.value {
                 let range = upper.value - lower.value
                 guard range > 0 else { return lower.percentile }
                 let fraction = (value - lower.value) / range
@@ -160,11 +157,10 @@ struct GrowthChartService: Sendable {
         let standard = try loadStandard(measurement: measurement, sex: sex)
 
         let babyPoints: [BabyDataPoint] = records.compactMap { record in
-            let value: Double?
-            switch measurement {
-            case .weight: value = record.weightGrams
-            case .length: value = record.lengthCm
-            case .headCircumference: value = record.headCircumferenceCm
+            let value: Double? = switch measurement {
+            case .weight: record.weightGrams
+            case .length: record.lengthCm
+            case .headCircumference: record.headCircumferenceCm
             }
             guard let value else { return nil }
 

@@ -34,8 +34,8 @@ struct NotificationScheduler: Sendable {
         let trigger = UNTimeIntervalNotificationTrigger(timeInterval: interval, repeats: false)
         try await service.scheduleLocal(
             id: "feeding-reminder-\(babyId.uuidString)",
-            title: "Feeding Reminder",
-            body: "Time to feed \(babyName)? Last feeding was a while ago.",
+            title: "Feeding reminder",
+            body: "It has been a while since \(babyName)'s last feeding.",
             trigger: trigger,
             categoryIdentifier: NotificationCategory.feeding.rawValue
         )
@@ -58,8 +58,8 @@ struct NotificationScheduler: Sendable {
         )
         try await service.scheduleLocal(
             id: "hydration-daily",
-            title: "Stay Hydrated",
-            body: "Have you had water today? Staying hydrated helps with recovery and energy.",
+            title: "A small hydration moment",
+            body: "Staying hydrated helps you keep going. A sip goes a long way.",
             trigger: trigger,
             categoryIdentifier: NotificationCategory.selfCare.rawValue
         )
@@ -77,8 +77,8 @@ struct NotificationScheduler: Sendable {
         )
         try await service.scheduleLocal(
             id: "selfcare-daily",
-            title: "How Are You Feeling?",
-            body: "Take a moment to check in with yourself. You deserve it.",
+            title: "A quiet check-in",
+            body: "How are you feeling today? You showed up, and that is enough.",
             trigger: trigger,
             categoryIdentifier: NotificationCategory.selfCare.rawValue
         )
@@ -96,8 +96,8 @@ struct NotificationScheduler: Sendable {
         )
         try await service.scheduleLocal(
             id: "weekly-recap",
-            title: "Your Week in Review",
-            body: "See how your week went -- feeding patterns, sleep trends, and self-care streaks.",
+            title: "Your week in review",
+            body: "Your week is ready. Feeding patterns, sleep trends, and small acts of care.",
             trigger: trigger,
             categoryIdentifier: NotificationCategory.weeklyRecap.rawValue
         )

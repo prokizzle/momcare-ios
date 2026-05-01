@@ -23,7 +23,7 @@ struct NotificationSchedulerTests {
         #expect(stub.scheduledNotifications.count == 1)
         let entry = try #require(stub.scheduledNotifications.first)
         #expect(entry.id == "feeding-reminder-\(babyId.uuidString)")
-        #expect(entry.title == "Feeding Reminder")
+        #expect(entry.title == "Feeding reminder")
         #expect(entry.categoryIdentifier == NotificationCategory.feeding.rawValue)
     }
 
@@ -54,7 +54,7 @@ struct NotificationSchedulerTests {
         #expect(stub.scheduledNotifications.count == 1)
         let entry = try #require(stub.scheduledNotifications.first)
         #expect(entry.id == "hydration-daily")
-        #expect(entry.title == "Stay Hydrated")
+        #expect(entry.title == "A small hydration moment")
         #expect(entry.categoryIdentifier == NotificationCategory.selfCare.rawValue)
     }
 
@@ -72,5 +72,11 @@ struct NotificationSchedulerTests {
         #expect(ids.contains("hydration-daily"))
         #expect(ids.contains("selfcare-daily"))
         #expect(ids.contains("weekly-recap"))
+
+        let titlesById = Dictionary(
+            uniqueKeysWithValues: stub.scheduledNotifications.map { ($0.id, $0.title) }
+        )
+        #expect(titlesById["selfcare-daily"] == "A quiet check-in")
+        #expect(titlesById["weekly-recap"] == "Your week in review")
     }
 }

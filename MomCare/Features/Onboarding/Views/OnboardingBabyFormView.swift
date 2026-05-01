@@ -8,6 +8,7 @@ import SwiftUI
 struct OnboardingBabyFormView: View {
     @Bindable var viewModel: OnboardingViewModel
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var photoLoadTask: Task<Void, Never>?
     @State private var showOptionalDetails = false
     @State private var showSuccess = false
     @State private var showSkeleton = true
@@ -31,23 +32,32 @@ struct OnboardingBabyFormView: View {
             }
         }
         .onChange(of: selectedPhoto) { _, newItem in
+            photoLoadTask?.cancel()
             guard let newItem else {
+                viewModel.babyPhotoData = nil
                 viewModel.photoLoadError = nil
                 return
             }
-            Task.detached {
+            photoLoadTask = Task { @MainActor in
                 do {
-                    let data = try await newItem.loadTransferable(type: Data.self)
-                    await MainActor.run {
-                        viewModel.babyPhotoData = data
-                        viewModel.photoLoadError = nil
-                    }
+                    let data = try await Task.detached(priority: .userInitiated) {
+                        try await newItem.loadTransferable(type: Data.self)
+                    }.value
+                    guard !Task.isCancelled else { return }
+                    viewModel.babyPhotoData = data
+                    viewModel.photoLoadError = nil
+                    MCHaptic.success()
+                } catch is CancellationError {
+                    return
                 } catch {
-                    await MainActor.run {
-                        viewModel.photoLoadError = "Failed to load photo. Please try again."
-                    }
+                    guard !Task.isCancelled else { return }
+                    viewModel.babyPhotoData = nil
+                    viewModel.photoLoadError = "Failed to load photo. Please try again."
                 }
             }
+        }
+        .onDisappear {
+            photoLoadTask?.cancel()
         }
     }
 
@@ -103,10 +113,10 @@ struct OnboardingBabyFormView: View {
         .padding(MCSpacing.lg)
         .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.lg))
         .skeleton(isEnabled: showSkeleton) { _ in
-                RoundedRectangle(cornerRadius: MCRadius.md)
-                    .fill(MCElevation.elevated)
-                    .frame(height: 16)
-            }
+            RoundedRectangle(cornerRadius: MCRadius.md)
+                .fill(MCElevation.elevated)
+                .frame(height: 16)
+        }
         .accessibilityElement(children: .combine)
         .accessibilityLabel("Baby preview: \(viewModel.babyName.isEmpty ? "No name entered" : viewModel.babyName)")
         .changeEffect(
@@ -184,22 +194,29 @@ struct OnboardingBabyFormView: View {
                         .foregroundStyle(.white)
                 }
 
-                PhotosPicker(selection: $selectedPhoto, matching: .images) {
-                    HStack {
-                        Image(systemName: "photo")
-                            .foregroundStyle(MCColor.accent)
-                        Text("Choose Photo")
-                            .foregroundStyle(.white)
-                        Spacer()
-                        if viewModel.babyPhotoData != nil {
-                            Image(systemName: "checkmark.circle.fill")
+                HStack(spacing: MCSpacing.md) {
+                    PhotosPicker(selection: $selectedPhoto, matching: .images) {
+                        HStack {
+                            Image(systemName: "photo")
                                 .foregroundStyle(MCColor.accent)
+                            Text("Choose Photo")
+                                .foregroundStyle(.white)
+                            Spacer()
                         }
+                        .padding(MCSpacing.lg)
+                        .frame(maxWidth: .infinity)
+                        .background(MCElevation.elevated, in: RoundedRectangle(cornerRadius: MCRadius.md))
                     }
-                    .padding(MCSpacing.lg)
-                    .background(MCElevation.elevated, in: RoundedRectangle(cornerRadius: MCRadius.md))
+                    .simultaneousGesture(TapGesture().onEnded { MCHaptic.tap() })
+                    .accessibilityLabel("Choose baby photo")
+
+                    if viewModel.babyPhotoData != nil {
+                        Image(systemName: "checkmark.circle.fill")
+                            .font(.title2)
+                            .foregroundStyle(MCColor.accent)
+                            .accessibilityLabel("Photo added")
+                    }
                 }
-                .accessibilityLabel("Choose baby photo")
 
                 if let photoError = viewModel.photoLoadError {
                     Text(photoError)
@@ -259,9 +276,9 @@ struct OnboardingBabyFormView: View {
 
     // MARK: - Helpers
 
-    private func formField<Content: View>(
+    private func formField(
         title: String,
-        @ViewBuilder content: () -> Content
+        @ViewBuilder content: () -> some View
     ) -> some View {
         VStack(alignment: .leading, spacing: MCSpacing.sm) {
             DSText(title)
