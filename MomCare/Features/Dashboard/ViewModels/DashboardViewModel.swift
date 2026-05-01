@@ -168,15 +168,15 @@ final class DashboardViewModel {
         if dailySummary.waterGlassesToday < 4 {
             let glasses = dailySummary.waterGlassesToday
             let message = glasses == 0
-                ? "No water logged today. Staying hydrated helps your milk supply."
-                : "Only \(glasses) glass\(glasses == 1 ? "" : "es") of water today. You're doing great — keep it up."
+                ? "No water logged yet today. A sip goes a long way."
+                : "\(glasses) glass\(glasses == 1 ? "" : "es") of water so far. Another sip whenever it fits."
             result.append(SmartSuggestion(message: message, actionTab: .selfCare))
         }
 
         // Meal nudge (no meals)
         if dailySummary.mealsToday == 0 {
             result.append(SmartSuggestion(
-                message: "No meals logged yet. Remember to fuel yourself too.",
+                message: "No meals logged yet. You are worth feeding too.",
                 actionTab: .selfCare
             ))
         }
@@ -184,7 +184,7 @@ final class DashboardViewModel {
         // Activity nudge — only when HealthKit data is available and steps are low
         if momStepsToday > 0 && momStepsToday < 3_000 {
             result.append(SmartSuggestion(
-                message: "Only \(momStepsToday) steps today. Even a short walk can boost your mood.",
+                message: "\(momStepsToday) steps so far. A short walk could feel good when there is space.",
                 actionTab: nil
             ))
         }
@@ -192,7 +192,7 @@ final class DashboardViewModel {
         // Self-care encouragement when doing well
         if dailySummary.completionPercentage >= 0.7 && result.isEmpty {
             result.append(SmartSuggestion(
-                message: "You're taking great care of yourself today. Keep it up.",
+                message: "You are taking good care of yourself today.",
                 actionTab: nil
             ))
         }
