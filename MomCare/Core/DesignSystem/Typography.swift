@@ -37,7 +37,7 @@ enum MCTypography {
 
     // MARK: - Badge Token
 
-    static let badgeTracking: CGFloat = 1.1
+    static let badgeTracking: CGFloat = 11 * 0.10  // 0.10em at the badge font size.
 }
 
 extension Text {

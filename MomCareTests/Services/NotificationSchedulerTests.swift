@@ -72,5 +72,11 @@ struct NotificationSchedulerTests {
         #expect(ids.contains("hydration-daily"))
         #expect(ids.contains("selfcare-daily"))
         #expect(ids.contains("weekly-recap"))
+
+        let titlesById = Dictionary(
+            uniqueKeysWithValues: stub.scheduledNotifications.map { ($0.id, $0.title) }
+        )
+        #expect(titlesById["selfcare-daily"] == "A quiet check-in")
+        #expect(titlesById["weekly-recap"] == "Your week in review")
     }
 }

@@ -8,7 +8,7 @@ enum MCColor {
     static let diaper = Color("DiaperColor")
     static let baby = Color("BabyColor")
 
-    static let canvas = Color(red: 0.043, green: 0.031, blue: 0.043)
+    static let canvas = Color(red: 0.043, green: 0.031, blue: 0.039)
     static let canvasEdge = Color.black
 
     static let error = Color(red: 0.937, green: 0.267, blue: 0.267)
@@ -20,7 +20,7 @@ enum MCColor {
     }
 
     enum Foreground {
-        static let level1 = Color.white.opacity(1.00)
+        static let level1 = Color.white
         static let level2 = Color.white.opacity(0.70)
         static let level3 = Color.white.opacity(0.55)
         static let level4 = Color.white.opacity(0.40)

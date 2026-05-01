@@ -88,7 +88,7 @@ struct HealthKitServiceTests {
         )
         await viewModel.loadDashboard(babyId: UUID())
         let hasStepNudge = viewModel.suggestions.contains {
-            $0.message.contains("steps today")
+            $0.message.contains("steps so far")
         }
         #expect(hasStepNudge == true)
     }
@@ -103,7 +103,7 @@ struct HealthKitServiceTests {
         )
         await viewModel.loadDashboard(babyId: UUID())
         let hasStepNudge = viewModel.suggestions.contains {
-            $0.message.contains("steps today")
+            $0.message.contains("steps so far")
         }
         #expect(hasStepNudge == false)
     }

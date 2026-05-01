@@ -123,12 +123,7 @@ let project = Project(
                     .testableTarget(target: .target("MomCareUITests")),
                 ]
             ),
-            runAction: .runAction(
-                executable: .target("MomCare"),
-                options: .options(
-                    storeKitConfigurationPath: .relativeToRoot("MomCare/Configuration/MomCare.storekit")
-                )
-            )
+            runAction: .runAction(executable: .target("MomCare"))
         ),
     ]
 )

@@ -168,7 +168,7 @@ final class DashboardViewModel {
         if dailySummary.waterGlassesToday < 4 {
             let glasses = dailySummary.waterGlassesToday
             let message = glasses == 0
-                ? "No water logged yet today. A sip goes a long way."
+                ? "No water logged yet today. A small sip can help."
                 : "\(glasses) glass\(glasses == 1 ? "" : "es") of water so far. Another sip whenever it fits."
             result.append(SmartSuggestion(message: message, actionTab: .selfCare))
         }
