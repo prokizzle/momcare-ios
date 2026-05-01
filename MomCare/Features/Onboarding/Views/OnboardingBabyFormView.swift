@@ -8,6 +8,7 @@ import SwiftUI
 struct OnboardingBabyFormView: View {
     @Bindable var viewModel: OnboardingViewModel
     @State private var selectedPhoto: PhotosPickerItem?
+    @State private var photoLoadTask: Task<Void, Never>?
     @State private var showOptionalDetails = false
     @State private var showSuccess = false
     @State private var showSkeleton = true
@@ -31,21 +32,32 @@ struct OnboardingBabyFormView: View {
             }
         }
         .onChange(of: selectedPhoto) { _, newItem in
+            photoLoadTask?.cancel()
             guard let newItem else {
+                viewModel.babyPhotoData = nil
                 viewModel.photoLoadError = nil
                 return
             }
-            Task { @MainActor in
+            photoLoadTask = Task { @MainActor in
                 do {
                     let data = try await Task.detached(priority: .userInitiated) {
                         try await newItem.loadTransferable(type: Data.self)
                     }.value
+                    guard !Task.isCancelled else { return }
                     viewModel.babyPhotoData = data
                     viewModel.photoLoadError = nil
+                    MCHaptic.success()
+                } catch is CancellationError {
+                    return
                 } catch {
+                    guard !Task.isCancelled else { return }
+                    viewModel.babyPhotoData = nil
                     viewModel.photoLoadError = "Failed to load photo. Please try again."
                 }
             }
+        }
+        .onDisappear {
+            photoLoadTask?.cancel()
         }
     }
 
@@ -195,6 +207,7 @@ struct OnboardingBabyFormView: View {
                         .frame(maxWidth: .infinity)
                         .background(MCElevation.elevated, in: RoundedRectangle(cornerRadius: MCRadius.md))
                     }
+                    .simultaneousGesture(TapGesture().onEnded { MCHaptic.tap() })
                     .accessibilityLabel("Choose baby photo")
 
                     if viewModel.babyPhotoData != nil {

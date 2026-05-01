@@ -78,7 +78,7 @@ struct NotificationScheduler: Sendable {
         try await service.scheduleLocal(
             id: "selfcare-daily",
             title: "A quiet check-in",
-            body: "How are you feeling tonight? You showed up today, and that is enough.",
+            body: "How are you feeling today? You showed up, and that is enough.",
             trigger: trigger,
             categoryIdentifier: NotificationCategory.selfCare.rawValue
         )
