@@ -18,10 +18,7 @@ struct FeedingTimerView: View {
                 }
             }
             Spacer()
-            VStack(spacing: MCSpacing.md) {
-                endButton
-                noteActions
-            }
+            endButton
         }
         .padding(.horizontal, MCSpacing.xl)
         .padding(.top, MCSpacing.section)
@@ -137,19 +134,5 @@ struct FeedingTimerView: View {
                 .clipShape(RoundedRectangle(cornerRadius: MCRadius.lg))
         }
         .padding(.bottom, MCSpacing.xxl)
-    }
-
-    private var noteActions: some View {
-        HStack(spacing: MCSpacing.xl) {
-            Button("Pause") {
-                MCHaptic.tap()
-            }
-            Button("Add a note") {
-                MCHaptic.tap()
-            }
-        }
-        .font(MCTypography.footnote)
-        .foregroundStyle(MCColor.Foreground.level3)
-        .padding(.bottom, MCSpacing.sm)
     }
 }

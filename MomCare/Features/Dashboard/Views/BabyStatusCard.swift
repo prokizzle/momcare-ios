@@ -72,7 +72,7 @@ struct BabyStatusCard: View {
                     .foregroundStyle(MCColor.Foreground.level3)
             }
             Spacer()
-            iconBubble(systemName: "drop.fill", color: viewModel.urgency.color)
+            iconBubble(systemName: "clock.fill", color: viewModel.urgency.color)
         }
     }
 

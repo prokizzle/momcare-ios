@@ -67,7 +67,7 @@ extension SelfCareCard.CardType {
         switch self {
         case .selfCareWindow: "For you, right now"
         case .hydrationNudge: "Hydration"
-        case .affirmation: "Pep talk"
+        case .affirmation: "Affirmation"
         case .pepTalk: "Pep talk"
         case .checkIn: "Check-in"
         case .streak: "Streak"

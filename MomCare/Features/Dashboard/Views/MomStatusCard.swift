@@ -41,7 +41,14 @@ struct MomStatusCard: View {
     }
 
     private var summaryText: String {
-        "\(viewModel.dailySummary.waterGlassesToday) glasses · \(viewModel.dailySummary.mealsToday) meals · "
-        + "\(viewModel.dailySummary.totalActionsToday) actions"
+        [
+            countText(viewModel.dailySummary.waterGlassesToday, singular: "glass", plural: "glasses"),
+            countText(viewModel.dailySummary.mealsToday, singular: "meal", plural: "meals"),
+            countText(viewModel.dailySummary.totalActionsToday, singular: "action", plural: "actions"),
+        ].joined(separator: " · ")
+    }
+
+    private func countText(_ count: Int, singular: String, plural: String) -> String {
+        "\(count) \(count == 1 ? singular : plural)"
     }
 }
