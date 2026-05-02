@@ -23,7 +23,6 @@ struct FeedingPatternCard: View {
                 }
 
                 Spacer(minLength: 0)
-                rhythmStrip
             }
 
             if let lastFeedTime {
@@ -72,21 +71,5 @@ struct FeedingPatternCard: View {
                 .font(MCTypography.timestamp)
                 .foregroundStyle(.secondary)
         }
-    }
-
-    private var rhythmStrip: some View {
-        HStack(alignment: .bottom, spacing: 4) {
-            ForEach(Array(rhythmValues.enumerated()), id: \.offset) { _, value in
-                RoundedRectangle(cornerRadius: 2.5)
-                    .fill(MCColor.feeding.opacity(0.30 + 0.70 * value))
-                    .frame(width: 9, height: 42 * value)
-            }
-        }
-        .frame(height: 48, alignment: .bottom)
-        .accessibilityHidden(true)
-    }
-
-    private var rhythmValues: [Double] {
-        [0.70, 0.47, 0.92, 0.63, 1.00, 0.50, 0.87, 0.60, 0.80]
     }
 }

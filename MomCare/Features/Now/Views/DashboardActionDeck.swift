@@ -195,7 +195,7 @@ private struct DashboardMomActionButton: View {
         .buttonStyle(.plain)
         .disabled(!isEnabled)
         .accessibilityLabel("Log \(actionType.label)")
-        .accessibilityHint(isRecentlyTapped ? "Logged recently" : "Tap to log")
+        .accessibilityHint(accessibilityHint)
     }
 
     private var shortLabel: String {
@@ -203,5 +203,10 @@ private struct DashboardMomActionButton: View {
         case .breathingExercise: "Breathe"
         default: actionType.label
         }
+    }
+
+    private var accessibilityHint: String {
+        if !isEnabled { return "Disabled" }
+        return isRecentlyTapped ? "Logged recently" : "Tap to log"
     }
 }

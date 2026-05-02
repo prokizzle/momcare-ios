@@ -151,34 +151,6 @@ struct ContentView: View {
         .tabItem { Label("Growth", systemImage: "chart.line.uptrend.xyaxis") }
         .tag(AppTab.growth)
     }
-
-    @ViewBuilder
-    private func journalTab(babyViewModel: BabyViewModel) -> some View {
-        @Bindable var navigation = navigation
-        NavigationStack(path: $navigation.journalPath) {
-            JournalScreen(
-                viewModel: journalViewModel,
-                babyId: babyViewModel.selectedBaby?.id
-            )
-            .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    BabySelectorView(viewModel: babyViewModel)
-                }
-            }
-        }
-        .tabItem { Label("Journal", systemImage: "book.pages") }
-        .tag(AppTab.journal)
-    }
-
-    @ViewBuilder
-    private func planTab() -> some View {
-        @Bindable var navigation = navigation
-        NavigationStack(path: $navigation.planPath) {
-            PlanScreen()
-        }
-        .tabItem { Label("Plan", systemImage: "map.fill") }
-        .tag(AppTab.plan)
-    }
 }
 
 #Preview {

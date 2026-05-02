@@ -17,8 +17,8 @@ struct AppNavigationTests {
         #expect(nav.nowPath.isEmpty)
         #expect(nav.babyPath.isEmpty)
         #expect(nav.selfCarePath.isEmpty)
-        #expect(nav.journalPath.isEmpty)
-        #expect(nav.planPath.isEmpty)
+        #expect(nav.feedingPath.isEmpty)
+        #expect(nav.growthPath.isEmpty)
     }
 
     @Test("Tab enum has five cases")
@@ -27,8 +27,8 @@ struct AppNavigationTests {
         #expect(tabs.count == 5)
         #expect(tabs.contains(.now))
         #expect(tabs.contains(.baby))
+        #expect(tabs.contains(.feeding))
         #expect(tabs.contains(.selfCare))
-        #expect(tabs.contains(.journal))
-        #expect(tabs.contains(.plan))
+        #expect(tabs.contains(.growth))
     }
 }

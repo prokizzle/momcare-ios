@@ -19,8 +19,6 @@ enum AppTab: String, CaseIterable, Sendable {
     case baby
     case selfCare
     case growth
-    case journal
-    case plan
 }
 
 @MainActor
@@ -32,8 +30,6 @@ final class AppNavigation {
     var babyPath = NavigationPath()
     var selfCarePath = NavigationPath()
     var growthPath = NavigationPath()
-    var journalPath = NavigationPath()
-    var planPath = NavigationPath()
     var pendingEndActivityType: String?
 
     func handleURL(_ url: URL) {
