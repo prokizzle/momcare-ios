@@ -7,7 +7,7 @@ struct ActionGridView: View {
     let onTap: (SelfCareActionType) -> Void
     let onLongPress: (SelfCareActionType) -> Void
 
-    private let columns = Array(repeating: GridItem(.flexible(), spacing: MCSpacing.sm), count: 3)
+    private let columns = Array(repeating: GridItem(.flexible(), spacing: MCSpacing.sm), count: 4)
 
     var body: some View {
         LazyVGrid(columns: columns, spacing: MCSpacing.sm) {

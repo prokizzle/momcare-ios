@@ -23,6 +23,8 @@ struct NowScreen: View {
         ScrollView {
             VStack(spacing: MCSpacing.lg) {
                 BabyStatusStrip(babyId: babyId)
+                BabyStatusCard(viewModel: viewModel)
+                MomStatusCard(viewModel: viewModel)
 
                 if !viewModel.visibleSuggestions.isEmpty {
                     suggestionsSection(viewModel: viewModel)
@@ -31,6 +33,7 @@ struct NowScreen: View {
             .padding(.horizontal, MCSpacing.xl)
             .padding(.vertical, MCSpacing.lg)
         }
+        .ambientBackground()
         .task {
             await viewModel.loadDashboard(babyId: babyId)
         }

@@ -5,6 +5,7 @@ struct ContentView: View {
     @Environment(AppNavigation.self) private var navigation
 
     var babyViewModel: BabyViewModel?
+    var feedingViewModel: FeedingViewModel?
     var selfCareViewModel: SelfCareViewModel?
     var dashboardViewModel: DashboardViewModel?
     var babyActivityEngine: BabyActivityEngine?
@@ -33,10 +34,10 @@ struct ContentView: View {
         @Bindable var navigation = navigation
         TabView(selection: $navigation.selectedTab) {
             nowTab(babyViewModel: babyViewModel)
-            babyTab(babyViewModel: babyViewModel)
+            feedingTab(babyViewModel: babyViewModel)
             selfCareTab(babyViewModel: babyViewModel)
-            journalTab(babyViewModel: babyViewModel)
-            planTab()
+            growthTab(babyViewModel: babyViewModel)
+            moreTab(babyViewModel: babyViewModel)
         }
     }
 
@@ -54,12 +55,30 @@ struct ContentView: View {
                 }
             }
         }
-        .tabItem { Label("Now", systemImage: "sun.horizon.fill") }
+        .tabItem { Label("Now", systemImage: "house.fill") }
         .tag(AppTab.now)
     }
 
     @ViewBuilder
-    private func babyTab(babyViewModel: BabyViewModel) -> some View {
+    private func feedingTab(babyViewModel: BabyViewModel) -> some View {
+        @Bindable var navigation = navigation
+        NavigationStack(path: $navigation.feedingPath) {
+            FeedingScreen(
+                viewModel: feedingViewModel,
+                babyId: babyViewModel.selectedBaby?.id
+            )
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    BabySelectorView(viewModel: babyViewModel)
+                }
+            }
+        }
+        .tabItem { Label("Feeding", systemImage: "drop.fill") }
+        .tag(AppTab.feeding)
+    }
+
+    @ViewBuilder
+    private func moreTab(babyViewModel: BabyViewModel) -> some View {
         @Bindable var navigation = navigation
         NavigationStack(path: $navigation.babyPath) {
             BabyScreen(
@@ -77,7 +96,7 @@ struct ContentView: View {
                     }
                 }
         }
-        .tabItem { Label("Baby", systemImage: "figure.and.child.holdinghands") }
+        .tabItem { Label("More", systemImage: "person.crop.circle") }
         .tag(AppTab.baby)
     }
 
@@ -92,8 +111,41 @@ struct ContentView: View {
                     }
                 }
         }
-        .tabItem { Label("Self-Care", systemImage: "sparkles") }
+        .tabItem { Label("You", systemImage: "sparkles") }
         .tag(AppTab.selfCare)
+    }
+
+    @ViewBuilder
+    private func growthTab(babyViewModel: BabyViewModel) -> some View {
+        @Bindable var navigation = navigation
+        NavigationStack(path: $navigation.growthPath) {
+            if let baby = babyViewModel.selectedBaby,
+               let growthViewModel {
+                GrowthScreen(
+                    babyId: baby.id,
+                    dateOfBirth: baby.dateOfBirth,
+                    biologicalSex: baby.biologicalSex,
+                    baby: baby,
+                    healthEvents: healthEventsViewModel?.events ?? [],
+                    viewModel: growthViewModel
+                )
+                .toolbar {
+                    ToolbarItem(placement: .topBarLeading) {
+                        BabySelectorView(viewModel: babyViewModel)
+                    }
+                }
+            } else {
+                ContentUnavailableView(
+                    "Select a baby",
+                    systemImage: "figure.and.child.holdinghands",
+                    description: Text("Growth charts appear once a baby profile is selected.")
+                )
+                .navigationTitle("Growth")
+                .ambientBackground()
+            }
+        }
+        .tabItem { Label("Growth", systemImage: "chart.line.uptrend.xyaxis") }
+        .tag(AppTab.growth)
     }
 
     @ViewBuilder

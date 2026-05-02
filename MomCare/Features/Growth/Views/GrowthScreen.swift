@@ -16,8 +16,8 @@ struct GrowthScreen: View {
         ScrollView {
             VStack(spacing: MCSpacing.xl) {
                 measurementPicker
+                measurementHero
                 chartSection
-                percentileLabel
                 addButton
                 historySection
             }
@@ -25,6 +25,7 @@ struct GrowthScreen: View {
             .padding(.vertical, MCSpacing.lg)
         }
         .navigationTitle("Growth")
+        .ambientBackground()
         .toolbar {
             ToolbarItem(placement: .topBarTrailing) {
                 Button {
@@ -130,6 +131,8 @@ struct GrowthScreen: View {
             .chartYAxisLabel(yAxisLabel)
             .frame(height: 280)
             .accessibilityLabel(chartAccessibilityLabel)
+            .padding(MCSpacing.lg)
+            .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.xl))
         } else {
             emptyChartPlaceholder
         }
@@ -152,21 +155,51 @@ struct GrowthScreen: View {
         .frame(height: 280)
     }
 
-    // MARK: - Percentile Label
+    // MARK: - Measurement Hero
 
     @ViewBuilder
-    private var percentileLabel: some View {
-        if let pct = viewModel.latestPercentile {
-            HStack {
-                Image(systemName: "chart.bar.fill")
-                    .foregroundStyle(MCColor.accent)
-                    .accessibilityHidden(true)
-                Text("Latest: \(Int(pct))th percentile")
-                    .font(MCTypography.title3)
+    private var measurementHero: some View {
+        if let latestRecord {
+            VStack(alignment: .leading, spacing: MCSpacing.md) {
+                HStack {
+                    Text(viewModel.selectedMeasurement.label)
+                        .mcBadge()
+                        .foregroundStyle(MCColor.accent)
+                    Spacer()
+                    Text("WHO 0-24 mo")
+                        .font(MCTypography.caption)
+                        .foregroundStyle(MCColor.Foreground.level3)
+                }
+
+                HStack(alignment: .center, spacing: MCSpacing.md) {
+                    VStack(alignment: .leading, spacing: MCSpacing.xs) {
+                        Text(selectedMeasurementValue(record: latestRecord))
+                            .font(MCTypography.display)
+                            .foregroundStyle(MCColor.Foreground.level1)
+                            .monospacedDigit()
+                        Text(latestRecord.date.formatted(date: .abbreviated, time: .shortened))
+                            .font(MCTypography.footnote)
+                            .foregroundStyle(MCColor.Foreground.level3)
+                    }
+
+                    Spacer(minLength: 0)
+
+                    if let pct = viewModel.latestPercentile {
+                        percentileOrb(percentile: pct)
+                    }
+                }
             }
-            .padding(MCSpacing.md)
-            .frame(maxWidth: .infinity)
-            .background(MCElevation.surface, in: RoundedRectangle(cornerRadius: MCRadius.md))
+            .padding(MCSpacing.xl)
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background {
+                RoundedRectangle(cornerRadius: MCRadius.xl)
+                    .fill(MCElevation.elevated)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: MCRadius.xl)
+                            .stroke(MCColor.accent.opacity(MCOpacity.soft), lineWidth: 1)
+                    }
+                    .shadow(color: MCColor.accent.opacity(MCOpacity.soft), radius: 24)
+            }
         }
     }
 
@@ -188,6 +221,28 @@ struct GrowthScreen: View {
             .frame(height: 50)
             .background(MCColor.accent, in: RoundedRectangle(cornerRadius: MCRadius.lg))
         }
+    }
+
+    private func percentileOrb(percentile: Double) -> some View {
+        ZStack {
+            Circle()
+                .stroke(MCColor.accent.opacity(MCOpacity.soft), lineWidth: 6)
+            Circle()
+                .trim(from: 0, to: min(max(percentile / 100, 0), 1))
+                .stroke(MCColor.accent, style: StrokeStyle(lineWidth: 6, lineCap: .round))
+                .rotationEffect(.degrees(-90))
+            VStack(spacing: 0) {
+                Text("\(Int(percentile))")
+                    .font(MCTypography.title2)
+                    .foregroundStyle(MCColor.Foreground.level1)
+                    .monospacedDigit()
+                Text("pct")
+                    .font(MCTypography.caption)
+                    .foregroundStyle(MCColor.Foreground.level3)
+            }
+        }
+        .frame(width: 96, height: 96)
+        .accessibilityLabel("\(Int(percentile))th percentile")
     }
 
     // MARK: - History
@@ -235,6 +290,21 @@ struct GrowthScreen: View {
             return Locale.current.measurementSystem == .metric ? value / 1000.0 : value / 453.592
         case .length, .headCircumference:
             return Locale.current.measurementSystem == .metric ? value : value / 2.54
+        }
+    }
+
+    private var latestRecord: GrowthRecord? {
+        viewModel.records.max { $0.date < $1.date }
+    }
+
+    private func selectedMeasurementValue(record: GrowthRecord) -> String {
+        switch viewModel.selectedMeasurement {
+        case .weight:
+            return record.weightFormatted
+        case .length:
+            return record.lengthFormatted
+        case .headCircumference:
+            return record.headCircumferenceFormatted
         }
     }
 

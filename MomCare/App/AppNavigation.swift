@@ -15,8 +15,10 @@ enum FeedingRoute: Hashable {
 
 enum AppTab: String, CaseIterable, Sendable {
     case now
+    case feeding
     case baby
     case selfCare
+    case growth
     case journal
     case plan
 }
@@ -26,8 +28,10 @@ enum AppTab: String, CaseIterable, Sendable {
 final class AppNavigation {
     var selectedTab: AppTab = .now
     var nowPath = NavigationPath()
+    var feedingPath = NavigationPath()
     var babyPath = NavigationPath()
     var selfCarePath = NavigationPath()
+    var growthPath = NavigationPath()
     var journalPath = NavigationPath()
     var planPath = NavigationPath()
     var pendingEndActivityType: String?

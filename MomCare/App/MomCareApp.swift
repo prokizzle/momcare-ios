@@ -63,6 +63,7 @@ struct MomCareApp: App {
     @AppStorage("hasCompletedOnboarding") private var hasCompletedOnboarding = false
     @State private var onboardingViewModel: OnboardingViewModel?
     @State private var babyViewModel: BabyViewModel?
+    @State private var feedingViewModel: FeedingViewModel?
     @State private var selfCareViewModel: SelfCareViewModel?
     @State private var dashboardViewModel: DashboardViewModel?
     @State private var babyActivityEngine: BabyActivityEngine?
@@ -74,6 +75,17 @@ struct MomCareApp: App {
     @State private var splashFinished = false
     @Environment(\.scenePhase) private var scenePhase
 
+    private func makeAuthServiceIfConfigured() -> AuthService? {
+        guard let options = FirebaseApp.app()?.options else {
+            return nil
+        }
+        let apiKey: String? = options.apiKey
+        guard let apiKey, !apiKey.isEmpty else {
+            return nil
+        }
+        return AuthService()
+    }
+
     var body: some Scene {
         WindowGroup {
             Group {
@@ -82,6 +94,7 @@ struct MomCareApp: App {
                 } else if hasCompletedOnboarding {
                     ContentView(
                         babyViewModel: babyViewModel,
+                        feedingViewModel: feedingViewModel,
                         selfCareViewModel: selfCareViewModel,
                         dashboardViewModel: dashboardViewModel,
                         babyActivityEngine: babyActivityEngine,
@@ -107,7 +120,6 @@ struct MomCareApp: App {
                 if !hasCompletedOnboarding && onboardingViewModel == nil {
                     let deps = AppDependencies(modelContext: sharedModelContainer.mainContext)
                     let babyRepo = deps.makeBabyRepository()
-                    let authService = FirebaseApp.app() != nil ? AuthService() : nil
                     onboardingViewModel = OnboardingViewModel(dependencies: .init(
                         requestNotifications: {
                             // Intentional direct usage: NotificationManager is a system
@@ -120,6 +132,7 @@ struct MomCareApp: App {
                             return false
                         },
                         signInWithApple: { authorization, nonce in
+                            let authService = makeAuthServiceIfConfigured()
                             guard let authService else {
                                 throw AuthError.firebaseNotConfigured
                             }
@@ -132,6 +145,7 @@ struct MomCareApp: App {
                             throw AuthError.googleSignInNotAvailable
                         },
                         signInAnonymously: {
+                            let authService = makeAuthServiceIfConfigured()
                             guard let authService else {
                                 throw AuthError.firebaseNotConfigured
                             }
@@ -161,6 +175,7 @@ struct MomCareApp: App {
                     let babyVM = BabyViewModel(repository: deps.makeBabyRepository())
                     await babyVM.loadBabies()
                     babyViewModel = babyVM
+                    feedingViewModel = FeedingViewModel(repository: deps.makeFeedingRepository())
 
                     if let baby = babyVM.selectedBaby {
                         SharedDataManager.updateBaby(name: baby.name)
@@ -265,8 +280,10 @@ struct MomCareApp: App {
                 switch newPhase {
                 case .background:
                     babyActivityEngine?.pauseTimers()
+                    feedingViewModel?.pauseTimer()
                 case .active:
                     babyActivityEngine?.resumeTimersIfNeeded()
+                    feedingViewModel?.resumeTimerIfNeeded()
                 default:
                     break
                 }

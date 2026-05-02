@@ -160,7 +160,7 @@ final class DashboardViewModel {
         if urgency == .urgent && inProgressFeeding == nil {
             result.append(SmartSuggestion(
                 message: "Baby may be due for a feeding soon.",
-                actionTab: .baby
+                actionTab: .feeding
             ))
         }
 

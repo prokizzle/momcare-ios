@@ -34,7 +34,11 @@ struct SmartSuggestionBanner: View {
         .padding(MCSpacing.lg)
         .background {
             RoundedRectangle(cornerRadius: MCRadius.md)
-                .fill(MCElevation.surface)
+                .fill(MCColor.selfCare.opacity(MCOpacity.ghost))
+                .overlay {
+                    RoundedRectangle(cornerRadius: MCRadius.md)
+                        .stroke(MCColor.selfCare.opacity(MCOpacity.soft), lineWidth: 1)
+                }
         }
         .offset(x: dragOffset)
         .gesture(

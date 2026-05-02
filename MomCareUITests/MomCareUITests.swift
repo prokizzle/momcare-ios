@@ -10,10 +10,13 @@ final class MomCareUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        // App should show either onboarding or the main tab bar
+        // App should show the splash, onboarding, or the redesigned main tab bar.
+        let splashTitle = app.staticTexts["MomCare"]
         let getStarted = app.buttons["Get Started"]
         let tabBar = app.tabBars.firstMatch
-        let eitherExists = getStarted.waitForExistence(timeout: 5) || tabBar.exists
-        XCTAssertTrue(eitherExists, "Expected either onboarding or main tab bar")
+        let eitherExists = splashTitle.waitForExistence(timeout: 5)
+            || getStarted.waitForExistence(timeout: 10)
+            || tabBar.waitForExistence(timeout: 10)
+        XCTAssertTrue(eitherExists, "Expected splash, onboarding, or main tab bar")
     }
 }

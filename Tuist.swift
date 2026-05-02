@@ -1,3 +1,3 @@
 import ProjectDescription
 
-let tuist = Tuist(fullHandle: "feelingmindful/MomCare")
+let tuist = Tuist(fullHandle: "FeelingMindfulOrg/momcare")

@@ -10,13 +10,16 @@ struct FeedingTimerRing: View {
     let timerText: String
     var maxDuration: TimeInterval = 45 * 60
 
-    private static let ringSize: CGFloat = 220
-    private static let lineWidth: CGFloat = 8
+    private static let ringSize: CGFloat = 300
+    private static let lineWidth: CGFloat = 6
 
     @Environment(\.accessibilityReduceMotion) private var reduceMotion
 
     var body: some View {
         ZStack {
+            Circle()
+                .fill(MCGradient.glow(color: MCColor.feeding, radius: 150))
+                .blur(radius: 2)
             ringLayer
             timerLabel
         }
