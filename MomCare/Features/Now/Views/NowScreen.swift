@@ -4,6 +4,8 @@ import SwiftUI
 struct NowScreen: View {
     var dashboardViewModel: DashboardViewModel?
     let babyId: UUID?
+    var sleepViewModel: SleepViewModel?
+    var selfCareViewModel: SelfCareViewModel?
 
     @Environment(AppNavigation.self) private var navigation
 
@@ -23,6 +25,11 @@ struct NowScreen: View {
         ScrollView {
             VStack(spacing: MCSpacing.lg) {
                 BabyStatusStrip(babyId: babyId)
+                DashboardActionDeck(
+                    babyId: babyId,
+                    sleepViewModel: sleepViewModel,
+                    selfCareViewModel: selfCareViewModel
+                )
                 BabyStatusCard(viewModel: viewModel)
                 MomStatusCard(viewModel: viewModel)
 

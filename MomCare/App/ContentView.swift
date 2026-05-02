@@ -34,10 +34,10 @@ struct ContentView: View {
         @Bindable var navigation = navigation
         TabView(selection: $navigation.selectedTab) {
             nowTab(babyViewModel: babyViewModel)
+            babyTab(babyViewModel: babyViewModel)
             feedingTab(babyViewModel: babyViewModel)
             selfCareTab(babyViewModel: babyViewModel)
             growthTab(babyViewModel: babyViewModel)
-            moreTab(babyViewModel: babyViewModel)
         }
     }
 
@@ -47,7 +47,9 @@ struct ContentView: View {
         NavigationStack(path: $navigation.nowPath) {
             NowScreen(
                 dashboardViewModel: dashboardViewModel,
-                babyId: babyViewModel.selectedBaby?.id
+                babyId: babyViewModel.selectedBaby?.id,
+                sleepViewModel: sleepViewModel,
+                selfCareViewModel: selfCareViewModel
             )
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
@@ -78,7 +80,7 @@ struct ContentView: View {
     }
 
     @ViewBuilder
-    private func moreTab(babyViewModel: BabyViewModel) -> some View {
+    private func babyTab(babyViewModel: BabyViewModel) -> some View {
         @Bindable var navigation = navigation
         NavigationStack(path: $navigation.babyPath) {
             BabyScreen(
@@ -96,7 +98,7 @@ struct ContentView: View {
                     }
                 }
         }
-        .tabItem { Label("More", systemImage: "person.crop.circle") }
+        .tabItem { Label("Baby", systemImage: "figure.and.child.holdinghands") }
         .tag(AppTab.baby)
     }
 
