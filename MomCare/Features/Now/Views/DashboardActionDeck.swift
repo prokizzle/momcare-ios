@@ -32,10 +32,12 @@ struct DashboardActionDeck: View {
         .navigationDestination(isPresented: $showSleepTimer) {
             if let babyId {
                 SleepTimerView(babyId: babyId) { quality, location in
-                    guard let sleepViewModel else { return }
-                    sleepViewModel.selectedQuality = quality
-                    sleepViewModel.selectedLocation = location
-                    await sleepViewModel.endSleep(babyId: babyId)
+                    if let sleepViewModel {
+                        sleepViewModel.selectedQuality = quality
+                        sleepViewModel.selectedLocation = location
+                        await sleepViewModel.endSleep(babyId: babyId)
+                        guard sleepViewModel.error == nil else { return }
+                    }
                     await engine.endNap(babyId: babyId)
                 }
             }

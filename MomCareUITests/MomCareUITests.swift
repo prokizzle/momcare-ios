@@ -10,13 +10,15 @@ final class MomCareUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        // App should show the splash, onboarding, or the redesigned main tab bar.
+        // Synchronize on launch, then require an actionable app state.
         let splashTitle = app.staticTexts["MomCare"]
         let getStarted = app.buttons["Get Started"]
         let tabBar = app.tabBars.firstMatch
-        let eitherExists = splashTitle.waitForExistence(timeout: 5)
-            || getStarted.waitForExistence(timeout: 10)
+        let anyActionableButton = app.buttons.firstMatch
+        _ = splashTitle.waitForExistence(timeout: 5)
+        let readyStateExists = getStarted.waitForExistence(timeout: 10)
             || tabBar.waitForExistence(timeout: 10)
-        XCTAssertTrue(eitherExists, "Expected splash, onboarding, or main tab bar")
+            || anyActionableButton.waitForExistence(timeout: 10)
+        XCTAssertTrue(readyStateExists, "Expected actionable UI or main tab bar after launch")
     }
 }

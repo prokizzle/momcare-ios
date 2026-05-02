@@ -42,6 +42,8 @@ struct FeedingTimerView: View {
                 MCHaptic.tap()
                 dismiss()
             }
+            .frame(minWidth: 44, minHeight: 44, alignment: .leading)
+            .contentShape(Rectangle())
             .font(MCTypography.button)
             .foregroundStyle(MCColor.Foreground.level2)
 

@@ -36,7 +36,7 @@ struct BabyStatusStrip: View {
                 .fill(MCElevation.elevated)
                 .overlay {
                     RoundedRectangle(cornerRadius: MCRadius.md)
-                        .stroke(Color.white.opacity(MCOpacity.whisper), lineWidth: 1)
+                        .stroke(MCColor.Foreground.level1.opacity(MCOpacity.whisper), lineWidth: 1)
                 }
         }
     }

@@ -39,7 +39,7 @@ struct FeedingPatternCard: View {
                 .padding(.top, MCSpacing.sm)
                 .overlay(alignment: .top) {
                     Rectangle()
-                        .fill(Color.white.opacity(MCOpacity.whisper))
+                        .fill(MCColor.Foreground.level1.opacity(MCOpacity.whisper))
                         .frame(height: 1)
                 }
             }

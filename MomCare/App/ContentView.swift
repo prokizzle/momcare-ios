@@ -121,29 +121,31 @@ struct ContentView: View {
     private func growthTab(babyViewModel: BabyViewModel) -> some View {
         @Bindable var navigation = navigation
         NavigationStack(path: $navigation.growthPath) {
-            if let baby = babyViewModel.selectedBaby,
-               let growthViewModel {
-                GrowthScreen(
-                    babyId: baby.id,
-                    dateOfBirth: baby.dateOfBirth,
-                    biologicalSex: baby.biologicalSex,
-                    baby: baby,
-                    healthEvents: healthEventsViewModel?.events ?? [],
-                    viewModel: growthViewModel
-                )
-                .toolbar {
-                    ToolbarItem(placement: .topBarLeading) {
-                        BabySelectorView(viewModel: babyViewModel)
-                    }
+            Group {
+                if let baby = babyViewModel.selectedBaby,
+                   let growthViewModel {
+                    GrowthScreen(
+                        babyId: baby.id,
+                        dateOfBirth: baby.dateOfBirth,
+                        biologicalSex: baby.biologicalSex,
+                        baby: baby,
+                        healthEvents: healthEventsViewModel?.events ?? [],
+                        viewModel: growthViewModel
+                    )
+                } else {
+                    ContentUnavailableView(
+                        "Select a baby",
+                        systemImage: "figure.and.child.holdinghands",
+                        description: Text("Growth charts appear once a baby profile is selected.")
+                    )
                 }
-            } else {
-                ContentUnavailableView(
-                    "Select a baby",
-                    systemImage: "figure.and.child.holdinghands",
-                    description: Text("Growth charts appear once a baby profile is selected.")
-                )
-                .navigationTitle("Growth")
-                .ambientBackground()
+            }
+            .navigationTitle("Growth")
+            .ambientBackground()
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    BabySelectorView(viewModel: babyViewModel)
+                }
             }
         }
         .tabItem { Label("Growth", systemImage: "chart.line.uptrend.xyaxis") }
