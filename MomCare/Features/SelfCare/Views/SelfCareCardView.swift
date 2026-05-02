@@ -90,12 +90,12 @@ extension SelfCareCard.CardType {
     var accentColor: Color {
         switch self {
         case .selfCareWindow: MCColor.selfCare
-        case .hydrationNudge: .blue
-        case .affirmation: .pink
-        case .pepTalk: .orange
-        case .checkIn: .purple
+        case .hydrationNudge: MCColor.feeding
+        case .affirmation: MCColor.selfCare
+        case .pepTalk: MCColor.Urgency.warning
+        case .checkIn: MCColor.baby
         case .streak: MCColor.selfCare
-        case .gentleNudge: .green
+        case .gentleNudge: MCColor.Urgency.safe
         }
     }
 }
