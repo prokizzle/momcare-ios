@@ -8,11 +8,14 @@ struct FeedingTimerView: View {
     @State private var showEndConfirmation = false
 
     var body: some View {
-        VStack(spacing: MCSpacing.xxl) {
-            feedingTypeIndicator
-            timerDisplay
-            if viewModel.inProgressFeeding?.feedingType == .breast {
-                breastSideToggle
+        VStack(spacing: MCSpacing.xl) {
+            header
+            Spacer()
+            VStack(spacing: MCSpacing.xxl) {
+                timerDisplay
+                if viewModel.inProgressFeeding?.feedingType == .breast {
+                    breastSideToggle
+                }
             }
             Spacer()
             endButton
@@ -33,23 +36,52 @@ struct FeedingTimerView: View {
         }
     }
 
-    private var feedingTypeIndicator: some View {
-        HStack(spacing: MCSpacing.sm) {
-            if let feedingType = viewModel.inProgressFeeding?.feedingType {
-                Image(systemName: feedingType.systemImage)
-                    .font(.title2)
-                Text(feedingType.label)
-                    .font(MCTypography.title3)
+    private var header: some View {
+        HStack {
+            Button("Cancel") {
+                MCHaptic.tap()
+                dismiss()
             }
+            .frame(minWidth: 44, minHeight: 44, alignment: .leading)
+            .contentShape(Rectangle())
+            .font(MCTypography.button)
+            .foregroundStyle(MCColor.Foreground.level2)
+
+            Spacer()
+
+            HStack(spacing: MCSpacing.sm) {
+                if let feedingType = viewModel.inProgressFeeding?.feedingType {
+                    Image(systemName: feedingType.systemImage)
+                        .font(.subheadline)
+                        .accessibilityHidden(true)
+                    Text(feedingType.label)
+                        .font(MCTypography.headline)
+                }
+            }
+            .foregroundStyle(MCColor.Foreground.level2)
+
+            Spacer()
+            Color.clear.frame(width: 60, height: 1)
         }
-        .foregroundStyle(.secondary)
     }
 
     private var timerDisplay: some View {
-        FeedingTimerRing(
-            startTime: viewModel.inProgressFeeding?.startTime,
-            timerText: viewModel.elapsedTimeFormatted
-        )
+        ZStack {
+            FeedingTimerRing(
+                startTime: viewModel.inProgressFeeding?.startTime,
+                timerText: viewModel.elapsedTimeFormatted
+            )
+            VStack(spacing: 90) {
+                Text("Active")
+                    .mcBadge()
+                    .foregroundStyle(MCColor.feeding)
+                Text("Hold steady")
+                    .font(MCTypography.footnote)
+                    .foregroundStyle(MCColor.Foreground.level3)
+                    .tracking(MCTypography.badgeTracking)
+                    .textCase(.uppercase)
+            }
+        }
     }
 
     private var breastSideToggle: some View {
@@ -72,7 +104,7 @@ struct FeedingTimerView: View {
                 .background(
                     viewModel.selectedSide == side
                         ? MCColor.feeding.opacity(MCOpacity.medium)
-                        : Color.white.opacity(MCOpacity.whisper)
+                        : MCElevation.surface
                 )
                 .clipShape(RoundedRectangle(cornerRadius: MCRadius.lg))
                 .overlay(

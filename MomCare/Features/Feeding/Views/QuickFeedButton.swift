@@ -12,17 +12,18 @@ struct QuickFeedButton: View {
             action()
         } label: {
             HStack(spacing: MCSpacing.md) {
-                Image(systemName: "drop.fill")
-                    .font(.title2)
+                Image(systemName: "play.fill")
+                    .font(.subheadline)
                     .accessibilityHidden(true)
                 Text("Start Feeding")
-                    .font(MCTypography.title3)
+                    .font(MCTypography.button)
             }
             .foregroundStyle(.white)
             .frame(maxWidth: .infinity)
-            .frame(height: 56)
+            .frame(height: 64)
             .background(MCColor.feeding)
             .clipShape(RoundedRectangle(cornerRadius: MCRadius.lg))
+            .shadow(color: MCColor.feeding.opacity(MCOpacity.medium), radius: 18)
         }
         .changeEffect(.shine, value: tapCount)
     }

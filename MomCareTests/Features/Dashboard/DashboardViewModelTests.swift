@@ -123,7 +123,7 @@ struct DashboardViewModelTests {
     func suggestionNoFeeding() async {
         let sut = makeSUT()
         await sut.loadDashboard(babyId: babyId)
-        let hasFeeding = sut.suggestions.contains { $0.actionTab == .baby }
+        let hasFeeding = sut.suggestions.contains { $0.actionTab == .feeding }
         #expect(hasFeeding)
     }
 

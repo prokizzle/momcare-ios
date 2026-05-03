@@ -5,6 +5,7 @@ struct ContentView: View {
     @Environment(AppNavigation.self) private var navigation
 
     var babyViewModel: BabyViewModel?
+    var feedingViewModel: FeedingViewModel?
     var selfCareViewModel: SelfCareViewModel?
     var dashboardViewModel: DashboardViewModel?
     var babyActivityEngine: BabyActivityEngine?
@@ -34,9 +35,9 @@ struct ContentView: View {
         TabView(selection: $navigation.selectedTab) {
             nowTab(babyViewModel: babyViewModel)
             babyTab(babyViewModel: babyViewModel)
+            feedingTab(babyViewModel: babyViewModel)
             selfCareTab(babyViewModel: babyViewModel)
-            journalTab(babyViewModel: babyViewModel)
-            planTab()
+            growthTab(babyViewModel: babyViewModel)
         }
     }
 
@@ -46,6 +47,26 @@ struct ContentView: View {
         NavigationStack(path: $navigation.nowPath) {
             NowScreen(
                 dashboardViewModel: dashboardViewModel,
+                babyId: babyViewModel.selectedBaby?.id,
+                sleepViewModel: sleepViewModel,
+                selfCareViewModel: selfCareViewModel
+            )
+            .toolbar {
+                ToolbarItem(placement: .topBarLeading) {
+                    BabySelectorView(viewModel: babyViewModel)
+                }
+            }
+        }
+        .tabItem { Label("Now", systemImage: "house.fill") }
+        .tag(AppTab.now)
+    }
+
+    @ViewBuilder
+    private func feedingTab(babyViewModel: BabyViewModel) -> some View {
+        @Bindable var navigation = navigation
+        NavigationStack(path: $navigation.feedingPath) {
+            FeedingScreen(
+                viewModel: feedingViewModel,
                 babyId: babyViewModel.selectedBaby?.id
             )
             .toolbar {
@@ -54,8 +75,8 @@ struct ContentView: View {
                 }
             }
         }
-        .tabItem { Label("Now", systemImage: "sun.horizon.fill") }
-        .tag(AppTab.now)
+        .tabItem { Label("Feeding", systemImage: "drop.fill") }
+        .tag(AppTab.feeding)
     }
 
     @ViewBuilder
@@ -92,36 +113,43 @@ struct ContentView: View {
                     }
                 }
         }
-        .tabItem { Label("Self-Care", systemImage: "sparkles") }
+        .tabItem { Label("You", systemImage: "sparkles") }
         .tag(AppTab.selfCare)
     }
 
     @ViewBuilder
-    private func journalTab(babyViewModel: BabyViewModel) -> some View {
+    private func growthTab(babyViewModel: BabyViewModel) -> some View {
         @Bindable var navigation = navigation
-        NavigationStack(path: $navigation.journalPath) {
-            JournalScreen(
-                viewModel: journalViewModel,
-                babyId: babyViewModel.selectedBaby?.id
-            )
+        NavigationStack(path: $navigation.growthPath) {
+            Group {
+                if let baby = babyViewModel.selectedBaby,
+                   let growthViewModel {
+                    GrowthScreen(
+                        babyId: baby.id,
+                        dateOfBirth: baby.dateOfBirth,
+                        biologicalSex: baby.biologicalSex,
+                        baby: baby,
+                        healthEvents: healthEventsViewModel?.events ?? [],
+                        viewModel: growthViewModel
+                    )
+                } else {
+                    ContentUnavailableView(
+                        "Select a baby",
+                        systemImage: "figure.and.child.holdinghands",
+                        description: Text("Growth charts appear once a baby profile is selected.")
+                    )
+                }
+            }
+            .navigationTitle("Growth")
+            .ambientBackground()
             .toolbar {
                 ToolbarItem(placement: .topBarLeading) {
                     BabySelectorView(viewModel: babyViewModel)
                 }
             }
         }
-        .tabItem { Label("Journal", systemImage: "book.pages") }
-        .tag(AppTab.journal)
-    }
-
-    @ViewBuilder
-    private func planTab() -> some View {
-        @Bindable var navigation = navigation
-        NavigationStack(path: $navigation.planPath) {
-            PlanScreen()
-        }
-        .tabItem { Label("Plan", systemImage: "map.fill") }
-        .tag(AppTab.plan)
+        .tabItem { Label("Growth", systemImage: "chart.line.uptrend.xyaxis") }
+        .tag(AppTab.growth)
     }
 }
 

@@ -45,6 +45,7 @@ struct FeedingScreen: View {
             FeedingHistoryView(viewModel: viewModel, babyId: babyId)
         }
         .navigationTitle("Feeding")
+        .ambientBackground()
         .navigationDestination(isPresented: $showTimer) {
             FeedingTimerView(viewModel: viewModel)
         }

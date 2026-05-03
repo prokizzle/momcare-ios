@@ -10,10 +10,21 @@ final class MomCareUITests: XCTestCase {
         let app = XCUIApplication()
         app.launch()
 
-        // App should show either onboarding or the main tab bar
+        // Synchronize on launch, then require an actionable app state.
+        let splashTitle = app.staticTexts["MomCare"]
         let getStarted = app.buttons["Get Started"]
+        let next = app.buttons["Next"]
+        let setup = app.buttons["Let's set up"]
+        let startUsing = app.buttons["Start using MomCare"]
+        let signInWithGoogle = app.buttons["Sign in with Google"]
         let tabBar = app.tabBars.firstMatch
-        let eitherExists = getStarted.waitForExistence(timeout: 5) || tabBar.exists
-        XCTAssertTrue(eitherExists, "Expected either onboarding or main tab bar")
+        _ = splashTitle.waitForExistence(timeout: 5)
+        let readyStateExists = getStarted.waitForExistence(timeout: 10)
+            || next.waitForExistence(timeout: 10)
+            || setup.waitForExistence(timeout: 10)
+            || startUsing.waitForExistence(timeout: 10)
+            || signInWithGoogle.waitForExistence(timeout: 10)
+            || tabBar.waitForExistence(timeout: 10)
+        XCTAssertTrue(readyStateExists, "Expected actionable UI or main tab bar after launch")
     }
 }

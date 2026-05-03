@@ -26,8 +26,14 @@ struct ActionGridItemView: View {
             VStack(spacing: MCSpacing.xs) {
                 ZStack(alignment: .topTrailing) {
                     Image(systemName: item.displayIcon)
-                        .font(.title2)
-                        .frame(width: 28, height: 28)
+                        .font(.headline)
+                        .frame(width: 32, height: 32)
+                        .foregroundStyle(item.actionType == .water ? MCColor.feeding : MCColor.selfCare)
+                        .background(
+                            (item.actionType == .water ? MCColor.feeding : MCColor.selfCare)
+                                .opacity(MCOpacity.soft),
+                            in: Circle()
+                        )
 
                     if let waterCount, item.actionType == .water, waterCount > 0 {
                         Text("x\(waterCount)")
@@ -38,14 +44,14 @@ struct ActionGridItemView: View {
                 }
 
                 Text(item.displayName)
-                    .font(.caption2)
+                    .font(MCTypography.caption2)
                     .lineLimit(1)
             }
             .frame(maxWidth: .infinity)
-            .frame(height: 80)
+            .frame(height: 76)
             .background {
                 RoundedRectangle(cornerRadius: MCRadius.lg)
-                    .fill(MCElevation.elevated)
+                    .fill(MCElevation.surface)
                     .overlay {
                         if isRecentlyTapped {
                             RoundedRectangle(cornerRadius: MCRadius.lg)

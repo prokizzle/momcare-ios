@@ -11,20 +11,19 @@ struct SelfCareCardView: View {
     var body: some View {
         HStack(alignment: .top, spacing: MCSpacing.md) {
             Image(systemName: card.type.systemImage)
-                .font(.title3)
+                .font(.subheadline)
                 .foregroundStyle(card.type.accentColor)
-                .frame(width: 24)
+                .frame(width: 36, height: 36)
+                .background(card.type.accentColor.opacity(MCOpacity.soft), in: Circle())
                 .accessibilityHidden(true)
 
             VStack(alignment: .leading, spacing: MCSpacing.xs) {
-                if card.type == .streak {
-                    Text("Streak")
-                        .font(MCTypography.badge)
-                        .foregroundStyle(MCColor.selfCare)
-                }
+                Text(card.type.badgeLabel)
+                    .mcBadge()
+                    .foregroundStyle(card.type.accentColor)
                 Text(card.message)
-                    .font(MCTypography.callout)
-                    .foregroundStyle(.primary)
+                    .font(card.type == .affirmation ? MCTypography.milestone : MCTypography.headline)
+                    .foregroundStyle(MCColor.Foreground.level1)
             }
 
             Spacer()
@@ -32,7 +31,11 @@ struct SelfCareCardView: View {
         .padding(MCSpacing.lg)
         .background {
             RoundedRectangle(cornerRadius: MCRadius.lg)
-                .fill(MCElevation.surface)
+                .fill(MCElevation.elevated)
+                .overlay {
+                    RoundedRectangle(cornerRadius: MCRadius.lg)
+                        .stroke(card.type.accentColor.opacity(MCOpacity.soft), lineWidth: 1)
+                }
         }
         .offset(x: dragOffset)
         .gesture(
@@ -60,6 +63,18 @@ struct SelfCareCardView: View {
 }
 
 extension SelfCareCard.CardType {
+    var badgeLabel: String {
+        switch self {
+        case .selfCareWindow: "For you, right now"
+        case .hydrationNudge: "Hydration"
+        case .affirmation: "Affirmation"
+        case .pepTalk: "Pep talk"
+        case .checkIn: "Check-in"
+        case .streak: "Streak"
+        case .gentleNudge: "Gentle nudge"
+        }
+    }
+
     var systemImage: String {
         switch self {
         case .selfCareWindow: "sparkles"
@@ -75,12 +90,12 @@ extension SelfCareCard.CardType {
     var accentColor: Color {
         switch self {
         case .selfCareWindow: MCColor.selfCare
-        case .hydrationNudge: .blue
-        case .affirmation: .pink
-        case .pepTalk: .orange
-        case .checkIn: .purple
+        case .hydrationNudge: MCColor.feeding
+        case .affirmation: MCColor.selfCare
+        case .pepTalk: MCColor.Urgency.warning
+        case .checkIn: MCColor.baby
         case .streak: MCColor.selfCare
-        case .gentleNudge: .green
+        case .gentleNudge: MCColor.Urgency.safe
         }
     }
 }

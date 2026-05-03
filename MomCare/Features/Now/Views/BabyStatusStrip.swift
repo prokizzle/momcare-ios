@@ -23,15 +23,22 @@ struct BabyStatusStrip: View {
             }
             if !engine.isNapActive, !engine.isFeedingActive {
                 Text("All quiet")
-                    .font(MCTypography.subheadline)
-                    .foregroundStyle(.secondary)
+                    .font(MCTypography.timestamp)
+                    .foregroundStyle(MCColor.Foreground.level3)
             }
+            Spacer(minLength: 0)
         }
         .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, MCSpacing.lg)
         .padding(.vertical, MCSpacing.md)
-        .background(MCElevation.elevated)
-        .clipShape(RoundedRectangle(cornerRadius: MCRadius.md))
+        .background {
+            RoundedRectangle(cornerRadius: MCRadius.md)
+                .fill(MCElevation.elevated)
+                .overlay {
+                    RoundedRectangle(cornerRadius: MCRadius.md)
+                        .stroke(MCColor.Foreground.level1.opacity(MCOpacity.whisper), lineWidth: 1)
+                }
+        }
     }
 
     @ViewBuilder
@@ -40,6 +47,7 @@ struct BabyStatusStrip: View {
             Circle()
                 .fill(color)
                 .frame(width: 8, height: 8)
+                .shadow(color: color.opacity(MCOpacity.heavy), radius: 5)
             Image(systemName: icon)
                 .foregroundStyle(color)
                 .font(.caption)
